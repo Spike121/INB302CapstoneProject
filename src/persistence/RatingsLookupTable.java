@@ -6,11 +6,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class RatingsLookupTable {
 
-	private Map<String, Item> items = new HashMap<String, Item>();
-	private Map<String, User> users = new HashMap<String, User>();
+	private Map<String, Item> items = new TreeMap<String, Item>();
+	private Map<String, User> users = new TreeMap<String, User>();
 	
 	private Map<ItemUserPair, Integer> ratingLookup = new HashMap<ItemUserPair, Integer>();
 	
@@ -20,7 +21,7 @@ public class RatingsLookupTable {
 		ratingLookup.put(pair, rating);
 		
 		//Items
-		if(!items.containsKey(newItem))
+		if(!items.containsKey(newItem.getId()))
 			items.put(newItem.getId(),newItem);
 		
 		 Item existingItem = items.get(newItem.getId());
@@ -28,7 +29,7 @@ public class RatingsLookupTable {
 		 items.put(existingItem.getId(), existingItem);
 		 
 		 //Users
-		 if(!users.containsKey(newUser))
+		 if(!users.containsKey(newUser.getId()))
 				users.put(newUser.getId(),newUser);
 			
 		 User existingUser = users.get(newUser.getId());
@@ -49,9 +50,10 @@ public class RatingsLookupTable {
 	
 	public Map<User,Float> getAllUsersAverageRating()
 	{
-		Map<User,Float> averageRatings = new HashMap<User,Float>();
+		Map<User,Float> averageRatings = new TreeMap<User,Float>();
 		for(User user : users.values())
 			averageRatings.put(user, getAverageUserRating(user) );
+		
 		
 		return averageRatings;
 	}

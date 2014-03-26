@@ -3,7 +3,7 @@ package persistence;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Item {
+public class Item implements Comparable<Item>{
 
 	private String itemId;
 	private List<User> raters = new LinkedList<User>();
@@ -33,6 +33,11 @@ public class Item {
 
 	public String getId() {
 		return this.itemId;
+	}
+
+	@Override
+	public int compareTo(Item o) {
+		return Integer.parseInt(this.itemId) - Integer.parseInt(o.itemId);
 	}
 	
 	

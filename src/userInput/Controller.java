@@ -17,17 +17,19 @@ public class Controller {
 	
 	public static void main(String[] args) {
 		
-		InputTextReader reader;
-		
-		do
+		InputTextReader reader = new InputTextReader("ratings.txt");
+		if(!reader.readFromFile())
 		{
-			System.out.println("Enter filename: ");
-			Scanner in = new Scanner(System.in);
-			String fileName = in.nextLine();
-			
-			reader = new InputTextReader(fileName);
-			
-		} while(!reader.readFromFile());
+			do
+			{
+				System.out.println("Enter filename: ");
+				Scanner in = new Scanner(System.in);			
+				String fileName = in.nextLine();
+				
+				reader = new InputTextReader(fileName);
+				
+			} while(!reader.readFromFile());
+		}
 		
 		lookupTable = reader.getLookupTable();
 		

@@ -14,7 +14,17 @@ public class ItemUserPair {
 	@Override	
 	public boolean equals(Object obj) {
 		
-		return super.equals(obj);		
+		if ( !(obj instanceof ItemUserPair))
+			return false;
+		
+		if(obj == this)
+			return true;
+		
+		return this.item.getId().equals(((ItemUserPair) obj).item.getId()) && this.user.getId().equals(((ItemUserPair) obj).user.getId());
 	}
 	
+	@Override
+	public int hashCode() {		
+		return Integer.parseInt(this.item.getId()) * Integer.parseInt(this.user.getId());
+	}
 }
