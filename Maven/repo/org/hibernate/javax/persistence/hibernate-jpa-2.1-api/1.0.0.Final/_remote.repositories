@@ -1,0 +1,5 @@
+#NOTE: This is an Aether internal implementation file, its format can be changed without prior notice.
+#Mon Mar 31 18:08:10 EST 2014
+hibernate-jpa-2.1-api-1.0.0.Final.jar>=
+hibernate-jpa-2.1-api-1.0.0.Final.jar>central=
+hibernate-jpa-2.1-api-1.0.0.Final.pom>central=
