@@ -19,23 +19,6 @@ public class App
 		
     	RatingsLookupTable lookup = readInValuesFromTextInput();
     	exportValuesToDb(lookup);
-    	
-    	/*
-    	Session session = HibernateUtil.getSessionFactory().openSession();
- 
-		session.beginTransaction();
-		DBUser user = new DBUser();
- 
-		user.setUserId(123);
- 
-		session.save(user);		
-		System.out.println("User saved");
-		
-		session.getTransaction().commit();
-		System.out.println("DB updated");
-		
-		HibernateUtil.shutdown();
-		*/
     }
     
     public static RatingsLookupTable readInValuesFromTextInput()
@@ -44,7 +27,7 @@ public class App
 	    	
     	boolean readSuccesful;
     	do {
-    		System.out.println("Enter filename (ratings.txt default) : ");
+    		System.out.println("Enter filename (or enter for ratings.txt default) : ");
 			Scanner in = new Scanner(System.in);			
 			String fileName = in.nextLine();
 			

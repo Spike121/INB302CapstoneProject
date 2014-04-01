@@ -2,10 +2,18 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="com.codetrix.entities.database.DBItem" table="ITEMS">
+    <class name="com.codetrix.entities.database.DBItem" table="items">
         <id name="itemId" type="long">
-            <column name="ITEM_ID" />
+            <column name="itemId" />
             <generator class="assigned" />
-        </id>             
+        </id>
+		<set name="raters" table="ratings" inverse="true" lazy="true" fetch="select" >
+            <key>
+                <column name="itemId" not-null="true" />
+            </key>
+            <many-to-many entity-name="com.codetrix.entities.database.DBUser">
+                <column name="userId" not-null="true" />
+            </many-to-many>
+        </set>
     </class>
 </hibernate-mapping>

@@ -27,6 +27,23 @@ public class Item implements Comparable<Item>{
 		return Long.toString(itemId);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		
+		if(!(obj instanceof Item))
+			return false;
+		
+		if(obj == this)
+			return true;
+		
+		return ((Item) obj).itemId == this.itemId;
+	};
+	
+	@Override
+	public int hashCode() {
+		return Long.valueOf(this.itemId).hashCode();
+	};
+	
 	public void addUser(User newUser) {
 		raters.add(newUser);
 	}

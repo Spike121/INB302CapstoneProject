@@ -6,6 +6,14 @@
         <id name="userId" type="long">
             <column name="userId" />
             <generator class="assigned" />
-        </id>             
+        </id>
+		<set name="ratedItems" table="ratings" inverse="false" lazy="true" fetch="select" cascade="all" >
+            <key>
+                <column name="userId" not-null="true" />
+            </key>
+            <many-to-many entity-name="com.codetrix.entities.database.DBItem">
+                <column name="itemId" not-null="true" />
+            </many-to-many>
+        </set>
     </class>
 </hibernate-mapping>

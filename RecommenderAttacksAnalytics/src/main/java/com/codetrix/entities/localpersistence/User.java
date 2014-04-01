@@ -28,9 +28,25 @@ public class User implements Comparable<User>{
 		return Long.toString(userId);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		
+		if(!(obj instanceof User))
+			return false;
+		
+		if(obj == this)
+			return true;
+		
+		return ((User) obj).userId == this.userId;
+	};
+	
+	@Override
+	public int hashCode() {
+		return Long.valueOf(this.userId).hashCode();
+	};
+	
 	public void addItem(Item newItem) {
 		ratedItems.add(newItem);
-		
 	}
 
 	public long getId() {

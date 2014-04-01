@@ -3,6 +3,7 @@ package com.codetrix.util;
 import java.io.File;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
@@ -14,20 +15,18 @@ import org.hibernate.Session;
 public class HibernateUtil {
 	
 	private static final SessionFactory sessionFactory = buildSessionFactory();
-	 
+	private static ServiceRegistry serviceRegistry;
+	
     private static SessionFactory buildSessionFactory() {
         try {
-        	/*
-        	Configuration configuration = new Configuration();  
-            configuration.configure("main/java/resources/hibernate.cfg.xml");  
-            new ServiceRegistryBuilder().applySettings(configuration.getProperties());
-        	*/
-        	
-            // Create the SessionFactory from hibernate.cfg.xml
-            return new Configuration().configure(new File("src\\hibernate.cfg.xml")).buildSessionFactory();
+        	Configuration config = new Configuration().configure(new File("src\\hibernate.cfg.xml"));
+        	serviceRegistry = new StandardServiceRegistryBuilder().applySettings(config.getProperties()).build();
+            
+        	// Create the SessionFactory from hibernate.cfg.xml
+        	return config.buildSessionFactory(serviceRegistry);        	            
         }
         catch (Throwable ex) { 
-            // Make sure you log the exception, as it might be swallowed
+      
             System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
         }
