@@ -18,9 +18,32 @@ public class App
     public static void main( String[] args )
     {
     	System.out.println("Maven + Hibernate + Oracle");
+    	
+    	boolean exit = false;
+		do
+		{
+			System.out.println("Select command: ");
+			Scanner in = new Scanner(System.in);
+			String input = in.next();
+			switch(input)
+			{
+				case "1": readAndExportToDb();
+					break;
+				case "2": getUserAverageRating();
+					break;
+				default:										
+			}
+				
+		}
+		while(!exit);
 		
     	RatingsLookupTable lookup = readInValuesFromTextInput();
     	exportValuesToDb(lookup);
+    }
+    
+    public static void readAndExportToDb()
+    {
+    	
     }
     
     public static RatingsLookupTable readInValuesFromTextInput()
@@ -29,9 +52,8 @@ public class App
 	    	
     	boolean readSuccesful;
     	do {
-    		System.out.println("Enter filename (or enter for ratings.txt default) : ");
-			Scanner in = new Scanner(System.in);			
-			String fileName = in.nextLine();
+    					
+			String fileName = promptWithAnswer("Enter filename (or enter for ratings.txt default) : ");
 			
 			if(fileName.isEmpty())
 				fileName = "ratings.txt";
@@ -49,16 +71,26 @@ public class App
     	return reader.getLookupTable();
     }
     
+    public static String promptWithAnswer(String str)
+    {
+    	System.out.println(str);
+		Scanner in = new Scanner(System.in);			
+		return in.nextLine();
+    }
+    
     public static void exportValuesToDb(RatingsLookupTable lookup)
     {
     	LocalToDbFormatter.outputToDb(lookup);
     }
     
-    public void getUserRatings(long userId)
+    public static void getUserAverageRating()
     {
+    	long userId = Long.parseLong(promptWithAnswer("Input user number: "));
     	Session session = HibernateUtil.getSessionFactory().openSession();
-    	Query query = session.createQuery("from DBUSerItemRating where userId = :id");
-    	query.setParameter("id", String.valueOf(userId));
-    	List list = query.list();
+    	Query query = session.createQuery("from DBUser where userId = :id");
+    	query.setParameter("id", userId);
+    	List<DBUser> list = query.list();
+    	DBUser user = list.get(0);
+    	System.out.println("Average for user " + user.getUserId() + " : " + user.getItemRatingsAverage());
     }
 }

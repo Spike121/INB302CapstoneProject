@@ -24,7 +24,6 @@ public class DBUser implements Serializable {
 		this.userId = userId;
 	}
 
-
 	public long getUserId() {
 		return this.userId;
 	}
@@ -98,5 +97,5 @@ public class DBUser implements Serializable {
 	public void setAuthentic(boolean isAuthentic) {
 		this.isAuthentic = isAuthentic;
 	}	
-	 */
+	*/
 }

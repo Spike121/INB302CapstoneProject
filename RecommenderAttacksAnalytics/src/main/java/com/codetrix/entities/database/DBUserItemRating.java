@@ -11,8 +11,7 @@ public class DBUserItemRating implements Serializable{
 	private int rating;
 	
 	public DBUserItemRating()
-	{
-		
+	{	
 	}
 	
 	public DBUserItemRating(DBUser dbUser, DBItem item, int rating) {

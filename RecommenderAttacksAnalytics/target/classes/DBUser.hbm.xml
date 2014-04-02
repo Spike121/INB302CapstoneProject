@@ -23,7 +23,7 @@
             <key column="userId" foreign-key="USER_ID_FK2" />
             <composite-element class="com.codetrix.entities.database.DBUserItemRating">
                 <parent name="user" />
-                <many-to-one name="item" class="com.codetrix.entities.database.DBItem" column="itemId" foreign-key="CHOCOLATE__FK1" not-null="true" cascade="all"/>
+                <many-to-one name="item" class="com.codetrix.entities.database.DBItem" column="itemId" foreign-key="USER_ID_FK1" not-null="true" cascade="all"/>
                 <property name="rating" type="integer">
                     <column name="rating" not-null="true" />
                 </property>

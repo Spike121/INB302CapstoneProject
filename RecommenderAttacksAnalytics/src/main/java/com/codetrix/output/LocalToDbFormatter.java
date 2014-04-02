@@ -78,9 +78,6 @@ public class LocalToDbFormatter {
 		} finally {
 			HibernateUtil.shutdown();	
 		}
-
-		
-		
 	}
 	
 	public static void outputUsersToDb(List<User> users)
