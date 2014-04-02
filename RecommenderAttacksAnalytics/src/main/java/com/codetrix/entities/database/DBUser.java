@@ -38,6 +38,22 @@ public class DBUser implements Serializable {
 		this.getUserItemRatings().add(userItemRating);
 	}
 	
+	public float diffFromAverage()
+	{
+		float totalDiff = 0.0f;
+		float average = getItemRatingsAverage();
+		Iterator<DBUserItemRating> it = userItemRatings.iterator();
+		
+		while(it.hasNext())
+		{
+			DBUserItemRating userItemRating = it.next();
+			float diff = userItemRating.getRating() - average;			
+			totalDiff += diff;
+		}
+		
+		return totalDiff;
+	}
+	
 	/*
 	public void removeRatedItem()
 	{

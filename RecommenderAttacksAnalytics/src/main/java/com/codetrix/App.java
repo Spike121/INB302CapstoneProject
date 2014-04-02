@@ -29,7 +29,7 @@ public class App
 			{
 				case "1": readAndExportToDb();
 					break;
-				case "2": getUserAverageRating();
+				case "2": getSpecifiedUser();
 					break;
 				default:										
 			}
@@ -83,14 +83,46 @@ public class App
     	LocalToDbFormatter.outputToDb(lookup);
     }
     
-    public static void getUserAverageRating()
+    public static DBUser getSpecifiedUser()
     {
     	long userId = Long.parseLong(promptWithAnswer("Input user number: "));
+    	return getUser(userId);
+    }
+    
+    public static DBUser getUser(long userId)
+    {    	
     	Session session = HibernateUtil.getSessionFactory().openSession();
     	Query query = session.createQuery("from DBUser where userId = :id");
     	query.setParameter("id", userId);
-    	List<DBUser> list = query.list();
+    	
+    	List<DBUser> list = query.list();	
     	DBUser user = list.get(0);
-    	System.out.println("Average for user " + user.getUserId() + " : " + user.getItemRatingsAverage());
+    	
+    	HibernateUtil.shutdown();
+    	
+    	return user;
     }
+    
+    public List<DBUser> fetchAllUsers()
+    {
+    	Session session = HibernateUtil.getSessionFactory().openSession();
+    	Query query = session.createQuery("from DBUser");
+    	List<DBUser> list = query.list();
+   	
+    	HibernateUtil.shutdown();
+    	
+    	return list;
+    }
+    
+    /*
+    public float computeSimilarityToNeighbor(DBUser user, DBUser neighbor)
+    {
+    	user.diffFromAverage() ;
+    	neighbor.diffFromAverage();
+    }
+    */
+
+    	
 }
+
+
