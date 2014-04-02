@@ -11,9 +11,11 @@ public class DBItem implements Serializable{
 
 	private static final long serialVersionUID = -321973360789099117L;
 	private long itemId;
-	private Set<User> raters = new HashSet<User>();
+	
+	//private Set<User> raters = new HashSet<User>();
 	
 	public DBItem() { }
+	
 	
 	public DBItem(Item item) 
 	{
@@ -28,6 +30,7 @@ public class DBItem implements Serializable{
 		this.itemId = itemId;
 	}
 
+	/*
 	public Set<User> getRaters() {
 		return raters;
 	}
@@ -35,5 +38,10 @@ public class DBItem implements Serializable{
 	public void setRaters(Set<User> raters) {
 		this.raters = raters;
 	}
+	*/
 	
+	@Override	
+	public String toString() {
+		return String.valueOf(this.itemId);
+	}
 }

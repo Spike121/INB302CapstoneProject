@@ -1,8 +1,10 @@
 package com.codetrix;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Scanner;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.codetrix.entities.database.DBUser;
@@ -50,5 +52,13 @@ public class App
     public static void exportValuesToDb(RatingsLookupTable lookup)
     {
     	LocalToDbFormatter.outputToDb(lookup);
+    }
+    
+    public void getUserRatings(long userId)
+    {
+    	Session session = HibernateUtil.getSessionFactory().openSession();
+    	Query query = session.createQuery("from DBUSerItemRating where userId = :id");
+    	query.setParameter("id", String.valueOf(userId));
+    	List list = query.list();
     }
 }

@@ -1,5 +1,6 @@
 package com.codetrix.entities.localpersistence;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,5 +57,9 @@ public class User implements Comparable<User>{
 	@Override
 	public int compareTo(User o) {
 		return (int) (this.userId - o.userId);
+	}
+
+	public Collection<Item> getRatedItems() {
+		return this.ratedItems;
 	}
 }

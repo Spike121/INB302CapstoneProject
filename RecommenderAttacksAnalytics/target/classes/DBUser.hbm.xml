@@ -7,13 +7,28 @@
             <column name="userId" />
             <generator class="assigned" />
         </id>
-		<set name="ratedItems" table="ratings" inverse="false" lazy="true" fetch="select" cascade="all" >
+		
+		<!-- <property name="isAuthentic" type="boolean" /> -->
+		<!--
+		<set name="ratedItems" table="ratings" inverse="false" lazy="true" fetch="select" cascade="all">
             <key>
                 <column name="userId" not-null="true" />
             </key>
-            <many-to-many entity-name="com.codetrix.entities.database.DBItem">
-                <column name="itemId" not-null="true" />
-            </many-to-many>
+	
+			<many-to-many column="itemId" class="com.codetrix.entities.database.DBItem" />
         </set>
+		-->
+		
+		<set name="userItemRatings" table="ratings">
+            <key column="userId" foreign-key="USER_ID_FK2" />
+            <composite-element class="com.codetrix.entities.database.DBUserItemRating">
+                <parent name="user" />
+                <many-to-one name="item" class="com.codetrix.entities.database.DBItem" column="itemId" foreign-key="CHOCOLATE__FK1" not-null="true" cascade="all"/>
+                <property name="rating" type="integer">
+                    <column name="rating" not-null="true" />
+                </property>
+            </composite-element>
+        </set>
+		
     </class>
 </hibernate-mapping>

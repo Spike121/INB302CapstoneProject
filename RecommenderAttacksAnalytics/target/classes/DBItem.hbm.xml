@@ -7,13 +7,21 @@
             <column name="itemId" />
             <generator class="assigned" />
         </id>
+		
+		<!--
 		<set name="raters" table="ratings" inverse="true" lazy="true" fetch="select" >
             <key>
                 <column name="itemId" not-null="true" />
             </key>
-            <many-to-many entity-name="com.codetrix.entities.database.DBUser">
-                <column name="userId" not-null="true" />
-            </many-to-many>
-        </set>
+			
+
+            <many-to-many column="userId" class="com.codetrix.entities.database.DBUser" />
+			
+		</set>
+		-->
+		
+		
+		
+
     </class>
 </hibernate-mapping>

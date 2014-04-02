@@ -1,7 +1,9 @@
 package com.codetrix.output;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.hibernate.Session;
@@ -22,40 +24,53 @@ public class LocalToDbFormatter {
 		
 		Session session = HibernateUtil.getSessionFactory().openSession();		 
 		session.beginTransaction();
+		//session.clear() ;
 		
-		/*
-		session.save(user);		
-		System.out.println("User saved");
-		*/
-		
-		HashSet<User> userSet = new HashSet<User>();
-		HashSet<Item> itemSet = new HashSet<Item>();
+		Map<Long, DBItem> itemsMap = new HashMap<Long, DBItem>();
+		Map<Long, DBUser> usersMap = new HashMap<Long, DBUser>();
 		
 		try
 		{
 			for(Entry<ItemUserPair, Integer> entry : table.getRatingsLookup().entrySet())
 			{
 				ItemUserPair pair = entry.getKey();
-				if(!userSet.contains(pair.getUser()))
-				{
-					DBUser dbUser = new DBUser(pair.getUser());
-					session.save(dbUser);
-					System.out.println("User " + dbUser.getUserId() + " persisted");
-					
-					userSet.add(pair.getUser());
+				User rater = pair.getUser();
+				Item ratedItem = pair.getItem();
+				Integer rating = entry.getValue();
+								
+				DBUser dbUser;
+				DBItem dbItem;
+				
+				// Get db user
+				if(usersMap.containsKey(rater.getId()))
+					dbUser = usersMap.get(rater.getId()); 
+				else
+				{	
+					dbUser = new DBUser(rater.getId());
+					usersMap.put(rater.getId(), dbUser);
 				}
 				
-				if(!itemSet.contains(pair.getItem()))
-				{
-					DBItem dbItem = new DBItem(pair.getItem());
-					session.save(dbItem);
-					System.out.println("Item " + dbItem.getItemId() + " persisted");
-					
-					itemSet.add(pair.getItem());
+				// Get db item
+				if(itemsMap.containsKey(ratedItem.getId()))
+					dbItem = itemsMap.get(ratedItem.getId()); 
+				else
+				{	
+					dbItem = new DBItem(ratedItem);
+					itemsMap.put(ratedItem.getId(), dbItem);
 				}
+				
+				dbUser.addRatedItem(dbItem, rating);																					
 			}
 			
+			for(DBUser dbUser : usersMap.values())
+			{
+				session.save(dbUser);
+				System.out.println("User " + dbUser.getUserId() + " persisted");
+			}
+			
+			
 			session.getTransaction().commit();
+			System.out.println("DB updated");
 			
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -65,7 +80,7 @@ public class LocalToDbFormatter {
 		}
 
 		
-		System.out.println("DB updated");
+		
 	}
 	
 	public static void outputUsersToDb(List<User> users)
