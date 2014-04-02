@@ -1,0 +1,3 @@
+username: root
+password: CodeTrix
+port: 3306
