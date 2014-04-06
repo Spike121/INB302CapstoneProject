@@ -3,6 +3,7 @@ package com.codetrix;
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Scanner;
+import java.lang.Math;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -12,6 +13,7 @@ import com.codetrix.entities.localpersistence.RatingsLookupTable;
 import com.codetrix.input.InputTextReader;
 import com.codetrix.output.LocalToDbFormatter;
 import com.codetrix.util.HibernateUtil;
+
 
 public class App 
 {
@@ -114,13 +116,15 @@ public class App
     	return list;
     }
     
-    /*
+    
     public float computeSimilarityToNeighbor(DBUser user, DBUser neighbor)
     {
-    	user.diffFromAverage() ;
-    	neighbor.diffFromAverage();
+    	float resultTop = (user.diffFromAverage() * neighbor.diffFromAverage());
+    	float resultBottom = (float) Math.sqrt((Math.pow(user.diffFromAverage(), 2)));
+		resultBottom = resultBottom * (float) Math.sqrt((Math.pow(neighbor.diffFromAverage(), 2)));
+    	return (resultTop / resultBottom);
     }
-    */
+    
 
     	
 }
