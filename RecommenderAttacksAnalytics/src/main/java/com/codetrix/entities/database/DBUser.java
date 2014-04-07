@@ -1,18 +1,16 @@
 package com.codetrix.entities.database;
 
+import com.codetrix.entities.common.AbstractUser;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import com.codetrix.entities.localpersistence.Item;
-import com.codetrix.entities.localpersistence.User;
 
-public class DBUser implements Serializable {
+public class DBUser extends AbstractUser implements Serializable {
 
 	private static final long serialVersionUID = -7573207794958163613L;
-	private long userId;
-	
+
 	//private boolean isAuthentic = true;
 	//private Set<DBItem> ratedItems = new HashSet<DBItem>();
 	
@@ -37,8 +35,20 @@ public class DBUser implements Serializable {
 		final DBUserItemRating userItemRating = new DBUserItemRating(this,item,rating);
 		this.getUserItemRatings().add(userItemRating);
 	}
-	
+        
+	@Override
 	public float diffFromAverage()
+	{
+		return computeDiffFromAverage(false);
+	}
+	
+        @Override
+	public float diffFromAverageSquared()
+	{
+		return computeDiffFromAverage(true);
+	}
+	
+	private float computeDiffFromAverage(boolean isSquared)
 	{
 		float totalDiff = 0.0f;
 		float average = getItemRatingsAverage();
@@ -48,6 +58,10 @@ public class DBUser implements Serializable {
 		{
 			DBUserItemRating userItemRating = it.next();
 			float diff = userItemRating.getRating() - average;			
+			
+			if(isSquared)
+				diff = (float) Math.pow(diff, 2);
+			
 			totalDiff += diff;
 		}
 		

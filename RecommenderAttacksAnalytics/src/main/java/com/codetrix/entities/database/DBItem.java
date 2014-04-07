@@ -1,16 +1,13 @@
 package com.codetrix.entities.database;
 
+import com.codetrix.entities.common.AbstractItem;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.codetrix.entities.localpersistence.Item;
-import com.codetrix.entities.localpersistence.User;
 
-public class DBItem implements Serializable{
+
+public class DBItem extends AbstractItem implements Serializable{
 
 	private static final long serialVersionUID = -321973360789099117L;
-	private long itemId;
 	
 	//private Set<User> raters = new HashSet<User>();
 	
@@ -44,4 +41,12 @@ public class DBItem implements Serializable{
 	public String toString() {
 		return String.valueOf(this.itemId);
 	}
+
+    public float diffFromAverageSquared() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public float diffFromAverage() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

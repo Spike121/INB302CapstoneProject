@@ -1,19 +1,7 @@
 package com.codetrix;
 
-import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.Scanner;
-import java.lang.Math;
-
-import org.hibernate.Query;
-import org.hibernate.Session;
-
-import com.codetrix.entities.database.DBUser;
-import com.codetrix.entities.localpersistence.RatingsLookupTable;
-import com.codetrix.input.InputTextReader;
-import com.codetrix.output.LocalToDbFormatter;
-import com.codetrix.util.HibernateUtil;
-
+import com.codetrix.ui.MainAppFrame;
+import javax.swing.JFrame;
 
 public class App 
 {
@@ -21,6 +9,7 @@ public class App
     {
     	System.out.println("Maven + Hibernate + Oracle");
     	
+        /*
     	boolean exit = false;
 		do
 		{
@@ -41,90 +30,20 @@ public class App
 		
     	RatingsLookupTable lookup = readInValuesFromTextInput();
     	exportValuesToDb(lookup);
+        */
+             
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+
+            public void run() {
+                MainAppFrame frame = new MainAppFrame();
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setVisible(true);
+            }
+        });
+       
     }
-    
-    public static void readAndExportToDb()
-    {
-    	
-    }
-    
-    public static RatingsLookupTable readInValuesFromTextInput()
-    {
-    	InputTextReader reader = new InputTextReader();
-	    	
-    	boolean readSuccesful;
-    	do {
-    					
-			String fileName = promptWithAnswer("Enter filename (or enter for ratings.txt default) : ");
-			
-			if(fileName.isEmpty())
-				fileName = "ratings.txt";
-			
-    		readSuccesful = false;    		
-	    	try {
-	    		readSuccesful = reader.readFromFile(fileName);
-			} catch (FileNotFoundException e) {
-				System.out.println("Invalid file name/path (" + fileName + ")");
-				readSuccesful = false;
-			}
-	    	
-    	} while(!readSuccesful);   
-    	
-    	return reader.getLookupTable();
-    }
-    
-    public static String promptWithAnswer(String str)
-    {
-    	System.out.println(str);
-		Scanner in = new Scanner(System.in);			
-		return in.nextLine();
-    }
-    
-    public static void exportValuesToDb(RatingsLookupTable lookup)
-    {
-    	LocalToDbFormatter.outputToDb(lookup);
-    }
-    
-    public static DBUser getSpecifiedUser()
-    {
-    	long userId = Long.parseLong(promptWithAnswer("Input user number: "));
-    	return getUser(userId);
-    }
-    
-    public static DBUser getUser(long userId)
-    {    	
-    	Session session = HibernateUtil.getSessionFactory().openSession();
-    	Query query = session.createQuery("from DBUser where userId = :id");
-    	query.setParameter("id", userId);
-    	
-    	List<DBUser> list = query.list();	
-    	DBUser user = list.get(0);
-    	
-    	HibernateUtil.shutdown();
-    	
-    	return user;
-    }
-    
-    public List<DBUser> fetchAllUsers()
-    {
-    	Session session = HibernateUtil.getSessionFactory().openSession();
-    	Query query = session.createQuery("from DBUser");
-    	List<DBUser> list = query.list();
-   	
-    	HibernateUtil.shutdown();
-    	
-    	return list;
-    }
-    
-    
-    public float computeSimilarityToNeighbor(DBUser user, DBUser neighbor)
-    {
-    	float resultTop = (user.diffFromAverage() * neighbor.diffFromAverage());
-    	float resultBottom = (float) Math.sqrt((Math.pow(user.diffFromAverage(), 2)));
-		resultBottom = resultBottom * (float) Math.sqrt((Math.pow(neighbor.diffFromAverage(), 2)));
-    	return (resultTop / resultBottom);
-    }
-    
+  
 
     	
 }
