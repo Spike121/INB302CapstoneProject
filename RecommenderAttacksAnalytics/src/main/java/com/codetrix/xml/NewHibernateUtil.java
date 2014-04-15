@@ -36,3 +36,21 @@ public SessionFactory getSessionFactory() {
     return sessionFactory;
 }    
 }
+/* This is another method
+
+public static void hibernate.SetSessionFactory() {
+    try {
+
+      AnnotationConfiguration conf = new AnnotationConfiguration().configure();
+      // <!-- Database connection settings -->
+      conf.setProperty("hibernate.connection.url", URL);
+      conf.setProperty("hibernate.connection.username", USERNAME);
+      conf.setProperty("hibernate.connection.password", PASSWORD);
+      SESSION_FACTORY = conf.buildSessionFactory();
+
+    } catch (Throwable ex) {
+      // Log exception!
+      throw new ExceptionInInitializerError(ex);
+    }
+  }
+*/
