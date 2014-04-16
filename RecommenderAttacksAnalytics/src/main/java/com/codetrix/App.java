@@ -1,9 +1,10 @@
 package com.codetrix;
 
+import com.codetrix.events.IFetchEntityEvent;
 import com.codetrix.ui.MainAppFrame;
 import javax.swing.JFrame;
 
-public class App 
+public class App implements IFetchEntityEvent
 {
     public static void main( String[] args )
     {
@@ -32,6 +33,7 @@ public class App
     	exportValuesToDb(lookup);
         */
              
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
@@ -40,8 +42,11 @@ public class App
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setVisible(true);
             }
-        });
-       
+        });  
+    }
+
+    public void OnFetchEntity(long id) {
+        
     }
   
 

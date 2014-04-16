@@ -17,6 +17,8 @@ public abstract class AbstractModel {
     protected abstract void computePearsonCoefficients();
     protected abstract void computePredictions();
     
+    
+    
     protected  String promptWithAnswer(String str)
     {
     	System.out.println(str);

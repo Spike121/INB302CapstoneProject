@@ -1,6 +1,8 @@
 package com.codetrix.entities.database;
 
 import com.codetrix.entities.common.AbstractUser;
+import com.codetrix.util.Logger;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -42,7 +44,7 @@ public class DBUser extends AbstractUser implements Serializable {
 		return computeDiffFromAverage(false);
 	}
 	
-        @Override
+    @Override
 	public float diffFromAverageSquared()
 	{
 		return computeDiffFromAverage(true);
@@ -66,6 +68,22 @@ public class DBUser extends AbstractUser implements Serializable {
 		}
 		
 		return totalDiff;
+	}
+	
+	public float diffFromAverageForSpecificItem(DBItem item)
+	{
+		Iterator<DBUserItemRating> it = userItemRatings.iterator();
+		float average = getItemRatingsAverage();
+		
+		while(it.hasNext())
+		{
+			DBUserItemRating userItemRating = it.next();
+			if(userItemRating.getItem().getId() == item.getId())
+				return userItemRating.getRating() - average;						
+		}
+		
+		Logger.logWarning("Item " + item.getId() + "not found - returned 0.0 as diff. Results may be innacurate");
+		return 0.0f;
 	}
 	
 	/*
