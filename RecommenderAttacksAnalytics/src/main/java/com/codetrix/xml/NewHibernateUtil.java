@@ -6,6 +6,9 @@
 
 package com.codetrix.xml;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AnnotationConfiguration;
+
 /**
  *
  * @author Mikhail
