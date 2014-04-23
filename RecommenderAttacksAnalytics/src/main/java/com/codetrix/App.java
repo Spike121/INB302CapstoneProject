@@ -1,10 +1,15 @@
 package com.codetrix;
 
+import java.io.File;
+
 import com.codetrix.ui.MainAppFrame;
 import javax.swing.JFrame;
 
+import com.codetrix.util.DatabaseInfos;
+
 public class App 
 {
+	
     public static void main( String[] args )
     {
     	System.out.println("Maven + Hibernate + Oracle");
