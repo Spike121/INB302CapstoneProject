@@ -1,9 +1,11 @@
 
 package com.codetrix.ui;
 
+import com.codetrix.entities.database.DBItem;
 import com.codetrix.model.AbstractModel;
 import com.codetrix.model.UserCentricModel;
 import com.codetrix.util.Logger;
+import java.util.Map;
 
 public class MainAppFrame extends javax.swing.JFrame {
 
@@ -15,13 +17,20 @@ public class MainAppFrame extends javax.swing.JFrame {
     }
 
     private void selectUserBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectUserBtnActionPerformed
-        try{
+        
+        try {
             currentModel.select(Long.valueOf(entityIdTextField.getText()));
-        } catch(NumberFormatException e)
+        } 
+        catch(NumberFormatException e)
         {
             Logger.logError("Invalid user number");
         }
         
+        for(Map.Entry<DBItem, Float> entry : currentModel.getPredictions().entrySet())
+        {
+            //Logger.log(entry.getKey().getId());
+            outputTextArea.append("Item " + entry.getKey().getId() + ":  " + entry.getValue() + "\n");
+        }      
     }//GEN-LAST:event_selectUserBtnActionPerformed
     
     @SuppressWarnings("unchecked")
@@ -33,6 +42,8 @@ public class MainAppFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         entityIdTextField = new javax.swing.JTextPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        outputTextArea = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -49,15 +60,20 @@ public class MainAppFrame extends javax.swing.JFrame {
 
         jScrollPane1.setViewportView(entityIdTextField);
 
+        outputTextArea.setColumns(20);
+        outputTextArea.setRows(5);
+        jScrollPane2.setViewportView(outputTextArea);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator1)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane2)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -76,7 +92,9 @@ public class MainAppFrame extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(353, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -86,7 +104,9 @@ public class MainAppFrame extends javax.swing.JFrame {
     private javax.swing.JTextPane entityIdTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTextArea outputTextArea;
     private javax.swing.JButton selectUserBtn;
     // End of variables declaration//GEN-END:variables
 }

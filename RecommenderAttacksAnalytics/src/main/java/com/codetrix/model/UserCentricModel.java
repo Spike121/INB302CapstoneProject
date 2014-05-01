@@ -27,9 +27,11 @@ public class UserCentricModel extends AbstractModel {
     private DBUser selectedUser;
     private List<DBUser> users = new LinkedList<>();
     private Map<DBUser, Float> pearsonValuesMap = new HashMap<>();
-    private Map<DBItem, Float> itemsScorePredictions = new HashMap<>();
+    
     
     private final float similarityCutoff = 0.1f;
+    
+    
     
     public UserCentricModel()
     {
@@ -45,8 +47,12 @@ public class UserCentricModel extends AbstractModel {
     public void select(long id) {
         
         fetchEntities();
+        
+        
         try{
+            
             selectedUser = findUser(id);
+            System.out.println(selectedUser.getItemRatingsAverage());
             computePredictions();
             
         } catch(UserNotFoundException e) {
@@ -80,8 +86,8 @@ public class UserCentricModel extends AbstractModel {
     {	
     	float resultTop = (user.diffFromAverage() * neighbor.diffFromAverage());
     	float resultBottomLeft = (float) Math.sqrt(user.diffFromAverageSquared());
-    	float resultBottomRight = (float) Math.sqrt(neighbor.diffFromAverageSquared());
-  
+        float resultBottomRight = (float) Math.sqrt(neighbor.diffFromAverageSquared());
+        
     	return (resultTop / (resultBottomLeft * resultBottomRight));
     }
 
@@ -95,7 +101,8 @@ public class UserCentricModel extends AbstractModel {
             else
             {	
                     Float coefficient = computeSimilarityToNeighbor(selectedUser, neighbor);
-                    if(coefficient >= similarityCutoff)
+                    System.out.println(coefficient);
+                    //if(coefficient >= similarityCutoff)
                             pearsonValuesMap.put(neighbor, coefficient);
             }
     	}	
@@ -123,20 +130,20 @@ public class UserCentricModel extends AbstractModel {
     Set<DBUserItemRating> userItemRatings = selectedUser.getUserItemRatings();
     
     Hibernate.initialize(userItemRatings);
-    
-            for(DBUserItemRating userItemRating : userItemRatings)
-            {
-                
-                    Float currentItemPrediction = getPredictedScoreForItem(userItemRating.getItem());
-                    tempitemsScorePredictions.put(userItemRating.getItem(), currentItemPrediction);
-            }
+    computePearsonCoefficients();
 
-            List<Entry<DBItem, Float>> sortedItemScorePairs = new LinkedList(tempitemsScorePredictions.entrySet());
-            Collections.sort(sortedItemScorePairs, (Entry<DBItem, Float> e1, Entry<DBItem, Float> e2) -> e1.getValue().compareTo(e2.getValue()));
-            itemsScorePredictions = new HashMap<>();
-            
-            for(Entry<DBItem, Float> entry : sortedItemScorePairs)
-                itemsScorePredictions.put(entry.getKey(), entry.getValue());
+    for(DBUserItemRating userItemRating : userItemRatings)
+    {
+            Float currentItemPrediction = getPredictedScoreForItem(userItemRating.getItem());
+            tempitemsScorePredictions.put(userItemRating.getItem(), currentItemPrediction);
+    }
+
+    List<Entry<DBItem, Float>> sortedItemScorePairs = new LinkedList(tempitemsScorePredictions.entrySet());
+    Collections.sort(sortedItemScorePairs, (Entry<DBItem, Float> e1, Entry<DBItem, Float> e2) -> e1.getValue().compareTo(e2.getValue()));
+    itemsScorePredictions = new HashMap<>();
+
+    for(Entry<DBItem, Float> entry : sortedItemScorePairs)
+        itemsScorePredictions.put(entry.getKey(), entry.getValue());
     }
     
     private float getPredictedScoreForItem(DBItem dbItem)
@@ -158,6 +165,7 @@ public class UserCentricModel extends AbstractModel {
     private float getPearsonAjustedDiffForItem(DBItem item)
     {
     	float total = 0.0f;
+        System.out.println("");
     	for(Entry<DBUser, Float> pair : pearsonValuesMap.entrySet())
     	{
     		float pearsonCoefficient = pair.getValue();

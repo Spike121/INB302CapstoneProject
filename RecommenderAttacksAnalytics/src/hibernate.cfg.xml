@@ -14,4 +14,4 @@
 	<mapping resource="DBUser.hbm.xml"></mapping>
 	<mapping resource="DBItem.hbm.xml"></mapping>
 </session-factory>
-</hibernate-configuration>
+</hibernate-configuration> 

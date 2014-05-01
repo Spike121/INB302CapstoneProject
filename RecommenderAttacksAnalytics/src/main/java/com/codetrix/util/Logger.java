@@ -9,12 +9,12 @@ public class Logger {
 	
 	public static void logWarning(String str){
 		
-		System.out.println("Warning: " + str);
+		System.err.println("Warning: " + str);
 	}
 	
 	public static void logError(String str){
 		
-		System.out.println("Error: " + str);
+		System.err.println("Error: " + str);
 	}
 
 }

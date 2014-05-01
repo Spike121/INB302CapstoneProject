@@ -2,22 +2,28 @@
 package com.codetrix.model;
 
 import com.codetrix.entities.common.IPersistenceEntity;
+import com.codetrix.entities.database.DBItem;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 
 public abstract class AbstractModel {
     
-    
-    
     public abstract void fetchEntities();
     public abstract void pushEntities();
     public abstract void select(long id);
     
+    protected Map<DBItem, Float> itemsScorePredictions = new HashMap<>();
+    
     protected abstract float computeSimilarityToNeighbor(IPersistenceEntity mainEntity, IPersistenceEntity neighborEntity);
     protected abstract void computePearsonCoefficients();
     protected abstract void computePredictions();
-    
-    
+   
+    public Map<DBItem, Float> getPredictions()
+    {
+        return itemsScorePredictions;
+    }
     
     protected  String promptWithAnswer(String str)
     {
