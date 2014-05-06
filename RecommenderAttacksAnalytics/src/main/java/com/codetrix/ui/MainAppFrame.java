@@ -2,9 +2,13 @@
 package com.codetrix.ui;
 
 import com.codetrix.entities.database.DBItem;
+import com.codetrix.entities.database.DBUser;
 import com.codetrix.model.AbstractModel;
 import com.codetrix.model.UserCentricModel;
 import com.codetrix.util.Logger;
+import com.codetrix.entities.localpersistence.*;
+
+import java.util.Random;
 import java.util.Map;
 
 public class MainAppFrame extends javax.swing.JFrame {
@@ -16,6 +20,18 @@ public class MainAppFrame extends javax.swing.JFrame {
         currentModel = new UserCentricModel();
     }
 
+    private void addFakeProfilesBtnActionPerformed(java.awt.event.ActionEvent evt) {
+    	
+    	//PROBLEM: Find the corresponding DBItem for the ID the user enters
+    	//Rest is done
+    	DBItem randomItem = new DBItem(); //Using an empty DBItem at the moment, hoping Phil can help
+		try {
+			currentModel.addFakeProfiles(randomItem, 5);
+		} catch (Exception e) {
+			Logger.logError("Error:" + e);
+		}
+    }
+    
     private void selectUserBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectUserBtnActionPerformed
         
         try {
@@ -39,6 +55,7 @@ public class MainAppFrame extends javax.swing.JFrame {
 
         jSeparator1 = new javax.swing.JSeparator();
         selectUserBtn = new javax.swing.JButton();
+        addFakeProfilesBtn = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         entityIdTextField = new javax.swing.JTextPane();
@@ -53,6 +70,15 @@ public class MainAppFrame extends javax.swing.JFrame {
         selectUserBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 selectUserBtnActionPerformed(evt);
+            }
+        });
+        
+        addFakeProfilesBtn.setText("Add Fake Profiles");
+        addFakeProfilesBtn.setMargin(new java.awt.Insets(3, 40, 3, 40));
+        addFakeProfilesBtn.setName("addFakeProfilesBtn"); // NOI18N
+        addFakeProfilesBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            	addFakeProfilesBtnActionPerformed(evt);
             }
         });
 
@@ -108,5 +134,6 @@ public class MainAppFrame extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea outputTextArea;
     private javax.swing.JButton selectUserBtn;
+    private javax.swing.JButton addFakeProfilesBtn;
     // End of variables declaration//GEN-END:variables
 }
