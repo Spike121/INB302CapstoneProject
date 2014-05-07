@@ -1,21 +1,12 @@
 package com.codetrix;
 
-<<<<<<< HEAD
 import com.codetrix.events.IFetchEntityEvent;
 import com.codetrix.ui.MainAppFrame;
 import javax.swing.JFrame;
-
-public class App implements IFetchEntityEvent
-=======
-import java.io.File;
-
-import com.codetrix.ui.MainAppFrame;
-import javax.swing.JFrame;
-
 import com.codetrix.util.DatabaseInfos;
 
-public class App 
->>>>>>> adc214d00e0491597ea1398763b9bb4922f69101
+
+public class App implements IFetchEntityEvent
 {
 	
     public static void main( String[] args )
