@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.hibernate.Hibernate;
@@ -70,6 +71,33 @@ public class UserCentricModel extends AbstractModel {
         }
     }
     
+    
+    //Not 100% Sure if this is even right, because so many methods are implemented more than once
+    //Did I even use the right methods? Does addRatedItem even get used?
+    //Will recomputing even check new UserItemRatings? Fuck knows. 
+    @Override
+    public void addFakeProfiles(DBItem productToPromote, int numOfProfiles) {
+		Random randomRating = new Random(); //will be used when randomly rating a random product
+    	for(int i = 0; i < numOfProfiles; i++) {
+    		//Create a new user
+    		DBUser newUser = new DBUser(9999 - i);
+    		//Promote the main product
+    		newUser.addRatedItem(productToPromote, 5);
+    		
+    		//Randomly rate a random number of other products
+    		//NEED TO FIGURE THIS PART OUT STILL
+			//NOT SURE HOW TO SELECT A RANDOM ITEM
+    		//CURRENTLY Randomly rates the top however many predictions
+    		for(Map.Entry<DBItem, Float> entry : getPredictions().entrySet())
+    	    {
+    			DBItem randomItem = entry.getKey();
+    			newUser.addRatedItem(randomItem, randomRating.nextInt(5));	
+    	    }
+    	}
+    }
+  
+    
+    
     private DBUser findUser(long id) throws UserNotFoundException {
         for(DBUser user : users)
         {
@@ -79,6 +107,8 @@ public class UserCentricModel extends AbstractModel {
         
         throw new UserNotFoundException();
     }
+    
+    
     
     // TODO: Could be placed in AbstractModel
     @Override
@@ -111,7 +141,7 @@ public class UserCentricModel extends AbstractModel {
     @Override
     public void fetchEntities() {
     	Session session = HibernateUtil.getSessionFactory().openSession();
-     	Query query = session.createQuery("from DBUser");
+     	Query query = session.createQuery("FROM DBUser");
      	users = query.list();
     	
      	//HibernateUtil.shutdown();
@@ -144,6 +174,7 @@ public class UserCentricModel extends AbstractModel {
 
     for(Entry<DBItem, Float> entry : sortedItemScorePairs)
         itemsScorePredictions.put(entry.getKey(), entry.getValue());
+    
     }
     
     private float getPredictedScoreForItem(DBItem dbItem)

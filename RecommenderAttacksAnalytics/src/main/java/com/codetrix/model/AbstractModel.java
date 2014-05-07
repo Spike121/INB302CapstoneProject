@@ -13,6 +13,7 @@ public abstract class AbstractModel {
     public abstract void fetchEntities();
     public abstract void pushEntities();
     public abstract void select(long id);
+    public void addFakeProfiles(DBItem productToPromote, int numOfProfiles) {}
     
     protected Map<DBItem, Float> itemsScorePredictions = new HashMap<>();
     
@@ -31,4 +32,5 @@ public abstract class AbstractModel {
 		Scanner in = new Scanner(System.in);			
 		return in.nextLine();
     }
+	
 }
