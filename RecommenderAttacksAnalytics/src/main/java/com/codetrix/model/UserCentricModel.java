@@ -46,10 +46,12 @@ public class UserCentricModel extends AbstractModel {
   
     @Override
     public void select(long id) {
-        
+        users = getTestUsers();
+        selectedUser = users.get(0);
+        computePredictions();
+        /*
         fetchEntities();
-        
-        
+       
         try{
             
             selectedUser = findUser(id);
@@ -63,6 +65,8 @@ public class UserCentricModel extends AbstractModel {
         finally{
             HibernateUtil.shutdown();
         }
+        */
+        
         
         for(Entry<DBItem, Float> entry : itemsScorePredictions.entrySet())
         {
@@ -108,19 +112,28 @@ public class UserCentricModel extends AbstractModel {
         throw new UserNotFoundException();
     }
     
-    
-    
     // TODO: Could be placed in AbstractModel
     @Override
     protected float computeSimilarityToNeighbor(IPersistenceEntity user, IPersistenceEntity neighbor)
     {	
+        List<DBItem> intemsInCommon = getCommonItems();
     	float resultTop = (user.diffFromAverage() * neighbor.diffFromAverage());
     	float resultBottomLeft = (float) Math.sqrt(user.diffFromAverageSquared());
         float resultBottomRight = (float) Math.sqrt(neighbor.diffFromAverageSquared());
         
     	return (resultTop / (resultBottomLeft * resultBottomRight));
     }
-
+    
+    private List<DBUserItemRating> getCommonItems(DBUser user, DBUser neighbor)
+    {
+        Set<DBUserItemRating> neighborSet = neighbor.getUserItemRatings();
+        for(DBUserItemRating userItemRating : user.getUserItemRatings())
+        {
+            if(neighbor.hasRatedItem(userItemRating.getItem()))
+                
+        }
+    }
+           
     @Override
     protected void computePearsonCoefficients() {
     	pearsonValuesMap = new HashMap<>();
@@ -159,7 +172,9 @@ public class UserCentricModel extends AbstractModel {
     Map<DBItem, Float> tempitemsScorePredictions = new HashMap<>();
     Set<DBUserItemRating> userItemRatings = selectedUser.getUserItemRatings();
     
-    Hibernate.initialize(userItemRatings);
+    
+    userItemRatings.size();
+    //Hibernate.initialize(userItemRatings);
     computePearsonCoefficients();
 
     for(DBUserItemRating userItemRating : userItemRatings)
@@ -181,6 +196,9 @@ public class UserCentricModel extends AbstractModel {
     {
 		float pearsonAbsCoefficientSum = getPearsonAbsoluteCoefficientsSum();
 		float pearsonAdjustedDiff = getPearsonAjustedDiffForItem(dbItem);
+                if(pearsonAbsCoefficientSum == 0)
+                    pearsonAbsCoefficientSum = selectedUser.getItemRatingsAverage();
+                
 		return selectedUser.getItemRatingsAverage() + (pearsonAdjustedDiff / pearsonAbsCoefficientSum);
     }
     

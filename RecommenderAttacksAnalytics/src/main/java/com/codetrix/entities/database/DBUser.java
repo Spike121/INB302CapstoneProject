@@ -18,8 +18,6 @@ public class DBUser extends AbstractUser implements Serializable {
 	
 	private Set<DBUserItemRating> userItemRatings = new HashSet<DBUserItemRating>();
 	
-	public DBUser() { }
-	
 	public DBUser(long userId) {
 		this.userId = userId;
 	}
@@ -83,9 +81,14 @@ public class DBUser extends AbstractUser implements Serializable {
 				return userItemRating.getRating() - average;						
 		}
 		
-		Logger.logWarning("Item " + item.getId() + " not found - returned 0.0 as diff. Results may be innacurate");
+		Logger.logWarning("Item " + item.getId() + " not found for user "+ this.userId+ "- returned 0.0 as diff. Results may be innacurate");
 		return 0.0f;
 	}
+        
+        public boolean hasRatedItem(DBItem item)
+        {
+            
+        }
 	
 	/*
 	public void removeRatedItem()

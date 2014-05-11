@@ -3,20 +3,13 @@ package com.codetrix;
 import com.codetrix.events.IFetchEntityEvent;
 import com.codetrix.ui.MainAppFrame;
 import javax.swing.JFrame;
-<<<<<<< HEAD
-import com.codetrix.util.DatabaseInfos;
 
-
-=======
-
-import java.io.File;
 
 import com.codetrix.ui.MainAppFrame;
 import javax.swing.JFrame;
 
 import com.codetrix.util.DatabaseInfos;
 
->>>>>>> caa768e544ae1184febcaec379abff592f7ae6c5
 public class App implements IFetchEntityEvent
 {
 	

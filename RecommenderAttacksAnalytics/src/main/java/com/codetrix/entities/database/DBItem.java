@@ -13,10 +13,15 @@ public class DBItem extends AbstractItem implements Serializable{
 	
 	public DBItem() { }
 	
+        public DBItem(long id) { 
+            this.itemId = id;
+        }
+        
+        
 	
 	public DBItem(Item item) 
 	{
-		this.itemId = item.getId();
+                this(item.getId());
 	}
 	
 	public long getItemId() {

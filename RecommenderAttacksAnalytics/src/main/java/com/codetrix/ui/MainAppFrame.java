@@ -55,7 +55,6 @@ public class MainAppFrame extends javax.swing.JFrame {
 
         jSeparator1 = new javax.swing.JSeparator();
         selectUserBtn = new javax.swing.JButton();
-        addFakeProfilesBtn = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         entityIdTextField = new javax.swing.JTextPane();
@@ -70,15 +69,6 @@ public class MainAppFrame extends javax.swing.JFrame {
         selectUserBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 selectUserBtnActionPerformed(evt);
-            }
-        });
-        
-        addFakeProfilesBtn.setText("Add Fake Profiles");
-        addFakeProfilesBtn.setMargin(new java.awt.Insets(3, 40, 3, 40));
-        addFakeProfilesBtn.setName("addFakeProfilesBtn"); // NOI18N
-        addFakeProfilesBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-            	addFakeProfilesBtnActionPerformed(evt);
             }
         });
 
@@ -119,7 +109,7 @@ public class MainAppFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -134,6 +124,5 @@ public class MainAppFrame extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextArea outputTextArea;
     private javax.swing.JButton selectUserBtn;
-    private javax.swing.JButton addFakeProfilesBtn;
     // End of variables declaration//GEN-END:variables
 }
