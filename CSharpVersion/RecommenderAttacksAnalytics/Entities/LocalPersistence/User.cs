@@ -57,19 +57,24 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
 
         public override double diffFromAverageSquared(double average)
         {
-            throw new NotImplementedException();
+            return doDiffFromAverage(average, true);
         }
 
         public override double diffFromAverage(double average)
         {
-            double result = 0.0f;
-
-            foreach(var itemScorePair in getAllItemRatings())
-                result += itemScorePair.Value - average;
-
-            return result;
+            return doDiffFromAverage(average, false);
         }
 
+        private double doDiffFromAverage(double average, bool isSquared)
+        {
+            double result = 0.0f;
+            long exp = isSquared ? 2 : 1;
+
+            foreach (var itemScorePair in getAllItemRatings())
+                result += Math.Pow(itemScorePair.Value - average, exp);
+            
+            return result;
+        }
        
     }
 }

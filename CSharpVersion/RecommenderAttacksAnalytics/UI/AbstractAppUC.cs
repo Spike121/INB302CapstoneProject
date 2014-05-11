@@ -8,7 +8,7 @@ namespace RecommenderAttacksAnalytics.UI
 {
     public class AbstractAppUC : UserControl
     {
-        public enum AppPage {LOAD_DATA_PAGE, SELECT_USERS, SELECT_ITEMS};
+        public enum AppPage {LOAD_DATA_PAGE, SELECT_USERS, SELECT_ITEMS, TEST, NONE};
         public delegate void ChangePageHandler(AppPage page);
 
         public event ChangePageHandler ChangePage;

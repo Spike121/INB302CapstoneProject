@@ -21,7 +21,9 @@ namespace RecommenderAttacksAnalytics
     public partial class MainWindow : Window
     {
 
-        AbstractAppUC currentUC;
+        private AbstractAppUC currentUC;
+        private RecommenderAttacksAnalytics.UI.AbstractAppUC.AppPage currentPage = AbstractAppUC.AppPage.NONE;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -41,7 +43,11 @@ namespace RecommenderAttacksAnalytics
 
         private void changeLeftPanelContent(RecommenderAttacksAnalytics.UI.AbstractAppUC.AppPage page)
         {
+            if (currentPage != AbstractAppUC.AppPage.NONE && currentPage == page)
+                return;
+
             AbstractAppUC uc = null;
+
             switch (page)
             {
 
@@ -49,14 +55,27 @@ namespace RecommenderAttacksAnalytics
                     break;
                 case AbstractAppUC.AppPage.LOAD_DATA_PAGE: uc = new ReadTextFileUC();
                     break;
+                case AbstractAppUC.AppPage.TEST: uc = new TestUC();
+                    break;
             }
 
+            currentPage = page;
             loadUc(uc);
         }
 
         private void OnCurrentUcChangePage(RecommenderAttacksAnalytics.UI.AbstractAppUC.AppPage page) 
         {
             changeLeftPanelContent(page);
+        }
+
+        private void testPageBtn_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            changeLeftPanelContent(AbstractAppUC.AppPage.TEST);
+        }
+
+        private void uploadDataBtn_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            changeLeftPanelContent(AbstractAppUC.AppPage.LOAD_DATA_PAGE);
         }
     }
 }

@@ -12,6 +12,10 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         private  Dictionary<long, User> m_userSet = new Dictionary<long, User>();
         private  Dictionary<UserItemPair, int> m_ratingsLookup = new Dictionary<UserItemPair, int>();
 
+        //Cache
+        private Dictionary<long, Dictionary<Item, int>> m_itemRatingsForUserCache = new Dictionary<long, Dictionary<Item, int>>();
+        private Dictionary<long, Dictionary<User, int>> m_userRatingsForItemCache = new Dictionary<long, Dictionary<User, int>>();
+
         private static RatingsLookupTable m_instance;
         public static RatingsLookupTable Instance
         {
@@ -26,11 +30,21 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
 
         private RatingsLookupTable(){}
 
+        /// <summary>
+        /// Adds an entry to the table based on a TableEntry instance
+        /// </summary>
+        /// <param name="entry">The TableEntry instance containign the lements to add</param>
         public void addEntry(TableEntry entry)
         {
             addEntry(entry.UserId, entry.ItemId, entry.Rating);
         }
 
+        /// <summary>
+        /// Adds an entry to the table, keeping a separate list of unique users and items.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="itemId"></param>
+        /// <param name="rating"></param>
         public void addEntry(long userId, long itemId, int rating)
         {
             User user;
@@ -59,68 +73,158 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
             m_ratingsLookup.Add(new UserItemPair(user, item), rating);
         }
 
+        /// <summary>
+        /// Clears all the users, items and ratings from the table
+        /// </summary>
         public void clearAllData()
         {
             m_itemSet = new Dictionary<long, Item>();
             m_userSet = new Dictionary<long, User>();
             m_ratingsLookup = new Dictionary<UserItemPair, int>();
+            m_itemRatingsForUserCache = new Dictionary<long, Dictionary<Item, int>>();
+            m_userRatingsForItemCache = new Dictionary<long, Dictionary<User, int>>();
         }
 
+        /// <summary>
+        /// Shortcut method fro generating a UserItemPair object based on its containing values
+        /// </summary>
+        /// <param name="user">The user member of the pair</param>
+        /// <param name="item">The item member of the pair</param>
+        /// <returns></returns>
         private UserItemPair createUserItemPair(User user, Item item)
         {
             return new UserItemPair(user, item);
         }
 
+        /// <summary>
+        /// Returns if there exists a rating between this user and this item
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public bool hasEntry(User user, Item item)
         {
             return m_ratingsLookup.ContainsKey(createUserItemPair(user, item));
         }
 
+        public bool hasUser(long userId)
+        {
+            return m_userSet.ContainsKey(userId);
+        }
+
+        public bool hasItem(long itemId)
+        {
+            return m_itemSet.ContainsKey(itemId);
+        }
+
+        /// <summary>
+        /// Returns the rating of an item by a particular user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public int getRatingForEntry(User user, Item item)
         {
             return m_ratingsLookup[createUserItemPair(user, item)];
         }
 
+        /// <summary>
+        /// Returns a map of all the rated items for a particular user and the associated rating value
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>Map of the rated items for that user, along with the rating value</returns>
         public Dictionary<Item, int> getAllItemRatingsForUser(User user)
         {
-            var itemRatings = new Dictionary<Item, int>();
-
-            foreach(var itemRatingPair in m_itemSet)
+            Dictionary<Item, int> itemRatings;
+            if(m_itemRatingsForUserCache.ContainsKey(user.getId()))
             {
-                var item = itemRatingPair.Value;
-                var itemUserPair = createUserItemPair(user, item);
+                itemRatings = m_itemRatingsForUserCache[user.getId()];
+            }
+            else
+            {
+                itemRatings = new Dictionary<Item, int>();
 
-                if(m_ratingsLookup.ContainsKey(itemUserPair))
-                    itemRatings.Add(item, m_ratingsLookup[itemUserPair]);
+                foreach(var itemRatingPair in m_itemSet)
+                {
+                    var item = itemRatingPair.Value;
+                    var itemUserPair = createUserItemPair(user, item);
+
+                    if(m_ratingsLookup.ContainsKey(itemUserPair))
+                        itemRatings.Add(item, m_ratingsLookup[itemUserPair]);
+                }
+
+                m_itemRatingsForUserCache.Add(user.getId(), itemRatings);
             }
 
             return itemRatings;
         }
 
+        /// <summary>
+        /// Returns a map of all the users having rated a particular item and the associated rating value
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>Map of the raters for that item, along with the rating value</returns>
         public Dictionary<User, int> getAllUserRatingsForItem(Item item)
         {
-            var userRatings = new Dictionary<User, int>();
-
-            foreach (var userRatingPair in m_userSet)
+            Dictionary<User, int> userRatings;
+           
+            if(m_userRatingsForItemCache.ContainsKey(item.getId()))
             {
-                var user = userRatingPair.Value;
-                var itemUserPair = createUserItemPair(user, item);
+                userRatings = m_userRatingsForItemCache[item.getId()];
+            }
+            else
+            {
+                userRatings = new Dictionary<User, int>();
 
-                if (m_ratingsLookup.ContainsKey(itemUserPair))
-                    userRatings.Add(user, m_ratingsLookup[itemUserPair]);
+                foreach (var userRatingPair in m_userSet)
+                {
+                    var user = userRatingPair.Value;
+                    var itemUserPair = createUserItemPair(user, item);
+
+                    if (m_ratingsLookup.ContainsKey(itemUserPair))
+                        userRatings.Add(user, m_ratingsLookup[itemUserPair]);
+                }
             }
 
             return userRatings;
         }
 
+        /// <summary>
+        /// Get all the unique users in the lookup table
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<User> getUsers()
         {
             return m_userSet.Values;
         }
 
+        /// <summary>
+        /// Return a specified user
+        /// </summary>
+        /// <param name="userId">The user's id</param>
+        /// <returns>The user object</returns>
+        public User getUser(long userId)
+        {
+            return m_userSet[userId];
+        }
+
+        /// <summary>
+        /// Get all the unique items in the lookup table
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Item> getItems()
         {
             return m_itemSet.Values;
+        }
+
+        /// <summary>
+        /// Return a specified item
+        /// </summary>
+        /// <param name="userId">The item's id</param>
+        /// <returns>The item object</returns>
+        public Item getItem(long itemId)
+        {
+            return m_itemSet[itemId];
         }
     }
 }

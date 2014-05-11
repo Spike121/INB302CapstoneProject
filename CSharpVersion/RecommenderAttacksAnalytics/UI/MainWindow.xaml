@@ -9,13 +9,27 @@
         </Grid.ColumnDefinitions>
         <Border BorderThickness="0,0,2,0"
                 BorderBrush="LightGray">
-            <StackPanel Width="150" >
-            <Border BorderThickness="1,1,0,1" BorderBrush="LightGray" Height="50" Cursor="Hand" Background="WhiteSmoke">
-                <TextBlock Text="1- Upload Data"  VerticalAlignment="Center" TextAlignment="Center" />
-            </Border>
-            <TextBlock />
-            <TextBlock />
-        </StackPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                
+                <!--Top-->
+                <StackPanel Grid.Row="0" Width="150" >
+                    <Border x:Name="uploadDataBtn" BorderThickness="1,1,0,1" BorderBrush="LightGray" Height="50" Cursor="Hand" Background="WhiteSmoke" MouseDown="uploadDataBtn_MouseDown">
+                        <TextBlock Text="1- Upload Data"  VerticalAlignment="Center" TextAlignment="Center" />
+                    </Border>
+                    <TextBlock />
+                    <TextBlock />
+                </StackPanel>
+                
+                <!--Bottom-->
+                <Border Grid.Row="2" x:Name="testPageBtn" BorderThickness="1,1,0,1" BorderBrush="LightGray" Height="50" Cursor="Hand" Background="WhiteSmoke" MouseDown="testPageBtn_MouseDown">
+                    <TextBlock Text="Tests"  VerticalAlignment="Center" TextAlignment="Center" />
+                </Border>
+            </Grid>
         </Border>
         <ContentControl Grid.Column="1" x:Name="leftPanelContent"/>
     </Grid>

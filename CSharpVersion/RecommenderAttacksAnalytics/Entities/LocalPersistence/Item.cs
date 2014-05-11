@@ -21,6 +21,11 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
                 m_raters.Add(user);
         }
 
+        public bool hasRatingFromUser(User user)
+        {
+            return RatingsLookupTable.Instance.hasEntry(user, this);
+        }
+
         public int getRatingFromUser(User user)
         {
             return RatingsLookupTable.Instance.getRatingForEntry(user, this);

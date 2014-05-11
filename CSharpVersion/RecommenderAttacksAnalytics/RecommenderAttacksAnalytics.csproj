@@ -68,6 +68,9 @@
     <Compile Include="UI\SelectUsersUC.xaml.cs">
       <DependentUpon>SelectUsersUC.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\TestUC.xaml.cs">
+      <DependentUpon>TestUC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utililty\Util.cs" />
     <Compile Include="Models\AbstractModel.cs" />
     <Compile Include="Models\UserCentricModel.cs" />
@@ -94,6 +97,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\SelectUsersUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\TestUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

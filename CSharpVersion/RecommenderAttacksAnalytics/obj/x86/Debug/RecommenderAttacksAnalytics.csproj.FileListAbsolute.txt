@@ -17,3 +17,5 @@ c:\users\phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\
 c:\users\phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics_MarkupCompile.lref
 c:\users\phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\UI\SelectUsersUC.g.cs
 c:\users\phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\UI\SelectUsersUC.baml
+c:\users\phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\UI\TestUC.g.cs
+c:\users\phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\UI\TestUC.baml

@@ -18,8 +18,8 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
 
         public override bool Equals(object obj)
         {
-            if (!(obj is UserItemPair))
-                return false;
+            //if (!(obj is UserItemPair))
+               // return false;
 
             var userItemPair = obj as UserItemPair;
 
