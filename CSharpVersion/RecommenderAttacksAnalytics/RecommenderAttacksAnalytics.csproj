@@ -36,6 +36,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\packages\Iesi.Collections.3.2.0.1001\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -64,7 +70,17 @@
     <Compile Include="Entities\LocalPersistence\User.cs" />
     <Compile Include="Entities\LocalPersistence\RatingsLookupTable.cs" />
     <Compile Include="Entities\LocalPersistence\UserItemPair.cs" />
-    <Compile Include="UI\AbstractAppUC.cs" />
+    <Compile Include="UI\AbstractAppPageUC.cs" />
+    <Compile Include="UI\AbstractDataUploadUC.cs" />
+    <Compile Include="UI\DataSourceUploadContainerUC.xaml.cs">
+      <DependentUpon>DataSourceUploadContainerUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ReadFromDatabaseUc.xaml.cs">
+      <DependentUpon>ReadFromDatabaseUc.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SelectItemsUC.xaml.cs">
+      <DependentUpon>SelectItemsUC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\SelectUsersUC.xaml.cs">
       <DependentUpon>SelectUsersUC.xaml</DependentUpon>
     </Compile>
@@ -74,11 +90,14 @@
     <Compile Include="Utililty\Util.cs" />
     <Compile Include="Models\AbstractModel.cs" />
     <Compile Include="Models\UserCentricModel.cs" />
-    <Compile Include="UI\FilePath.cs" />
     <Compile Include="UI\ReadTextFileUC.xaml.cs">
       <DependentUpon>ReadTextFileUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utililty\Logger.cs" />
+    <Page Include="UI\DataSourceUploadContainerUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -92,7 +111,15 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UI\ReadFromDatabaseUc.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\ReadTextFileUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\SelectItemsUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -123,6 +150,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -131,7 +159,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Output\" />
-    <Folder Include="UI\NewFolder1\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\database-arrow-down-icon.png" />
+    <Resource Include="Resources\database-settings-icon.png" />
+    <Resource Include="Resources\document-arrow-down-icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\database-arrow-down-icon %281%29.png" />
+    <Resource Include="Resources\database-settings-icon %281%29.png" />
+    <Resource Include="Resources\document-arrow-down-icon %281%29.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

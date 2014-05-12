@@ -15,15 +15,15 @@ namespace RecommenderAttacksAnalytics.UI
     /// <summary>
     /// Interaction logic for ReadTextFileUC.xaml
     /// </summary>
-    public partial class ReadTextFileUC : AbstractAppUC
+    public partial class ReadTextFileUC : AbstractDataUploadUC
     {
 
         private TextFileReader m_textFileReader = new TextFileReader();
 
-        public string m_filePath
+        public string FilePath
         {
-            get { return (string)GetValue(m_filePathProperty); }
-            set { SetValue(m_filePathProperty, value); }
+            get { return (string)GetValue(FilePathProperty); }
+            set { SetValue(FilePathProperty, value); }
         }
 
         public int WorkCompletionPercentage
@@ -32,9 +32,8 @@ namespace RecommenderAttacksAnalytics.UI
             set { SetValue(WorkCompletionPercentageProperty, value); }
         }
 
-        public static readonly DependencyProperty m_filePathProperty =
-            DependencyProperty.Register("m_filePath", typeof(string), typeof(ReadTextFileUC));
-
+        public static readonly DependencyProperty FilePathProperty =
+            DependencyProperty.Register("FilePath", typeof(string), typeof(ReadTextFileUC));
 
         public static readonly DependencyProperty WorkCompletionPercentageProperty =
             DependencyProperty.Register("WorkCompletionPercentage", typeof(int), typeof(ReadTextFileUC), new UIPropertyMetadata(0));
@@ -42,8 +41,9 @@ namespace RecommenderAttacksAnalytics.UI
         public ReadTextFileUC()
         {
             InitializeComponent();
-            m_textFileReader.LogMessage += new TextFileReader.LogMessageHandler(onReaderLogMessage);
-            m_textFileReader.ReportProgress += new TextFileReader.ReportProgressHandler(onReaderReportProgress);
+            
+            m_textFileReader.LogStateEvent += new TextFileReader.LogStateHandler(onReaderLogState);
+            m_textFileReader.ReportProgressEvent += new TextFileReader.ReportProgressHandler(onReaderReportProgress);
         }
        
         private void openFileSelectDialogBtn_Click(object sender, RoutedEventArgs e)
@@ -59,50 +59,37 @@ namespace RecommenderAttacksAnalytics.UI
             Nullable<bool> result = dlg.ShowDialog();
             if (result.HasValue && result.Value)
             {
-                m_filePath = dlg.FileName;                                
+                FilePath = dlg.FileName;                                
             }
         }
 
         private void startLoadFromFileBtn_Click(object sender, RoutedEventArgs e)
         {
-            clearOutput();
-            m_textFileReader.readFromFile(m_filePath);
+            setDataValidityState(false);
+            m_textFileReader.readFromFile(FilePath);
         }
 
 
-        private void onReaderLogMessage (string message) {
-
-            outputToTextbox(message);
+        private void onReaderLogState(TextFileReader.TextFileReaderState state)
+        {
+            setDataValidityState(state.HasValidData);
+            outputToTextbox(state.Message);
         }
 
         private void onReaderReportProgress(int percentage)
         {
-
             m_completionProgressBar.Value = percentage;
-
-            /*Action action = () =>
-            {
-                
-            };
-            
-            Dispatcher.BeginInvoke(action,System.Windows.Threading.DispatcherPriority.Send);
-            Logger.log(percentage.ToString());*/
         }
 
         private void outputToTextbox(string str)
         {
-            m_outputTextBox.Text += (str + System.Environment.NewLine);
+            m_outputTextBox.AppendText(str + Environment.NewLine);
             m_outputTextBoxScroller.ScrollToEnd();
         }
 
         private void clearOutput()
         {
             m_outputTextBox.Text = string.Empty;
-        }
-
-        private void nextPageBtn_Click(object sender, RoutedEventArgs e)
-        {
-            GoToNextPage();
         }
     }
 }

@@ -19,3 +19,15 @@ c:\users\phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\
 c:\users\phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\UI\SelectUsersUC.baml
 c:\users\phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\UI\TestUC.g.cs
 c:\users\phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\UI\TestUC.baml
+C:\Users\Phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\bin\Debug\Iesi.Collections.dll
+C:\Users\Phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\bin\Debug\NHibernate.dll
+C:\Users\Phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\bin\Debug\Iesi.Collections.xml
+C:\Users\Phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\bin\Debug\NHibernate.xml
+C:\Users\Phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\UI\DataSourceUploadContainerUC.baml
+C:\Users\Phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\UI\DataSourceUploadContainerUC.g.cs
+C:\Users\Phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\UI\ReadFromDatabaseUc.baml
+C:\Users\Phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\UI\ReadFromDatabaseUc.g.cs
+C:\Users\Phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\UI\SelectItemsUC.baml
+C:\Users\Phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\UI\SelectItemsUC.g.cs
+C:\Users\Phil\Desktop\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.exe
+C:\Users\Phil\Desktop\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.pdb

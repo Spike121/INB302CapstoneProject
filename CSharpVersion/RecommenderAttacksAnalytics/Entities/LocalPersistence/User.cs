@@ -75,6 +75,11 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
             
             return result;
         }
+
+        public override string ToString()
+        {
+            return String.Format("User #{0}", getId());
+        }
        
     }
 }

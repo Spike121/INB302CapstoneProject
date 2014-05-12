@@ -13,7 +13,7 @@ namespace RecommenderAttacksAnalytics.Utility
             foreach (var rating in ratings)
                 avg += rating;
 
-            return avg / ratings.Count;
+            return (ratings.Count == 0) ? 0.0f : avg / ratings.Count;
         }
 
       

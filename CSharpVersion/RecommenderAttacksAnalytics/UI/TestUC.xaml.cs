@@ -19,7 +19,7 @@ namespace RecommenderAttacksAnalytics.UI
     /// <summary>
     /// Interaction logic for TestUC.xaml
     /// </summary>
-    public partial class TestUC : AbstractAppUC
+    public partial class TestUC : AbstractAppPageUC
     {
 
         AbstractModel currentModel;

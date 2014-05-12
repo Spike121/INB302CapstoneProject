@@ -20,62 +20,126 @@ namespace RecommenderAttacksAnalytics
     /// </summary>
     public partial class MainWindow : Window
     {
+        public enum AppPage { LOAD_DATA_PAGE, SELECT_USERS_PAGE, SELECT_ITEMS_PAGE, RESULTS_PAGE,TEST, NONE };
+        private AbstractAppPageUC currentUC;
+        private AppPage currentPage = AppPage.NONE;
+        protected int m_pageIndex;
 
-        private AbstractAppUC currentUC;
-        private RecommenderAttacksAnalytics.UI.AbstractAppUC.AppPage currentPage = AbstractAppUC.AppPage.NONE;
+        private DataSourceUploadContainerUC m_loadDataPage;
+        private AbstractAppPageUC LoadDataPage
+        {
+            get 
+            {
+                if (m_loadDataPage == null)
+                    m_loadDataPage = new DataSourceUploadContainerUC();
+                return m_loadDataPage;
+            }
+        }
+
+        private SelectUsersUC m_selectUsersPage;
+        private SelectUsersUC SelectUsersPage
+        {
+            get
+            {
+                if (m_selectUsersPage == null)
+                    m_selectUsersPage = new SelectUsersUC();
+                return m_selectUsersPage;
+            }
+        }
+
+        private SelectItemsUC m_selectItemsPage;
+        private SelectItemsUC SelectItemsPage
+        {
+            get
+            {
+                if (m_selectItemsPage == null)
+                    m_selectItemsPage = new SelectItemsUC();
+                return m_selectItemsPage;
+            }
+        }
+
 
         public MainWindow()
         {
             InitializeComponent();
-            changeLeftPanelContent(AbstractAppUC.AppPage.LOAD_DATA_PAGE);
+            changeLeftPanelContent(AppPage.LOAD_DATA_PAGE);
             
         }
 
-        private void loadUc(AbstractAppUC uc)
+        private void loadUc(AbstractAppPageUC uc)
         {
-            if(currentUC != null)
-                currentUC.ChangePage -= OnCurrentUcChangePage;  
-            
+            if (currentUC != null)
+            {
+                currentUC.ChangePage -= OnCurrentUcChangePageEvent;
+                currentUC.NextPage -= OnNextPageEvent;
+                currentUC.PreviousPage -= OnPreviousPageEvent;
+            }
+
             currentUC = uc;
-            currentUC.ChangePage += new AbstractAppUC.ChangePageHandler(OnCurrentUcChangePage);
+            currentUC.ChangePage += new AbstractAppPageUC.ChangePageHandler(OnCurrentUcChangePageEvent);
+            currentUC.NextPage += new RoutedEventHandler(OnNextPageEvent);
+            currentUC.PreviousPage += new RoutedEventHandler(OnPreviousPageEvent);
+
             leftPanelContent.Content = currentUC;
+            currentUC.activate();
         }
 
-        private void changeLeftPanelContent(RecommenderAttacksAnalytics.UI.AbstractAppUC.AppPage page)
+        private void changeLeftPanelContent(AppPage page)
         {
-            if (currentPage != AbstractAppUC.AppPage.NONE && currentPage == page)
+            if (currentPage != AppPage.NONE && currentPage == page)
                 return;
 
-            AbstractAppUC uc = null;
+            AbstractAppPageUC uc = null;
 
             switch (page)
             {
-
-                case AbstractAppUC.AppPage.SELECT_USERS: uc = new SelectUsersUC();
+                case AppPage.LOAD_DATA_PAGE: uc = LoadDataPage;
                     break;
-                case AbstractAppUC.AppPage.LOAD_DATA_PAGE: uc = new ReadTextFileUC();
+                case AppPage.SELECT_USERS_PAGE: uc = SelectUsersPage;
                     break;
-                case AbstractAppUC.AppPage.TEST: uc = new TestUC();
+                case AppPage.SELECT_ITEMS_PAGE: uc = SelectItemsPage;
+                    break;
+                
+                case AppPage.TEST: uc = new TestUC();
                     break;
             }
 
             currentPage = page;
+            m_pageIndex = (int)currentPage;
             loadUc(uc);
         }
 
-        private void OnCurrentUcChangePage(RecommenderAttacksAnalytics.UI.AbstractAppUC.AppPage page) 
+        private void OnNextPageEvent(object sender, RoutedEventArgs args)
+        {
+            if (m_pageIndex >= (int)AppPage.SELECT_ITEMS_PAGE)
+                return;
+
+            m_pageIndex++;
+            changeLeftPanelContent((AppPage)m_pageIndex);
+        }
+
+        private void OnPreviousPageEvent(object sender, RoutedEventArgs args)
+        {
+            if (m_pageIndex <= 0)
+                return;
+
+            m_pageIndex--;
+            changeLeftPanelContent((AppPage)m_pageIndex);
+        }
+
+        private void OnCurrentUcChangePageEvent(AppPage page) 
         {
             changeLeftPanelContent(page);
         }
 
         private void testPageBtn_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            changeLeftPanelContent(AbstractAppUC.AppPage.TEST);
+            changeLeftPanelContent(AppPage.TEST);
         }
 
         private void uploadDataBtn_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            changeLeftPanelContent(AbstractAppUC.AppPage.LOAD_DATA_PAGE);
+            changeLeftPanelContent(AppPage.LOAD_DATA_PAGE);
         }
     }
 }

@@ -40,5 +40,10 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         {
             throw new NotImplementedException();
         }
+
+        public override string ToString()
+        {
+            return String.Format("Item #{0}", getId());
+        }
     }
 }
