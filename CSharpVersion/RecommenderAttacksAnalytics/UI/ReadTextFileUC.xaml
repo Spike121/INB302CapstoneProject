@@ -1,5 +1,6 @@
 ﻿<src:AbstractDataUploadUC x:Class="RecommenderAttacksAnalytics.UI.ReadTextFileUC"
-                     xmlns:src="clr-namespace:RecommenderAttacksAnalytics.UI"                    
+                     xmlns:src="clr-namespace:RecommenderAttacksAnalytics.UI"
+                     xmlns:converters="clr-namespace:RecommenderAttacksAnalytics.Converters"
                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,9 +8,16 @@
                      mc:Ignorable="d" 
                      d:DesignHeight="300" d:DesignWidth="421"
                         DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <src:AbstractDataUploadUC.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Padding" Value="8,2,8,2" />
+        </Style>
+        <converters:BoolToInverseConverter x:Key="BoolToInverseConverter" />
+    </src:AbstractDataUploadUC.Resources>
+    
     <Grid Name="mainGrid">
         <DockPanel >
-        <Grid Margin="10" DockPanel.Dock="Right">
+        <Grid  DockPanel.Dock="Right">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"  />
                 <RowDefinition Height="Auto"  />
@@ -24,15 +32,17 @@
                 <!--Row 1-->
                 <Grid Grid.Row="1"   Margin="0,5,0,5">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition />
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="50" />
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     
-                    <TextBox Grid.Column="0" x:Name="m_fileNameTextBox" Text="{Binding Path=FilePath}" Width="325" FlowDirection="RightToLeft" />
-                    <Button Grid.Column="1" x:Name="m_openFileSelectDialogBtn" Content="Select" Padding="10,0,10,0"  Margin="5,0,0,0" Click="openFileSelectDialogBtn_Click" />
-                    <Button Grid.Column="3" x:Name="m_startLoadFromFileBtn" Content="Ok"  Padding="10,0,10,0" Margin="15px,0,0,0" Click="startLoadFromFileBtn_Click" />
+                    <TextBox Grid.Column="0" x:Name="m_fileNameTextBox" Text="{Binding Path=FilePath}" FlowDirection="RightToLeft" IsReadOnly="True" />
+                    <Button Grid.Column="1" x:Name="m_openFileSelectDialogBtn" Content="Select"  Margin="5,0,0,0" Click="openFileSelectDialogBtn_Click" 
+                            IsEnabled="{Binding Path=IsProcessing, Converter={StaticResource ResourceKey=BoolToInverseConverter}}" />
+                    <Button Grid.Column="3" x:Name="m_startLoadFromFileBtn" Content="Ok"  Padding="15,0,15,0" Click="startLoadFromFileBtn_Click" 
+                            IsEnabled="{Binding Path=IsProcessing, Converter={StaticResource ResourceKey=BoolToInverseConverter}}"/>
                     
                 </Grid>
 

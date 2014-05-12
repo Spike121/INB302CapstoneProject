@@ -6,8 +6,10 @@ using RecommenderAttacksAnalytics.Entities.Common;
 
 namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
 {
-    public class Item : AbstractItem
+    public class Item : AbstractItem, ILocalPersistenceEntity
     {
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
         private List<User> m_raters = new List<User>();
 
         public Item(long itemId)
@@ -31,12 +33,17 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
             return RatingsLookupTable.Instance.getRatingForEntry(user, this);
         }
 
-        public override double diffFromAverageSquared(double average)
+        public double diffFromAverageSquared(double average)
         {
             throw new NotImplementedException();
         }
 
-        public override double diffFromAverage(double average)
+        public double diffFromAverage(double average)
+        {
+            throw new NotImplementedException();
+        }
+
+        public double doDiffFromAverage(double average, bool isSquared)
         {
             throw new NotImplementedException();
         }
@@ -45,5 +52,7 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         {
             return String.Format("Item #{0}", getId());
         }
+
+        
     }
 }

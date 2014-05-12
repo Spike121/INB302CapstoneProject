@@ -6,8 +6,10 @@ using RecommenderAttacksAnalytics.Entities.Common;
 
 namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
 {
-    public class User : AbstractUser
+    public class User : AbstractUser, ILocalPersistenceEntity
     {
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
         private List<Item> m_ratedItems = new List<Item>();
 
         public User(long userId)
@@ -55,17 +57,17 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
             return currentUserRatedItems.Where(x => neighborsRatedItems.ContainsKey(x.Key)).ToDictionary(x => x.Key, x => x.Value);
         }
 
-        public override double diffFromAverageSquared(double average)
+        public  double diffFromAverageSquared(double average)
         {
             return doDiffFromAverage(average, true);
         }
 
-        public override double diffFromAverage(double average)
+        public  double diffFromAverage(double average)
         {
             return doDiffFromAverage(average, false);
         }
 
-        private double doDiffFromAverage(double average, bool isSquared)
+        public double doDiffFromAverage(double average, bool isSquared)
         {
             double result = 0.0f;
             long exp = isSquared ? 2 : 1;
@@ -80,6 +82,7 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         {
             return String.Format("User #{0}", getId());
         }
-       
+
+        
     }
 }

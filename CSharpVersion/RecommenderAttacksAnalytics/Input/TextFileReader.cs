@@ -165,6 +165,11 @@ namespace RecommenderAttacksAnalytics.Input
             public string Message { get; set; }
             public ReaderState State;
 
+            public bool IsProcessing
+            {
+                get { return State == ReaderState.PROCESSING; }
+            }
+
             public bool HasValidData
             {
                 get { return State == ReaderState.DONE_AND_VALID;  }

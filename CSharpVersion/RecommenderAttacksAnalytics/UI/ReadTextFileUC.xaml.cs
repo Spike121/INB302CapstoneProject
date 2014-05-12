@@ -26,17 +26,18 @@ namespace RecommenderAttacksAnalytics.UI
             set { SetValue(FilePathProperty, value); }
         }
 
-        public int WorkCompletionPercentage
+        public bool IsProcessing
         {
-            get { return (int)GetValue(WorkCompletionPercentageProperty); }
-            set { SetValue(WorkCompletionPercentageProperty, value); }
+            get { return (bool)GetValue(IsProcessingProperty); }
+            set { SetValue(IsProcessingProperty, value); }
         }
+
+        public static readonly DependencyProperty IsProcessingProperty =
+            DependencyProperty.Register("IsProcessing", typeof(bool), typeof(ReadTextFileUC), new UIPropertyMetadata(false));
+        
 
         public static readonly DependencyProperty FilePathProperty =
             DependencyProperty.Register("FilePath", typeof(string), typeof(ReadTextFileUC));
-
-        public static readonly DependencyProperty WorkCompletionPercentageProperty =
-            DependencyProperty.Register("WorkCompletionPercentage", typeof(int), typeof(ReadTextFileUC), new UIPropertyMetadata(0));
 
         public ReadTextFileUC()
         {
@@ -69,10 +70,10 @@ namespace RecommenderAttacksAnalytics.UI
             m_textFileReader.readFromFile(FilePath);
         }
 
-
         private void onReaderLogState(TextFileReader.TextFileReaderState state)
         {
             setDataValidityState(state.HasValidData);
+            IsProcessing = state.IsProcessing;
             outputToTextbox(state.Message);
         }
 

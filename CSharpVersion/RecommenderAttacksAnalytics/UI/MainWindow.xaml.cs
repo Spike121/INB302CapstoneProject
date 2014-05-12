@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using RecommenderAttacksAnalytics.UI;
+using RecommenderAttacksAnalytics.EventArguments;
 
 namespace RecommenderAttacksAnalytics
 {
@@ -70,21 +71,22 @@ namespace RecommenderAttacksAnalytics
         {
             if (currentUC != null)
             {
-                currentUC.ChangePage -= OnCurrentUcChangePageEvent;
-                currentUC.NextPage -= OnNextPageEvent;
-                currentUC.PreviousPage -= OnPreviousPageEvent;
+                currentUC.PageChange -= OnCurrentUcChangePageEvent;
             }
 
             currentUC = uc;
-            currentUC.ChangePage += new AbstractAppPageUC.ChangePageHandler(OnCurrentUcChangePageEvent);
-            currentUC.NextPage += new RoutedEventHandler(OnNextPageEvent);
-            currentUC.PreviousPage += new RoutedEventHandler(OnPreviousPageEvent);
+            currentUC.PageChange += new RoutedEventHandler(OnCurrentUcChangePageEvent);
 
             leftPanelContent.Content = currentUC;
             currentUC.activate();
         }
 
         private void changeLeftPanelContent(AppPage page)
+        { 
+            changeLeftPanelContent(page, null);
+        }
+
+        private void changeLeftPanelContent(AppPage page, PageChangeEventArgs args)
         {
             if (currentPage != AppPage.NONE && currentPage == page)
                 return;
@@ -106,10 +108,16 @@ namespace RecommenderAttacksAnalytics
 
             currentPage = page;
             m_pageIndex = (int)currentPage;
+            
+            //TODO: Maybe change that for a HasParams property inside PageChangeEventArgs
+            //TODO: Or even maybe only keep Parameters object ?
+            if(args != null)
+                uc.loadPreviousPageParams(args.Parameters);
+
             loadUc(uc);
         }
 
-        private void OnNextPageEvent(object sender, RoutedEventArgs args)
+        private void goToNextPage()
         {
             if (m_pageIndex >= (int)AppPage.SELECT_ITEMS_PAGE)
                 return;
@@ -118,7 +126,26 @@ namespace RecommenderAttacksAnalytics
             changeLeftPanelContent((AppPage)m_pageIndex);
         }
 
-        private void OnPreviousPageEvent(object sender, RoutedEventArgs args)
+        private void goToPreviousPage(PageChangeEventArgs args)
+        {
+            if (m_pageIndex <= 0)
+                return;
+
+            m_pageIndex--;
+            changeLeftPanelContent((AppPage)m_pageIndex, args);
+        }
+
+
+        private void goToNextPage(PageChangeEventArgs args)
+        {
+            if (m_pageIndex >= (int)AppPage.SELECT_ITEMS_PAGE)
+                return;
+
+            m_pageIndex++;
+            changeLeftPanelContent((AppPage)m_pageIndex, args);
+        }
+
+        private void goToPreviousPage()
         {
             if (m_pageIndex <= 0)
                 return;
@@ -127,9 +154,16 @@ namespace RecommenderAttacksAnalytics
             changeLeftPanelContent((AppPage)m_pageIndex);
         }
 
-        private void OnCurrentUcChangePageEvent(AppPage page) 
+        private void OnCurrentUcChangePageEvent(object sender, RoutedEventArgs args) 
         {
-            changeLeftPanelContent(page);
+            var pageChangeEventArgs = args as PageChangeEventArgs;
+            
+            if (pageChangeEventArgs.IsNextPageChangeType)
+                goToNextPage(pageChangeEventArgs);
+            else if (pageChangeEventArgs.IsPreviousPageChangeType)
+                goToPreviousPage(pageChangeEventArgs);
+            else
+                changeLeftPanelContent(pageChangeEventArgs.ToPage, pageChangeEventArgs);
         }
 
         private void testPageBtn_MouseDown(object sender, MouseButtonEventArgs e)
@@ -137,7 +171,7 @@ namespace RecommenderAttacksAnalytics
             changeLeftPanelContent(AppPage.TEST);
         }
 
-        private void uploadDataBtn_MouseDown(object sender, MouseButtonEventArgs e)
+        private void getDataBtn_MouseDown(object sender, MouseButtonEventArgs e)
         {
             changeLeftPanelContent(AppPage.LOAD_DATA_PAGE);
         }

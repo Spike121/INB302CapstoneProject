@@ -13,13 +13,15 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using RecommenderAttacksAnalytics.Entities.LocalPersistence;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using RecommenderAttacksAnalytics.UI.PageChangeParameters;
 
 namespace RecommenderAttacksAnalytics.UI
 {
     /// <summary>
     /// Interaction logic for SelectUsersUC.xaml
     /// </summary>
-    public partial class SelectUsersUC : AbstractAppPageUC
+    public partial class SelectUsersUC : AbstractAppPageUC, INotifyPropertyChanged
     {
         private ObservableCollection<User> m_unselectedUsers = new ObservableCollection<User>();
         private ObservableCollection<User> m_selectedUsers = new ObservableCollection<User>();
@@ -35,27 +37,37 @@ namespace RecommenderAttacksAnalytics.UI
             set { m_selectedUsers = value; } 
         }
 
+        public ObservableCollection<User> Users
+        {
+            get { return (ObservableCollection<User>)GetValue(UsersProperty); }
+            set { SetValue(UsersProperty, value); }
+        }
+
+        public static readonly DependencyProperty UsersProperty =
+            DependencyProperty.Register("Users", typeof(ObservableCollection<User>), typeof(SelectUsersUC), new UIPropertyMetadata(new ObservableCollection<User>()));
+
+
         public SelectUsersUC()
+            : base(MainWindow.AppPage.SELECT_USERS_PAGE)
         {
             InitializeComponent();
-
-            m_leftUserSelector.ItemsSource = UnselectedUsers;
-            UnselectedUsers = new ObservableCollection<User>(RatingsLookupTable.Instance.getUsers());
         }
 
         public override void activate()
         {
-            UnselectedUsers = new ObservableCollection<User>(RatingsLookupTable.Instance.getUsers());
+            Users = new ObservableCollection<User>(RatingsLookupTable.Instance.getUsers());
         }
 
         private void nextPageBtn_Click(object sender, RoutedEventArgs e)
         {
-            GoToNextPage();
+            GoToNextPage(new FromSelectUsersPageParameters(m_leftUserSelector.SelectedItem as User));
         }
 
         private void previousPageBtn_Click(object sender, RoutedEventArgs e)
         {
             GoToPreviousPage();
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

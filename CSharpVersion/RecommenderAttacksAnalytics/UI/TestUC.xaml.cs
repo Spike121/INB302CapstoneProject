@@ -25,6 +25,7 @@ namespace RecommenderAttacksAnalytics.UI
         AbstractModel currentModel;
 
         public TestUC()
+            : base(MainWindow.AppPage.TEST)
         {
             InitializeComponent();
             Random r = new Random();

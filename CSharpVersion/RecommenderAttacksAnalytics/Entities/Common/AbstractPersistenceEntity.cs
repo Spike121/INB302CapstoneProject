@@ -22,8 +22,7 @@ namespace RecommenderAttacksAnalytics.Entities.Common
             return getId().GetHashCode();
         }
 
-        public abstract double diffFromAverageSquared(double average);
-        public abstract double diffFromAverage(double average);
+       
 
     }
 }

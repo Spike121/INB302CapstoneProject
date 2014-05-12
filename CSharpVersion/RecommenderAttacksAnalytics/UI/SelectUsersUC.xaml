@@ -16,15 +16,15 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
+                <ColumnDefinition  Width="Auto"/>
             </Grid.ColumnDefinitions>
             
             <!--Column 0-->
-            <ListBox Grid.Column="0" Grid.Row="0" x:Name="m_leftUserSelector" ItemsSource="{Binding Path=UnselectedUsers}" Margin="10" />
+            <ListBox Grid.Column="0" Grid.Row="0" x:Name="m_leftUserSelector" ItemsSource="{Binding Path=Users}" Margin="10" />
             <!--Column 1-->
             
             <!--Column 2-->
-            <ListBox Grid.Column="2" Grid.Row="0" x:Name="m_rightUserSelector" ItemsSource="{Binding Path=SelectedUsers}" Margin="10" />
+            <!--<ListBox Grid.Column="2" Grid.Row="0" x:Name="m_rightUserSelector" ItemsSource="{Binding Path=SelectedUsers}" Margin="10" />-->
 
             <!--Page change buttons-->
             <Grid Grid.Row="1" Grid.ColumnSpan="3">
