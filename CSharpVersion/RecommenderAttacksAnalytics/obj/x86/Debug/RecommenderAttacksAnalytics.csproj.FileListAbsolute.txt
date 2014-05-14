@@ -59,3 +59,6 @@ C:\Users\Phil\Desktop\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAtta
 C:\Users\Phil\Desktop\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.g.resources
 C:\Users\Phil\Desktop\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.Properties.Resources.resources
 C:\Users\Phil\Desktop\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.csproj.GenerateResource.Cache
+C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.exe
+C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.pdb
+C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.csprojResolveAssemblyReference.cache
