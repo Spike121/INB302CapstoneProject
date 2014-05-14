@@ -45,6 +45,8 @@ namespace RecommenderAttacksAnalytics.UI
             
             m_textFileReader.LogStateEvent += new TextFileReader.LogStateHandler(onReaderLogState);
             m_textFileReader.ReportProgressEvent += new TextFileReader.ReportProgressHandler(onReaderReportProgress);
+
+            FilePath = Properties.Settings.Default.lastUsedTextFilePath;
         }
        
         private void openFileSelectDialogBtn_Click(object sender, RoutedEventArgs e)
@@ -60,14 +62,19 @@ namespace RecommenderAttacksAnalytics.UI
             Nullable<bool> result = dlg.ShowDialog();
             if (result.HasValue && result.Value)
             {
-                FilePath = dlg.FileName;                                
+                FilePath = dlg.FileName;
             }
         }
 
         private void startLoadFromFileBtn_Click(object sender, RoutedEventArgs e)
         {
             setDataValidityState(false);
-            m_textFileReader.readFromFile(FilePath);
+
+            if (m_textFileReader.readFromFile(FilePath))
+            {
+                Properties.Settings.Default.lastUsedTextFilePath = FilePath;
+                Properties.Settings.Default.Save();
+            }
         }
 
         private void onReaderLogState(TextFileReader.TextFileReaderState state)

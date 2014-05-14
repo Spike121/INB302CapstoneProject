@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+					namespace="RecommenderAttacksAnalytics.Entities.Database"
+					assembly=" RecommenderAttacksAnalytics.Entities.Database">
+
+  <class name="DBItem" table="items" lazy="false">
+
+    <id name="ItemId" type="long">
+      <column name="itemId" />
+      <generator class="assigned" />
+    </id>
+
+    <set name="UserItemRatings" table="ratings" inverse="true">
+      <key column="itemId"></key>
+      <one-to-many class="UserItemRating" />
+    </set>
+
+  </class>
+</hibernate-mapping>
+

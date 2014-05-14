@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <HostName>llsdasd</HostName>
+  <Username>lol</Username>
+  <Password></Password>
+  <Port>3306</Port>
+  <Schema>llsdasd</Schema>
+</root>
