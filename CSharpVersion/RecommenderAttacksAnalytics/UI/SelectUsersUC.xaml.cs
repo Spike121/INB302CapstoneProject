@@ -21,8 +21,9 @@ namespace RecommenderAttacksAnalytics.UI
     /// <summary>
     /// Interaction logic for SelectUsersUC.xaml
     /// </summary>
-    public partial class SelectUsersUC : AbstractAppPageUC, INotifyPropertyChanged
+    public partial class SelectUsersUC : AbstractAppPageUC
     {
+        /*
         private ObservableCollection<User> m_unselectedUsers = new ObservableCollection<User>();
         private ObservableCollection<User> m_selectedUsers = new ObservableCollection<User>();
 
@@ -36,16 +37,16 @@ namespace RecommenderAttacksAnalytics.UI
             get { return m_selectedUsers; } 
             set { m_selectedUsers = value; } 
         }
+        */
 
         public ObservableCollection<User> Users
         {
             get { return (ObservableCollection<User>)GetValue(UsersProperty); }
             set { SetValue(UsersProperty, value); }
         }
-
+        
         public static readonly DependencyProperty UsersProperty =
             DependencyProperty.Register("Users", typeof(ObservableCollection<User>), typeof(SelectUsersUC), new UIPropertyMetadata(new ObservableCollection<User>()));
-
 
         public SelectUsersUC()
             : base(MainWindow.AppPage.SELECT_USERS_PAGE)
@@ -53,21 +54,27 @@ namespace RecommenderAttacksAnalytics.UI
             InitializeComponent();
         }
 
-        public override void activate()
+        public override void  activate(IPageChangeParameters parameters)
         {
-            Users = new ObservableCollection<User>(RatingsLookupTable.Instance.getUsers());
+            if (parameters.getPreviousPageValidationGuid() != this.PageValidationGuid)
+            {
+                Users = new ObservableCollection<User>(RatingsLookupTable.Instance.getUsers().OrderBy(x => x.getId()));
+                this.PageValidationGuid = parameters.getPreviousPageValidationGuid();
+            }
         }
 
-        private void nextPageBtn_Click(object sender, RoutedEventArgs e)
+        private void OnListItemDoubleClick(object sender, RoutedEventArgs args)
         {
-            GoToNextPage(new FromSelectUsersPageParameters(m_leftUserSelector.SelectedItem as User));
+            if (sender is ListBoxItem)
+            {
+                var listBoxItem = sender as ListBoxItem;
+                goToNextPage(new FromSelectUsersPageChangeParameters(m_pageValidationGuid, listBoxItem.Content as User));
+            }
         }
 
-        private void previousPageBtn_Click(object sender, RoutedEventArgs e)
+        protected override void nextPageBtn_Click(object sender, RoutedEventArgs e)
         {
-            GoToPreviousPage();
+            goToNextPage(new FromSelectUsersPageChangeParameters(m_pageValidationGuid, m_leftUserSelector.SelectedItem as User));
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

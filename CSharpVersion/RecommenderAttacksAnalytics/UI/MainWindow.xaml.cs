@@ -13,6 +13,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using RecommenderAttacksAnalytics.UI;
 using RecommenderAttacksAnalytics.EventArguments;
+using RecommenderAttacksAnalytics.UI.PageChangeParameters;
+using RecommenderAttacksAnalytics.Utility;
 
 namespace RecommenderAttacksAnalytics
 {
@@ -22,8 +24,11 @@ namespace RecommenderAttacksAnalytics
     public partial class MainWindow : Window
     {
         public enum AppPage { LOAD_DATA_PAGE, SELECT_USERS_PAGE, SELECT_ITEMS_PAGE, RESULTS_PAGE,TEST, NONE };
-        private AbstractAppPageUC currentUC;
-        private AppPage currentPage = AppPage.NONE;
+        private const AppPage FIRST_PAGE = AppPage.LOAD_DATA_PAGE;
+        private const AppPage LAST_PAGE = AppPage.RESULTS_PAGE;
+
+        private AbstractAppPageUC m_currentAppPage;
+        private AppPage m_currentPageAsEnum = AppPage.NONE;
         protected int m_pageIndex;
 
         private DataSourceUploadContainerUC m_loadDataPage;
@@ -59,99 +64,129 @@ namespace RecommenderAttacksAnalytics
             }
         }
 
+        private ResultsUC m_resultsPage;
+        private ResultsUC ResultsPage
+        {
+            get
+            {
+                if (m_resultsPage == null)
+                    m_resultsPage = new ResultsUC();
+                return m_resultsPage;
+            }
+        }
 
         public MainWindow()
         {
             InitializeComponent();
-            changeLeftPanelContent(AppPage.LOAD_DATA_PAGE);
-            
+            goDirectlyToPage(AppPage.LOAD_DATA_PAGE);
         }
 
-        private void loadUc(AbstractAppPageUC uc)
+        private int getPageIndex(AppPage pageAsEnum)
         {
-            if (currentUC != null)
+            return (int)pageAsEnum;
+        }
+
+        private void loadUc(AbstractAppPageUC pageToLoad, IPageChangeParameters parameters)
+        {
+            if (m_currentAppPage != null)
             {
-                currentUC.PageChange -= OnCurrentUcChangePageEvent;
+                m_currentAppPage.PageChange -= OnCurrentUcChangePageEvent;
             }
 
-            currentUC = uc;
-            currentUC.PageChange += new RoutedEventHandler(OnCurrentUcChangePageEvent);
+            m_currentAppPage = pageToLoad;
+            m_currentAppPage.PageChange += new RoutedEventHandler(OnCurrentUcChangePageEvent);
 
-            leftPanelContent.Content = currentUC;
-            currentUC.activate();
+            leftPanelContent.Content = m_currentAppPage;
+            m_currentAppPage.activate(parameters);
         }
 
-        private void changeLeftPanelContent(AppPage page)
-        { 
-            changeLeftPanelContent(page, null);
-        }
-
-        private void changeLeftPanelContent(AppPage page, PageChangeEventArgs args)
+        private AbstractAppPageUC getAppPageFromEnum(AppPage pageAsEnum)
         {
-            if (currentPage != AppPage.NONE && currentPage == page)
+            AbstractAppPageUC page = null;
+            try
+            {
+                switch (pageAsEnum)
+                {
+                    case AppPage.LOAD_DATA_PAGE: page = LoadDataPage;
+                        break;
+                    case AppPage.SELECT_USERS_PAGE: page = SelectUsersPage;
+                        break;
+                    case AppPage.SELECT_ITEMS_PAGE: page = SelectItemsPage;
+                        break;
+                    case AppPage.RESULTS_PAGE: page = ResultsPage;
+                        break;
+                    case AppPage.TEST: page = new TestUC();
+                        break;
+                    
+                    default: throw new MissingMethodException("Missing definition in function getAppPageFromEnum");
+                }
+            } 
+            catch(Exception e)
+            {
+                Logger.logError(e.Message);
+            }
+
+            return page;
+        }
+
+        private void changeRightPanelContent(AppPage pageAsEnum, PageChangeEventArgs args)
+        {
+            if (m_currentPageAsEnum != AppPage.NONE && m_currentPageAsEnum == pageAsEnum)
                 return;
 
-            AbstractAppPageUC uc = null;
+            // This ensure that the user cannot move to following page containing outdated data
+            //if (getAppPageFromEnum(pageAsEnum).PageValidationGuid == m_currentAppPage.PageValidationGuid || (int)pageAsEnum <= (m_pageIndex + 1))
 
-            switch (page)
-            {
-                case AppPage.LOAD_DATA_PAGE: uc = LoadDataPage;
-                    break;
-                case AppPage.SELECT_USERS_PAGE: uc = SelectUsersPage;
-                    break;
-                case AppPage.SELECT_ITEMS_PAGE: uc = SelectItemsPage;
-                    break;
-                
-                case AppPage.TEST: uc = new TestUC();
-                    break;
-            }
+            m_currentPageAsEnum = pageAsEnum;
+            m_pageIndex = (int)m_currentPageAsEnum;
 
-            currentPage = page;
-            m_pageIndex = (int)currentPage;
-            
+            var page = getAppPageFromEnum(pageAsEnum);
             //TODO: Maybe change that for a HasParams property inside PageChangeEventArgs
             //TODO: Or even maybe only keep Parameters object ?
-            if(args != null)
-                uc.loadPreviousPageParams(args.Parameters);
+            loadUc(page, args.Parameters);
+        }
 
-            loadUc(uc);
+        private void goDirectlyToPage(AppPage destPageAsEnum)
+        {
+            changeRightPanelContent(destPageAsEnum, new PageChangeEventArgs(m_currentPageAsEnum, 
+                                                                            destPageAsEnum,
+                                                                            m_currentAppPage == null ? null : m_currentAppPage.PageValidationGuid));
         }
 
         private void goToNextPage()
         {
-            if (m_pageIndex >= (int)AppPage.SELECT_ITEMS_PAGE)
+            if (m_pageIndex >= getPageIndex(LAST_PAGE))
                 return;
 
-            m_pageIndex++;
-            changeLeftPanelContent((AppPage)m_pageIndex);
+            var destPage = (AppPage)(m_pageIndex + 1);
+            goDirectlyToPage(destPage);
         }
-
-        private void goToPreviousPage(PageChangeEventArgs args)
-        {
-            if (m_pageIndex <= 0)
-                return;
-
-            m_pageIndex--;
-            changeLeftPanelContent((AppPage)m_pageIndex, args);
-        }
-
 
         private void goToNextPage(PageChangeEventArgs args)
         {
-            if (m_pageIndex >= (int)AppPage.SELECT_ITEMS_PAGE)
+            if (m_pageIndex >= getPageIndex(LAST_PAGE))
                 return;
 
-            m_pageIndex++;
-            changeLeftPanelContent((AppPage)m_pageIndex, args);
+            var destPage = (AppPage)(m_pageIndex + 1);
+            changeRightPanelContent(destPage, args);
         }
 
         private void goToPreviousPage()
         {
-            if (m_pageIndex <= 0)
+            if (m_pageIndex <= getPageIndex(FIRST_PAGE))
                 return;
 
-            m_pageIndex--;
-            changeLeftPanelContent((AppPage)m_pageIndex);
+            var destPage = (AppPage)(m_pageIndex - 1);
+            goDirectlyToPage(destPage);
+        }
+
+        private void goToPreviousPage(PageChangeEventArgs args)
+        {
+            if (m_pageIndex <= getPageIndex(FIRST_PAGE))
+                return;
+
+            var destPage = (AppPage)(m_pageIndex - 1);
+            changeRightPanelContent(destPage, args);
         }
 
         private void OnCurrentUcChangePageEvent(object sender, RoutedEventArgs args) 
@@ -163,17 +198,22 @@ namespace RecommenderAttacksAnalytics
             else if (pageChangeEventArgs.IsPreviousPageChangeType)
                 goToPreviousPage(pageChangeEventArgs);
             else
-                changeLeftPanelContent(pageChangeEventArgs.ToPage, pageChangeEventArgs);
+                changeRightPanelContent(pageChangeEventArgs.SourcePage, pageChangeEventArgs);
         }
 
         private void testPageBtn_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            changeLeftPanelContent(AppPage.TEST);
+            goDirectlyToPage(AppPage.TEST);
         }
 
         private void getDataBtn_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            changeLeftPanelContent(AppPage.LOAD_DATA_PAGE);
+            goDirectlyToPage(AppPage.LOAD_DATA_PAGE);
+        }
+
+        private void m_selectUsersBtn_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            goDirectlyToPage(AppPage.SELECT_USERS_PAGE);
         }
     }
 }

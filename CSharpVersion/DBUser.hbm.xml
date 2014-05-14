@@ -1,0 +1,19 @@
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+					namespace="RecommenderAttacksAnalytics.Entities.Database"
+					assembly=" RecommenderAttacksAnalytics.Entities.Database">
+
+	<class name="DBUser" table="users" lazy="false">
+		
+		<id name="UserId" type="long">
+            <column name="userId" />
+            <generator class="assigned" />
+        </id>
+	
+		<set name="UserItemRatings" table="ratings" inverse="true">
+			<key column="userId"></key>
+			<one-to-many class="UserItemRating" />
+		</set>
+	
+	</class>
+</hibernate-mapping>
+

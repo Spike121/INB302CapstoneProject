@@ -93,16 +93,16 @@ namespace RecommenderAttacksAnalytics.Input
         {
             var sr = args.Argument as StreamReader;
             string currentLine;
-            var entriesProcessed = 0;
-            var catchUpValue = m_numberOfUserItemPairs / 2000;
+            long entriesProcessed = 0;
+            long catchUpValue = m_numberOfUserItemPairs / 1000;
 
             while ((currentLine = sr.ReadLine()) != null)
             {
                 var lineArgs = currentLine.Split(' ');
                 
                 entriesProcessed++;
-                
                 var completionPercentage = (int)( (float)entriesProcessed / m_numberOfUserItemPairs * 100);
+
                 TableEntry currentEntry = null;
 
                 if (isLineValid(lineArgs))
@@ -112,7 +112,7 @@ namespace RecommenderAttacksAnalytics.Input
 
                 m_fileReaderWorker.ReportProgress(completionPercentage, currentEntry);
 
-                if (entriesProcessed % catchUpValue == 0 || completionPercentage == 100)
+                if (catchUpValue == 0 || entriesProcessed == 1 || (entriesProcessed % catchUpValue) == 0 || completionPercentage == 100)
                 {
                     System.Threading.Thread.Sleep(1);                     
                 }
@@ -138,9 +138,9 @@ namespace RecommenderAttacksAnalytics.Input
                 ReportProgressEvent(args.ProgressPercentage);
             
             var newEntry = args.UserState as TableEntry;
-            
-            //if(newEntry != null)
-                //LogMessage(String.Format("New entry added: {0}", newEntry.ToString()));
+
+            //if (newEntry != null)
+                //Logger.log(String.Format("New entry added: {0}", newEntry.ToString()));
         }
 
         private bool isLineValid(string[] args)

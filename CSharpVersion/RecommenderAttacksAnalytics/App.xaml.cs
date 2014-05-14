@@ -12,5 +12,9 @@ namespace RecommenderAttacksAnalytics
     /// </summary>
     public partial class App : Application
     {
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            //RecommenderAttacksAnalytics.Properties.Settings.Default.Save();
+        }
     }
 }

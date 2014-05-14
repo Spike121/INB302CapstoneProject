@@ -38,7 +38,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     
-                    <TextBox Grid.Column="0" x:Name="m_fileNameTextBox" Text="{Binding Path=FilePath}" FlowDirection="RightToLeft" IsReadOnly="True" />
+                    <TextBox Grid.Column="0" x:Name="m_fileNameTextBox" Text="{Binding Path=FilePath, Mode=TwoWay}" FlowDirection="RightToLeft" IsReadOnly="True" />
                     <Button Grid.Column="1" x:Name="m_openFileSelectDialogBtn" Content="Select"  Margin="5,0,0,0" Click="openFileSelectDialogBtn_Click" 
                             IsEnabled="{Binding Path=IsProcessing, Converter={StaticResource ResourceKey=BoolToInverseConverter}}" />
                     <Button Grid.Column="3" x:Name="m_startLoadFromFileBtn" Content="Ok"  Padding="15,0,15,0" Click="startLoadFromFileBtn_Click" 
@@ -52,7 +52,7 @@
                 <!--Row 3-->
                 <ScrollViewer Grid.Row="3" x:Name="m_outputTextBoxScroller" Margin="0,5,0,0" 
                               HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                    <TextBox x:Name="m_outputTextBox"  Background="WhiteSmoke" />
+                    <TextBox x:Name="m_outputTextBox"  Background="WhiteSmoke" IsReadOnly="True" />
                 </ScrollViewer>
 
   

@@ -27,16 +27,19 @@ namespace RecommenderAttacksAnalytics.UI
         public TestUC()
             : base(MainWindow.AppPage.TEST)
         {
+            
             InitializeComponent();
+            
+            
             Random r = new Random();
             var userId = (int)(r.NextDouble() * 999);
 
             if (RatingsLookupTable.Instance.hasUser(userId)) 
             {
-                currentModel = new UserCentricModel(userId);
+                currentModel = new UserCentricModel(userId, RatingsLookupTable.Instance.getItems());
                 currentModel.computePredictions();
             }
-
+            
 
         }
     }

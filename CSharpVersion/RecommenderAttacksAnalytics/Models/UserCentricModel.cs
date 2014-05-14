@@ -11,15 +11,22 @@ namespace RecommenderAttacksAnalytics.Models
 {
     public class UserCentricModel : AbstractModel
     {
-
-        public UserCentricModel(long userId)
+        private IEnumerable<Item> SelectedItems
         {
-            SelectedUser = RatingsLookupTable.Instance.getUser(userId);
+            get { return m_selectedCounterpartEntities.Cast<Item>(); }
+            set { m_selectedCounterpartEntities = value; } 
         }
 
-        private User SelectedUser {
-            get { return m_selectedEntity as User;  }
+        private User SelectedUser
+        {
+            get { return m_selectedEntity as User; }
             set { m_selectedEntity = value; }
+        }
+
+        public UserCentricModel(long userId, IEnumerable<Item> selectedItems)
+        {
+            SelectedUser = RatingsLookupTable.Instance.getUser(userId);
+            SelectedItems = selectedItems;
         }
 
         protected override PearsonComputationResults getPearsonCoefficients()
@@ -42,6 +49,7 @@ namespace RecommenderAttacksAnalytics.Models
 
         protected override double computeSimilarityToNeighbor(IPersistenceEntity selectedEntity, IPersistenceEntity neighborEntity)
         {
+                
             var user = selectedEntity as User;
             var neighbor = neighborEntity as User;
             
@@ -67,8 +75,8 @@ namespace RecommenderAttacksAnalytics.Models
             pearsonCoefficients = pearsonCoefficients.OrderByDescending(x => x.Value).Take(NEIGHBORBOOD_K_SIZE).ToDictionary(x => x.Key, x => x.Value);
             var targetUserAverageRating = SelectedUser.getRatingAverageForUser();
             var predictions = new Dictionary<Item, double>();
-            
-            foreach (var item in RatingsLookupTable.Instance.getItems())
+
+            foreach (var item in SelectedItems)
             {
                 double top = 0.0;
                 double pearsonAbsSum = 0.0f;
@@ -87,7 +95,5 @@ namespace RecommenderAttacksAnalytics.Models
                 predictions.Add(item, prediction);
             }
         }
-
-        
     }
 }

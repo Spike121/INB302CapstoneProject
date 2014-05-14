@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping 	xmlns="urn:nhibernate-mapping-2.2"
+					auto-import="true"
+					default-lazy="false"
+					assembly="RecommenderAttacksAnalytics.Entities.Database"
+					namespace="RecommenderAttacksAnalytics.Entities.Database">
+
+  <class name="UserItemRating" table="ratings">
+    <many-to-one name="DBUser" column="userId" lazy="false" cascade="none" not-null="true" />
+    <many-to-one name="DBItem" column="itemId" lazy="false" cascade="none" not-null="true" />
+    <property name="rating" not-null="true" update="false" />
+  </class>
+</hibernate-mapping>

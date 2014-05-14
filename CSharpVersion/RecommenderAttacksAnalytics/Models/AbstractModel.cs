@@ -10,7 +10,8 @@ namespace RecommenderAttacksAnalytics.Models
     {
         protected const int NEIGHBORBOOD_K_SIZE = 20;
         protected AbstractPersistenceEntity m_selectedEntity;
-        
+        protected IEnumerable<AbstractPersistenceEntity> m_selectedCounterpartEntities;
+
         protected abstract double computeSimilarityToNeighbor(IPersistenceEntity mainEntity, IPersistenceEntity neighborEntity);
         protected abstract PearsonComputationResults getPearsonCoefficients();
         public abstract void computePredictions();
