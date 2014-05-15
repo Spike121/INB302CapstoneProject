@@ -11,15 +11,22 @@ namespace RecommenderAttacksAnalytics.Models
 {
     public class UserCentricModel : AbstractModel
     {
-
-        public UserCentricModel(long userId)
+        private IEnumerable<Item> SelectedItems
         {
-            SelectedUser = RatingsLookupTable.Instance.getUser(userId);
+            get { return m_selectedCounterpartEntities.Cast<Item>(); }
+            set { m_selectedCounterpartEntities = value; } 
         }
 
-        private User SelectedUser {
-            get { return m_selectedEntity as User;  }
+        private User SelectedUser
+        {
+            get { return m_selectedEntity as User; }
             set { m_selectedEntity = value; }
+        }
+
+        public UserCentricModel(long userId, IEnumerable<Item> selectedItems)
+        {
+            SelectedUser = RatingsLookupTable.Instance.getUser(userId);
+            SelectedItems = selectedItems;
         }
 
         protected override PearsonComputationResults getPearsonCoefficients()
@@ -42,6 +49,7 @@ namespace RecommenderAttacksAnalytics.Models
 
         protected override double computeSimilarityToNeighbor(IPersistenceEntity selectedEntity, IPersistenceEntity neighborEntity)
         {
+                
             var user = selectedEntity as User;
             var neighbor = neighborEntity as User;
             
@@ -54,38 +62,38 @@ namespace RecommenderAttacksAnalytics.Models
             var top = user.diffFromAverage(userAverage) * neighbor.diffFromAverage(neighborAverage);
             var bottomLeft = Math.Sqrt(user.diffFromAverageSquared(userAverage));
             var bottomRight = Math.Sqrt(neighbor.diffFromAverageSquared(neighborAverage));
-
-            return top / (bottomLeft + bottomRight);
+           
+            var result = top / (bottomLeft * bottomRight);
+            return result;
         }
 
         public override void computePredictions()
         {
             var pearsonResults = getPearsonCoefficients();
             var pearsonCoefficients = pearsonResults.PearsonCoefficients.ToDictionary(x =>  x.Key as User, x => x.Value );
-            //OrderedDictionary a = new OrderedDictionary(
-
-            // TODO: Check sort order & cutoff
-            pearsonCoefficients = pearsonCoefficients.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
-            pearsonCoefficients.Take(NEIGHBORBOOD_K_SIZE);
+            
+            pearsonCoefficients = pearsonCoefficients.OrderByDescending(x => x.Value).Take(NEIGHBORBOOD_K_SIZE).ToDictionary(x => x.Key, x => x.Value);
             var targetUserAverageRating = SelectedUser.getRatingAverageForUser();
             var predictions = new Dictionary<Item, double>();
-            
-            foreach (var item in RatingsLookupTable.Instance.getItems())
+
+            foreach (var item in SelectedItems)
             {
                 double top = 0.0;
+                double pearsonAbsSum = 0.0f;
+
                 foreach (var v in pearsonCoefficients)
                 {
+
                     var user = v.Key;
                     var pearsonCoefficient = v.Value;
+                    pearsonAbsSum += Math.Abs(pearsonCoefficient);
 
                     if(item.hasRatingFromUser(user))
-                        top += pearsonCoefficient * (item.getRatingFromUser(user) - targetUserAverageRating);
+                        top += pearsonCoefficient * (item.getRatingFromUser(user) - user.getRatingAverageForUser());
                 }
-                var prediction = pearsonResults.IsAbsolutePearsonCoefficientSumZero ? targetUserAverageRating :targetUserAverageRating + (top / pearsonResults.AbsolutePearsonsCoefficientSum);
+                var prediction = pearsonResults.IsAbsolutePearsonCoefficientSumZero ? targetUserAverageRating : targetUserAverageRating + (top / pearsonAbsSum);
                 predictions.Add(item, prediction);
             }
         }
-
-        
     }
 }

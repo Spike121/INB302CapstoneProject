@@ -7,9 +7,6 @@ namespace RecommenderAttacksAnalytics.Entities.Common
 {
     public interface IPersistenceEntity
     {
-        double diffFromAverageSquared(double average);
-        double diffFromAverage(double average);
-
-         long getId();
+        long getId();
     }
 }

@@ -36,6 +36,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Iesi.Collections">
+      <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="NHibernate">
+      <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -55,30 +62,62 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\ArgToFormattedStringConverter.cs" />
+    <Compile Include="Converters\BoolToInverseConverter.cs" />
+    <Compile Include="Converters\IsNullToBoolConverter.cs" />
+    <Compile Include="Converters\SelectedItemsCountToBoolConverter.cs" />
+    <Compile Include="Database\NHibernateUtil.cs" />
     <Compile Include="Entities\Common\AbstractItem.cs" />
     <Compile Include="Entities\Common\AbstractPersistenceEntity.cs" />
     <Compile Include="Entities\Common\AbstractUser.cs" />
     <Compile Include="Entities\Common\IPersistenceEntity.cs" />
+    <Compile Include="Entities\Database\DBItem.cs" />
+    <Compile Include="Entities\Database\DBUser.cs" />
+    <Compile Include="Entities\Database\DBUserItemRating.cs" />
+    <Compile Include="Entities\Database\IDatabasePersistenceEntity.cs" />
+    <Compile Include="Entities\LocalPersistence\ILocalPersistenceEntity.cs" />
     <Compile Include="Entities\LocalPersistence\Item.cs" />
     <Compile Include="Entities\LocalPersistence\TableEntry.cs" />
     <Compile Include="Entities\LocalPersistence\User.cs" />
     <Compile Include="Entities\LocalPersistence\RatingsLookupTable.cs" />
     <Compile Include="Entities\LocalPersistence\UserItemPair.cs" />
-    <Compile Include="UI\AbstractAppUC.cs" />
+    <Compile Include="EventArguments\PageChangeEventArgs.cs" />
+    <Compile Include="UI\AbstractAppPageUC.cs" />
+    <Compile Include="UI\AbstractDataUploadUC.cs" />
+    <Compile Include="UI\DataSourceUploadContainerUC.xaml.cs">
+      <DependentUpon>DataSourceUploadContainerUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\PageChangeParameters\BasePageChangeParameters.cs" />
+    <Compile Include="UI\PageChangeParameters\FromSelectItemsPageChangeParameters.cs" />
+    <Compile Include="UI\PageChangeParameters\FromSelectUsersPageChangeParameters.cs" />
+    <Compile Include="UI\PageChangeParameters\IPageChangeParameters.cs" />
+    <Compile Include="UI\ReadFromDatabaseUc.xaml.cs">
+      <DependentUpon>ReadFromDatabaseUc.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ResultsUC.xaml.cs">
+      <DependentUpon>ResultsUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SelectItemsUC.xaml.cs">
+      <DependentUpon>SelectItemsUC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\SelectUsersUC.xaml.cs">
       <DependentUpon>SelectUsersUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\TestUC.xaml.cs">
       <DependentUpon>TestUC.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utililty\DatabaseInfos.cs" />
     <Compile Include="Utililty\Util.cs" />
     <Compile Include="Models\AbstractModel.cs" />
     <Compile Include="Models\UserCentricModel.cs" />
-    <Compile Include="UI\FilePath.cs" />
     <Compile Include="UI\ReadTextFileUC.xaml.cs">
       <DependentUpon>ReadTextFileUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utililty\Logger.cs" />
+    <Page Include="UI\DataSourceUploadContainerUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -92,7 +131,19 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UI\ReadFromDatabaseUc.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\ReadTextFileUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\ResultsUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\SelectItemsUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -123,6 +174,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -131,7 +184,18 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Output\" />
-    <Folder Include="UI\NewFolder1\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Database\Mappings\DBUser.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Database\Mappings\DBItem.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Database\Mappings\DBUserItemRating.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Database\hibernate.cfg.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

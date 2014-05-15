@@ -19,23 +19,27 @@ namespace RecommenderAttacksAnalytics.UI
     /// <summary>
     /// Interaction logic for TestUC.xaml
     /// </summary>
-    public partial class TestUC : AbstractAppUC
+    public partial class TestUC : AbstractAppPageUC
     {
 
         AbstractModel currentModel;
 
         public TestUC()
+            : base(MainWindow.AppPage.TEST)
         {
+            
             InitializeComponent();
+            
+            
             Random r = new Random();
             var userId = (int)(r.NextDouble() * 999);
 
             if (RatingsLookupTable.Instance.hasUser(userId)) 
             {
-                currentModel = new UserCentricModel(userId);
+                currentModel = new UserCentricModel(userId, RatingsLookupTable.Instance.getItems());
                 currentModel.computePredictions();
             }
-
+            
 
         }
     }

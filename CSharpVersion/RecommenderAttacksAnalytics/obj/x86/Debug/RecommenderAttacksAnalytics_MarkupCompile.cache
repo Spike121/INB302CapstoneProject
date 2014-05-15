@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-c:\users\phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\obj\x86\Debug\
+C:\Users\Phil\Desktop\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\
 RecommenderAttacksAnalytics
 none
 false
 DEBUG;TRACE
-c:\users\phil\documents\visual studio 2010\Projects\RecommenderAttacksAnalytics\RecommenderAttacksAnalytics\App.xaml
-41457355364
+C:\Users\Phil\Desktop\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\App.xaml
+8380419546
 
-24-504107675
-12-1381780322
-UI\MainWindow.xaml;UI\ReadTextFileUC.xaml;UI\SelectUsersUC.xaml;UI\TestUC.xaml;
+44-962225240
+14-684888390
+UI\DataSourceUploadContainerUC.xaml;UI\MainWindow.xaml;UI\ReadFromDatabaseUc.xaml;UI\ReadTextFileUC.xaml;UI\ResultsUC.xaml;UI\SelectItemsUC.xaml;UI\SelectUsersUC.xaml;UI\TestUC.xaml;
 
 False
 
