@@ -92,3 +92,4 @@ C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderA
 C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.exe
 C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.pdb
 C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\bin\Debug\Database\Mappings\DBUserItemRating.hbm.xml
+C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.csprojResolveAssemblyReference.cache

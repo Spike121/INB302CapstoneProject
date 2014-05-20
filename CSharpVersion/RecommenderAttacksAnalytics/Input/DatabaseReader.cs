@@ -12,16 +12,31 @@ using System.Windows.Threading;
 using System.Windows;
 
 namespace RecommenderAttacksAnalytics.Input {
-    public class DatabaseReader {
+    class DatabaseReader {
+        private static BackgroundWorker m_databaseReaderWorker;
         private static IList<DBUserItemRating> ratingList;
-        public static void FetchEntities(string hostname, string username, string password, int port, string schema) {
-            NHibernateUtil.NHibernateConnect(hostname, username, password, port, schema);
-            ratingList = NHibernateUtil.FetchRatingsList();
 
-            //Input into RatingsLookupTable -> see TextFileReader.cs for how this is done
+
+        public static void FetchEntities(string hostname, string username, string password, int port, string schema) {
+            //Connect
+            NHibernateUtil.NHibernateConnect(hostname, username, password, port, schema);
+
+            //Fetch list -> This takes forever, needs a background worker
+            m_databaseReaderWorker = new BackgroundWorker();
+            m_databaseReaderWorker.DoWork += new DoWorkEventHandler(databaseReaderWorker_DoWork);
+            m_databaseReaderWorker.WorkerReportsProgress = true;
+            m_databaseReaderWorker.RunWorkerAsync();
+            
+        }
+
+        private static void databaseReaderWorker_DoWork(object sender, DoWorkEventArgs args)
+        {
+            ratingList = NHibernateUtil.FetchRatingsList();
+            processInformation();
         }
 
         public static void processInformation() {
+            //Input into RatingsLookupTable
             long entriesProcessed = 0;
             entriesProcessed++;
             var completionPercentage = (int)( (float)entriesProcessed / ratingList.Count() * 100);
