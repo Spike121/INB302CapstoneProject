@@ -37,7 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Iesi.Collections">
-      <HintPath>..\packages\Iesi.Collections.3.2.0.1001\lib\Net35\Iesi.Collections.dll</HintPath>
+      <HintPath>..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate">
       <HintPath>..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
@@ -78,6 +78,7 @@
     <Compile Include="Entities\Common\AbstractItem.cs" />
     <Compile Include="Entities\Common\AbstractPersistenceEntity.cs" />
     <Compile Include="Entities\Common\AbstractUser.cs" />
+    <Compile Include="Entities\Common\AbstractRating.cs" />
     <Compile Include="Entities\Common\IPersistenceEntity.cs" />
     <Compile Include="Entities\Database\DBItem.cs" />
     <Compile Include="Entities\Database\DBUser.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Entities\LocalPersistence\RatingsLookupTable.cs" />
     <Compile Include="Entities\LocalPersistence\UserItemPair.cs" />
     <Compile Include="EventArguments\PageChangeEventArgs.cs" />
+    <Compile Include="Input\DatabaseReader.cs" />
     <Compile Include="UI\AbstractAppPageUC.cs" />
     <Compile Include="UI\AbstractDataUploadUC.cs" />
     <Compile Include="UI\Containers\PredictionResultContainer.cs" />
@@ -209,13 +211,10 @@
     <Folder Include="Output\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Database\Mappings\DBUser.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Database\Mappings\DBItem.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Database\Mappings\DBUserItemRating.hbm.xml" />
+    <EmbeddedResource Include="Database\Mappings\DBUserItemRating.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Database\hibernate.cfg.xml" />
