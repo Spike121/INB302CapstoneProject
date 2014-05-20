@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using RecommenderAttacksAnalytics.Utililty;
+using RecommenderAttacksAnalytics.Input;
 using Microsoft.Win32;
 
 namespace RecommenderAttacksAnalytics.UI
@@ -34,7 +35,8 @@ namespace RecommenderAttacksAnalytics.UI
 
         private void m_fetchDataBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            DatabaseReader.FetchEntities(hostname.Text, username.Text, password.Password, Convert.ToInt32(port.Text), schema.Text);
+            DatabaseReader.processInformation();
         }
 
         private void m_saveAsFileBtn_Click(object sender, RoutedEventArgs e)

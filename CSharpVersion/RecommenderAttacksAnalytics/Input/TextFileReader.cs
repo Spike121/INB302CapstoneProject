@@ -45,7 +45,7 @@ namespace RecommenderAttacksAnalytics.Input
             }
             catch (FileNotFoundException)
             {
-                msg = "Could not find the file with the provided path";
+                msg = "Could not find the file with the provided path.";
                 Logger.logError(msg);
                 LogState(TextFileReaderState.ReaderState.STOPPED_ERROR, msg);
 
