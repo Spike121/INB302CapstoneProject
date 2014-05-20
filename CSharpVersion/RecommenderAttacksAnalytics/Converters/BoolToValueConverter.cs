@@ -22,7 +22,8 @@ namespace RecommenderAttacksAnalytics.Converters
                 try
                 {
                     var converter = TypeDescriptor.GetConverter(ReturnType);
-                    return converter.ConvertFrom(returnValue);
+                    var convertedValue = converter.ConvertFrom(returnValue);
+                    return convertedValue;
                     //return (bool)value ? System.Convert.ChangeType(TrueValue, ReturnType) : System.Convert.ChangeType(FalseValue, ReturnType);
                 }
                 catch (Exception e)

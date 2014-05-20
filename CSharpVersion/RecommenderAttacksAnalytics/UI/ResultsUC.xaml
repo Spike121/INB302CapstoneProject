@@ -1,19 +1,41 @@
 ﻿<ui:AbstractAppPageUC x:Class="RecommenderAttacksAnalytics.UI.ResultsUC"
-                       xmlns:src="clr-namespace:RecommenderAttacksAnalytics.UI"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:ui="clr-namespace:RecommenderAttacksAnalytics.UI"
-             mc:Ignorable="d" 
+                      xmlns:src="clr-namespace:RecommenderAttacksAnalytics.UI"
+                      xmlns:results="clr-namespace:RecommenderAttacksAnalytics.UI"
+                      xmlns:gif="http://wpfanimatedgif.codeplex.com"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:ui="clr-namespace:RecommenderAttacksAnalytics.UI"
+                      xmlns:containers="clr-namespace:RecommenderAttacksAnalytics.UI.Containers"
+                      xmlns:converters="clr-namespace:RecommenderAttacksAnalytics.Converters"
+                      mc:Ignorable="d" 
                       DataContext="{Binding RelativeSource={RelativeSource Self}}"
-             d:DesignHeight="300" d:DesignWidth="543">
+                      d:DesignHeight="300" d:DesignWidth="543">
+    <ui:AbstractAppPageUC.Resources>
+        <converters:BoolToValueConverter x:Key="BoolToVisibilityCollapsedConverter" TrueValue="Visible" FalseValue="Collapsed" ReturnType="{x:Type Visibility}"/>
+    </ui:AbstractAppPageUC.Resources>
     <Grid>
         <ListBox ItemsSource="{Binding Path=PredictionsResults}">
             <ListBox.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate >
+                    <src:ResultTemplateUC OriginalPrediction="{Binding Path=OriginalScore, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                          FinalPrediction="{Binding Path=FinalScore, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                          EntityId="{Binding Path=EntityId, RelativeSource={RelativeSource AncestorType=containers:PredictionResultContainer}}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
         </ListBox>
+
+        <StackPanel VerticalAlignment="Center" Visibility="{Binding Path=IsWorkerRunning, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+            <Image gif:ImageBehavior.AnimatedSource="../Resources/Images/ajax-loader.gif"
+                   gif:ImageBehavior.RepeatBehavior="Forever"
+                   Width="25"/>
+            <TextBlock Text="Loading results..." HorizontalAlignment="Center"/>
+        </StackPanel>
     </Grid>
 </ui:AbstractAppPageUC>

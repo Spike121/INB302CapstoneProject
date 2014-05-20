@@ -56,6 +56,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WpfAnimatedGif">
+      <HintPath>..\packages\WpfAnimatedGif.1.4.4\lib\net\WpfAnimatedGif.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -89,6 +92,7 @@
     <Compile Include="EventArguments\PageChangeEventArgs.cs" />
     <Compile Include="UI\AbstractAppPageUC.cs" />
     <Compile Include="UI\AbstractDataUploadUC.cs" />
+    <Compile Include="UI\Containers\PredictionResultContainer.cs" />
     <Compile Include="UI\DataSourceUploadContainerUC.xaml.cs">
       <DependentUpon>DataSourceUploadContainerUC.xaml</DependentUpon>
     </Compile>
@@ -215,6 +219,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Database\hibernate.cfg.xml" />
+    <Resource Include="Resources\Images\ajax-loader.gif" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Fonts\Montserrat-Regular.ttf" />
