@@ -1,16 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using RecommenderAttacksAnalytics.Entities.LocalPersistence;
 using System.Collections.ObjectModel;
 using RecommenderAttacksAnalytics.UI.PageChangeParameters;
@@ -28,6 +17,17 @@ namespace RecommenderAttacksAnalytics.UI
             set { SetValue(ItemsProperty, value); }
         }
 
+
+
+        public ObservableCollection<Item> FakeItems
+        {
+            get { return (ObservableCollection<Item>)GetValue(FakeItemsProperty); }
+            set { SetValue(FakeItemsProperty, value); }
+        }
+
+        public static readonly DependencyProperty FakeItemsProperty =
+            DependencyProperty.Register("FakeItems", typeof(ObservableCollection<Item>), typeof(SelectItemsUC), new UIPropertyMetadata(new ObservableCollection<Item>()));
+
         public static readonly DependencyProperty ItemsProperty =
             DependencyProperty.Register("Items", typeof(ObservableCollection<Item>), typeof(SelectItemsUC), new UIPropertyMetadata(new ObservableCollection<Item>()));
 
@@ -43,7 +43,7 @@ namespace RecommenderAttacksAnalytics.UI
             InitializeComponent();
         }
 
-        public override void  activate(PageChangeParameters.IPageChangeParameters p)
+        public override void  activate(IPageChangeParameters p)
         {
             if (p is FromSelectUsersPageChangeParameters)
             {
@@ -52,12 +52,14 @@ namespace RecommenderAttacksAnalytics.UI
             }
 
             Items = new ObservableCollection<Item>(RatingsLookupTable.Instance.getItems());
+            FakeItems = new ObservableCollection<Item>(RatingsLookupTable.Instance.FakeProfilesTable.getItems());
         }
 
         protected override void nextPageBtn_Click(object sender, RoutedEventArgs e)
         {
             var selectedItems = m_itemsSelector.SelectedItems.Cast<Item>();
-            goToNextPage(new FromSelectItemsPageChangeParameters(m_pageValidationGuid, m_selectedUser, selectedItems));
+            //var selectedFakeItems = m_itemsSelector.SelectedItems.Cast<Item>();
+            goToNextPage(new FromSelectItemsPageChangeParameters(m_pageValidationGuid, m_selectedUser, selectedItems, FakeItems));
         }
     }
 }

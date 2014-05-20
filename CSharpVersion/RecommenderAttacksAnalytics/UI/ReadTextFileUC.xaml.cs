@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
+using System.Windows.Data;
 using Microsoft.Win32;
-using System.Windows.Controls;
+using RecommenderAttacksAnalytics.Converters;
 using RecommenderAttacksAnalytics.Input;
-using System.Windows.Documents;
-using RecommenderAttacksAnalytics.Utility;
 
 
 namespace RecommenderAttacksAnalytics.UI
@@ -18,7 +14,13 @@ namespace RecommenderAttacksAnalytics.UI
     public partial class ReadTextFileUC : AbstractDataUploadUC
     {
 
-        private TextFileReader m_textFileReader = new TextFileReader();
+        private readonly TextFileReader m_textFileReader = new TextFileReader(false);
+        private readonly TextFileReader m_fakeProfilesTextFileReader = new TextFileReader(true);
+        
+        public TextFileReader TextFileReader { get { return m_textFileReader; }}
+        public TextFileReader FakeProfilesTextFileReader { get { return m_fakeProfilesTextFileReader; }}
+
+        private readonly OpenFileDialog m_fileDialog = new OpenFileDialog();
 
         public string FilePath
         {
@@ -26,15 +28,14 @@ namespace RecommenderAttacksAnalytics.UI
             set { SetValue(FilePathProperty, value); }
         }
 
-        public bool IsProcessing
+        public string FakeProfilesFilePath
         {
-            get { return (bool)GetValue(IsProcessingProperty); }
-            set { SetValue(IsProcessingProperty, value); }
+            get { return (string)GetValue(FakeProfilesFilePathProperty); }
+            set { SetValue(FakeProfilesFilePathProperty, value); }
         }
 
-        public static readonly DependencyProperty IsProcessingProperty =
-            DependencyProperty.Register("IsProcessing", typeof(bool), typeof(ReadTextFileUC), new UIPropertyMetadata(false));
-        
+        public static readonly DependencyProperty FakeProfilesFilePathProperty =
+            DependencyProperty.Register("FakeProfilesFilePath", typeof(string), typeof(ReadTextFileUC));
 
         public static readonly DependencyProperty FilePathProperty =
             DependencyProperty.Register("FilePath", typeof(string), typeof(ReadTextFileUC));
@@ -42,51 +43,87 @@ namespace RecommenderAttacksAnalytics.UI
         public ReadTextFileUC()
         {
             InitializeComponent();
+            initializeBindings();
+
+            m_textFileReader.ReaderStateChangeEvent += OnReaderStateChange;
+            m_textFileReader.ReportProgressEvent += onReaderReportProgress;
+
+            m_fakeProfilesTextFileReader.ReaderStateChangeEvent += OnReaderStateChange;
+            m_fakeProfilesTextFileReader.ReportProgressEvent += onReaderReportProgress;
             
-            m_textFileReader.LogStateEvent += new TextFileReader.LogStateHandler(onReaderLogState);
-            m_textFileReader.ReportProgressEvent += new TextFileReader.ReportProgressHandler(onReaderReportProgress);
+
+            var isProcessingMultiBinding = new MultiBinding()
+            {
+                Converter = new BooleanOrToBoolConverter(),
+                Bindings =
+                {
+                    new Binding {Source = TextFileReader, Path = new PropertyPath(TextFileReader.IsReaderProcessingProperty.Name)},
+                    new Binding {Source = FakeProfilesTextFileReader, Path = new PropertyPath(TextFileReader.IsReaderProcessingProperty.Name)}
+                }
+            };
+
+            var isDataValidMutliBinding = new MultiBinding()
+            {
+                Converter = new BooleanAndToBoolConverter()
+            };
+
+            isDataValidMutliBinding.Bindings.Add(new Binding {Source = TextFileReader, Path = new PropertyPath(TextFileReader.IsReaderDataValidProperty.Name)});
+            if(HasFakeProfiles)
+                isDataValidMutliBinding.Bindings.Add(new Binding { Source = FakeProfilesTextFileReader, Path = new PropertyPath(TextFileReader.IsReaderDataValidProperty.Name) });
+
+            SetBinding(IsProcessingProperty, isProcessingMultiBinding);
+            SetBinding(IsDataValidProperty, isDataValidMutliBinding);
+
+            m_fileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            m_fileDialog.DefaultExt = ".txt";
+            //dlg.InitialDirectory = Environment.SpecialFolder.MyDocuments;
+            m_fileDialog.InitialDirectory = Environment.CurrentDirectory;
+            m_fileDialog.RestoreDirectory = false;
 
             FilePath = Properties.Settings.Default.lastUsedTextFilePath;
+            FakeProfilesFilePath = Properties.Settings.Default.lastUsedFakeProfilesTextFilePath;
         }
-       
+
         private void openFileSelectDialogBtn_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dlg = new OpenFileDialog();
+            var result = m_fileDialog.ShowDialog();
+            if (result.Value)
+                FilePath = m_fileDialog.FileName;
+        }
 
-            dlg.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*" ;
-            dlg.DefaultExt = ".txt";            
-            //dlg.InitialDirectory = Environment.SpecialFolder.MyDocuments;
-            dlg.InitialDirectory = Environment.CurrentDirectory;
-            dlg.RestoreDirectory = false;
-
-            Nullable<bool> result = dlg.ShowDialog();
-            if (result.HasValue && result.Value)
-            {
-                FilePath = dlg.FileName;
-            }
+        private void openFakeProfileFileSelectDialogBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var result = m_fileDialog.ShowDialog();
+            if (result.Value)
+                FakeProfilesFilePath = m_fileDialog.FileName;
         }
 
         private void startLoadFromFileBtn_Click(object sender, RoutedEventArgs e)
         {
-            setDataValidityState(false);
+            //IsDataValid = false;
 
             if (m_textFileReader.readFromFile(FilePath))
             {
                 Properties.Settings.Default.lastUsedTextFilePath = FilePath;
-                Properties.Settings.Default.Save();
             }
+
+            if (HasFakeProfiles && m_fakeProfilesTextFileReader.readFromFile(FakeProfilesFilePath))
+            {
+                Properties.Settings.Default.lastUsedFakeProfilesTextFilePath = FakeProfilesFilePath;
+            }
+
+            Properties.Settings.Default.Save();
         }
 
-        private void onReaderLogState(TextFileReader.TextFileReaderState state)
+        private void OnReaderStateChange(TextFileReader.TextFileReaderState state)
         {
-            setDataValidityState(state.HasValidData);
-            IsProcessing = state.IsProcessing;
             outputToTextbox(state.Message);
         }
 
         private void onReaderReportProgress(int percentage)
         {
-            m_completionProgressBar.Value = percentage;
+            m_completionProgressBar.Value = (m_textFileReader.getCompletionPercentage() + m_fakeProfilesTextFileReader.getCompletionPercentage() )/2;
+            //m_completionProgressBar.Value = percentage;
         }
 
         private void outputToTextbox(string str)

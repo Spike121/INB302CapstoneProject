@@ -12,7 +12,7 @@ namespace RecommenderAttacksAnalytics.UI
     public class AbstractAppPageUC : UserControl
     {
         public event RoutedEventHandler PageChange;
-        protected readonly RecommenderAttacksAnalytics.MainWindow.AppPage m_currentPage;
+        protected readonly MainWindow.AppPage m_currentPage;
 
         // Used to check if the content on a certain page is up to date compared to the latest data fetch and/or previous page data flow
         protected string m_pageValidationGuid = Guid.NewGuid().ToString();
@@ -22,17 +22,9 @@ namespace RecommenderAttacksAnalytics.UI
             set { m_pageValidationGuid = value; }
         }
 
-        /*
-        protected bool isPageContentUpToDateWithData()
-        {
-            // TODO: Finish implementing this
-            return validationGuid == string.Empty; 
-        }
-        */
-
         public AbstractAppPageUC() { }
 
-        protected AbstractAppPageUC(RecommenderAttacksAnalytics.MainWindow.AppPage page)
+        protected AbstractAppPageUC(MainWindow.AppPage page)
         {
             m_currentPage = page;
         }
@@ -51,12 +43,12 @@ namespace RecommenderAttacksAnalytics.UI
                 PageChange(this,args);
         }
 
-        protected void changePageTo(RecommenderAttacksAnalytics.MainWindow.AppPage toPage)
+        protected void changePageTo(MainWindow.AppPage toPage)
         {
             doPageChange(new PageChangeEventArgs(m_currentPage, toPage, m_pageValidationGuid));                
         }
 
-        protected void changePageTo(RecommenderAttacksAnalytics.MainWindow.AppPage toPage, IPageChangeParameters parameters)
+        protected void changePageTo(MainWindow.AppPage toPage, IPageChangeParameters parameters)
         {
             doPageChange(new PageChangeEventArgs(m_currentPage, toPage,parameters));
         }
