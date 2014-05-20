@@ -48,23 +48,23 @@
         
             <!--Row 0-->
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Hostname/IP:" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding Path=DatabaseInfos.HostName, Mode=TwoWay}" />
+                <TextBox x:Name="hostname" Grid.Row="0" Grid.Column="2" Text="localhost" />
 
             <!--Row 1-->
             <TextBlock Grid.Row="1" Grid.Column="0" Text="User:" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Path=DatabaseInfos.Username, Mode=TwoWay}"  />
+                <TextBox x:Name="username" Grid.Row="1" Grid.Column="2" Text="root"  />
 
             <!--Row 2-->
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Password:" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-            <PasswordBox Grid.Row="2" Grid.Column="2"  />
+            <PasswordBox x:Name="password" Grid.Row="2" Grid.Column="2" Password="CodeTrix"  />
 
             <!--Row 3-->
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Port:" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox  Grid.Row="3" Grid.Column="2" Width="75" HorizontalAlignment="Left" MaxLength="0" Text="{Binding Path=DatabaseInfos.Port, Mode=TwoWay}"  />
+                <TextBox x:Name="port"  Grid.Row="3" Grid.Column="2" Width="75" HorizontalAlignment="Left" MaxLength="0" Text="{Binding Path=DatabaseInfos.Port, Mode=TwoWay}"  />
         
             <!--Row 4-->
             <TextBlock Grid.Row="4" Grid.Column="0" Text="Schema:" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                <TextBox  Grid.Row="4" Grid.Column="2" Text="{Binding Path=DatabaseInfos.Schema, Mode=TwoWay}"  />
+                <TextBox x:Name="schema"  Grid.Row="4" Grid.Column="2" Text="useritemratings"  />
         </Grid>
         </GroupBox> 
         
@@ -85,5 +85,6 @@
                               HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
             <TextBox x:Name="m_outputTextBox"  Background="WhiteSmoke" IsReadOnly="True" />
         </ScrollViewer>
+        <TextBlock HorizontalAlignment="Left" Margin="33,0,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Note: Table should be called &quot;ratings&quot; with a list of UserID, ItemID, and Rating values." VerticalAlignment="Top" MaxWidth="300"/>
     </Grid>
 </src:AbstractDataUploadUC>

@@ -7,7 +7,7 @@
     <property name="connection.driver_class">NHibernate.Driver.MySqlDataDriver</property>
     <property name="use_proxy_validator">true</property>
     <property name="connection.connection_string">
-      Server=localhost;Database=Blog;User ID=root;Password=CodeTrix
+      Server=localhost;Database=Blog;Uid=root;Pwd=CodeTrix
     </property>
 
     <mapping resource="RecommenderAttacksAnalytics.Databse.Mappings.DBItem.hbm.xml" assembly="RecommenderAttacksAnalytics.Databse.Mappings" />
