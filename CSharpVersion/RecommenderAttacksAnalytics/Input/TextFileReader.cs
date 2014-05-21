@@ -1,53 +1,88 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+using NHibernate.Linq.Functions;
 using RecommenderAttacksAnalytics.Entities.LocalPersistence;
 using RecommenderAttacksAnalytics.Utility;
 using System.ComponentModel;
-using System.Windows.Threading;
 using System.Windows;
 
 namespace RecommenderAttacksAnalytics.Input
 {
-    class TextFileReader 
+    public class TextFileReader : DependencyObject
     {
         private const int NUM_LINE_ARGS = 4;
 
         public delegate void LogStateHandler(TextFileReaderState state);
         public delegate void ReportProgressHandler(int percentage);
 
-        public event LogStateHandler LogStateEvent;
+        public event LogStateHandler ReaderStateChangeEvent;
         public event ReportProgressHandler ReportProgressEvent;
-
+        
+        private readonly bool m_isReaderForFakeProfiles;
+        private long m_entriesProcessed = 0;
         private BackgroundWorker m_fileReaderWorker;
         private long m_numberOfUserItemPairs;
+        private TextFileReaderState m_readerState = new TextFileReaderState();
 
-        private void LogState(TextFileReaderState.ReaderState state, string message)
+        public bool IsReaderProcessing
         {
-            if (LogStateEvent != null)
-                LogStateEvent(new TextFileReaderState(state, message));
+            get { return (bool)GetValue(IsReaderProcessingProperty); }
+            set { SetValue(IsReaderProcessingProperty, value); }
+        }
+
+        public bool IsReaderDataValid
+        {
+            get { return (bool)GetValue(IsReaderDataValidProperty); }
+            set { SetValue(IsReaderDataValidProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsReaderDataValidProperty =
+            DependencyProperty.Register("IsReaderDataValid", typeof(bool), typeof(TextFileReader), new UIPropertyMetadata(false));
+
+        public static readonly DependencyProperty IsReaderProcessingProperty =
+            DependencyProperty.Register("IsReaderProcessing", typeof(bool), typeof(TextFileReader), new UIPropertyMetadata(false));
+
+
+        private void ChangeState(TextFileReaderState.ReaderState state, string message)
+        {
+            m_readerState = new TextFileReaderState(state, message);
+            IsReaderProcessing = m_readerState.IsProcessing;
+            IsReaderDataValid = m_readerState.HasValidData;
+
+            if (ReaderStateChangeEvent != null)
+                ReaderStateChangeEvent(m_readerState);
+        }
+
+        public TextFileReader(bool isReaderForFakeProfiles)
+        {
+            m_isReaderForFakeProfiles = isReaderForFakeProfiles;
+        }
+
+        public int getCompletionPercentage()
+        {
+            return m_numberOfUserItemPairs == 0 ? 100 : (int) ((float)m_entriesProcessed / m_numberOfUserItemPairs * 100);
         }
 
         public bool readFromFile(string filePath)
         {
             RatingsLookupTable.Instance.clearAllData();
+            IsReaderDataValid = false;
 
             StreamReader sr;
             string msg;
-
-            LogState(TextFileReaderState.ReaderState.PROCESSING, "Opening file...");
+            m_entriesProcessed = 0;
 
             try
             {
+                var fileInfo = new FileInfo(filePath);
+                ChangeState(TextFileReaderState.ReaderState.PROCESSING, String.Format("Opening file {0}...", fileInfo.Name));
                 sr = new StreamReader(filePath);
             }
             catch (FileNotFoundException)
             {
-                msg = "Could not find the file with the provided path";
+                msg = "Could not find the file with the provided path.";
                 Logger.logError(msg);
-                LogState(TextFileReaderState.ReaderState.STOPPED_ERROR, msg);
+                ChangeState(TextFileReaderState.ReaderState.STOPPED_ERROR, msg);
 
                 return false;
             }
@@ -55,34 +90,32 @@ namespace RecommenderAttacksAnalytics.Input
             {
                 msg = String.Format("Cannot open the file: {0}", e.Message);
                 Logger.logError(msg);
-                LogState(TextFileReaderState.ReaderState.STOPPED_ERROR, msg);
+                ChangeState(TextFileReaderState.ReaderState.STOPPED_ERROR, msg);
 
                 return false;
             }
 
             m_numberOfUserItemPairs = getLineCount(filePath);            
  
-            LogState(TextFileReaderState.ReaderState.PROCESSING, "File opened");
-            LogState(TextFileReaderState.ReaderState.PROCESSING, "Reading file...");
+            ChangeState(TextFileReaderState.ReaderState.PROCESSING, "File opened");
+            ChangeState(TextFileReaderState.ReaderState.PROCESSING, "Reading file...");
 
             m_fileReaderWorker = new BackgroundWorker();
-            m_fileReaderWorker.DoWork += new DoWorkEventHandler(fileReaderWorker_DoWork);
+            m_fileReaderWorker.DoWork += fileReaderWorker_DoWork;
             m_fileReaderWorker.WorkerReportsProgress = true;
-            m_fileReaderWorker.ProgressChanged += new ProgressChangedEventHandler(fileReaderWorker_ProgressChanged);
-            m_fileReaderWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(fileReaderWorker_RunWorkerCompleted);
+            m_fileReaderWorker.ProgressChanged += fileReaderWorker_ProgressChanged;
+            m_fileReaderWorker.RunWorkerCompleted += fileReaderWorker_RunWorkerCompleted;
             m_fileReaderWorker.RunWorkerAsync(sr);
            
-            
             return true;
         }
 
         private long getLineCount(string path)
         {
             long count = 0;
-            using (StreamReader r = new StreamReader(path))
+            using (var r = new StreamReader(path))
             {
-                string line;
-                while ((line = r.ReadLine()) != null)
+                while ((r.ReadLine()) != null)
                     count++;
             }
 
@@ -93,15 +126,15 @@ namespace RecommenderAttacksAnalytics.Input
         {
             var sr = args.Argument as StreamReader;
             string currentLine;
-            long entriesProcessed = 0;
+            m_entriesProcessed = 0;
             long catchUpValue = m_numberOfUserItemPairs / 1000;
 
-            while ((currentLine = sr.ReadLine()) != null)
+            while (sr != null && (currentLine = sr.ReadLine()) != null)
             {
                 var lineArgs = currentLine.Split(' ');
-                
-                entriesProcessed++;
-                var completionPercentage = (int)( (float)entriesProcessed / m_numberOfUserItemPairs * 100);
+
+                m_entriesProcessed++;
+                var completionPercentage = getCompletionPercentage();
 
                 TableEntry currentEntry = null;
 
@@ -112,7 +145,7 @@ namespace RecommenderAttacksAnalytics.Input
 
                 m_fileReaderWorker.ReportProgress(completionPercentage, currentEntry);
 
-                if (catchUpValue == 0 || entriesProcessed == 1 || (entriesProcessed % catchUpValue) == 0 || completionPercentage == 100)
+                if (catchUpValue == 0 || m_entriesProcessed == 1 || (m_entriesProcessed % catchUpValue) == 0 || completionPercentage == 100)
                 {
                     System.Threading.Thread.Sleep(1);                     
                 }
@@ -122,14 +155,18 @@ namespace RecommenderAttacksAnalytics.Input
         private TableEntry addEntryToTable(string[] args)
         {
             var entry = new TableEntry(args);
-            RatingsLookupTable.Instance.addEntry(entry);
+            
+            if(m_isReaderForFakeProfiles)
+                RatingsLookupTable.Instance.addFakeProfileEntry(entry);
+            else
+                RatingsLookupTable.Instance.addEntry(entry);
              
             return entry;
         }
 
         private void fileReaderWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs args)
         {
-            LogState(TextFileReaderState.ReaderState.DONE_AND_VALID, "Done !" + Environment.NewLine);
+            ChangeState(TextFileReaderState.ReaderState.DONE_AND_VALID, "Done !" + Environment.NewLine);
         }
 
         private void fileReaderWorker_ProgressChanged(object sender, ProgressChangedEventArgs args)
@@ -149,22 +186,25 @@ namespace RecommenderAttacksAnalytics.Input
                 return false;
 
             bool isValid = true;
-            long n;
-            
+
             for (int i = 0; i < NUM_LINE_ARGS; i++ )
             {
+                long n;
                 isValid &= Int64.TryParse(args[i], out n);
             }
-            
+
             return isValid;
         }
 
         public class TextFileReaderState
         {
             public enum ReaderState {STOPPED, STOPPED_ERROR, PROCESSING, DONE_AND_VALID};
-            public string Message { get; set; }
-            public ReaderState State;
 
+            private readonly ReaderState m_state;
+            public ReaderState State {  get { return m_state; } }
+
+            public string Message { get; set; }
+            
             public bool IsProcessing
             {
                 get { return State == ReaderState.PROCESSING; }
@@ -175,10 +215,16 @@ namespace RecommenderAttacksAnalytics.Input
                 get { return State == ReaderState.DONE_AND_VALID;  }
             }
 
+            public TextFileReaderState()
+            {
+                m_state = ReaderState.STOPPED;
+
+            }
+
             public TextFileReaderState(ReaderState state, string message)
             {
-                State = state;
                 Message = message;
+                m_state = state;
             }
         }
 

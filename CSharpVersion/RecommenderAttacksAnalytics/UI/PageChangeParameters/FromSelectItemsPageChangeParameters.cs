@@ -10,12 +10,14 @@ namespace RecommenderAttacksAnalytics.UI.PageChangeParameters
     {
         public User SelectedUser { get; set; }
         public IEnumerable<Item> SelectedItems { get; set; }
-
-        public FromSelectItemsPageChangeParameters(string pageValidationGuid, User selectedUser, IEnumerable<Item> selectedItems)
+        public IEnumerable<Item> SelectedFakeItems { get; set; }
+        
+        public FromSelectItemsPageChangeParameters(string pageValidationGuid, User selectedUser, IEnumerable<Item> selectedItems, IEnumerable<Item> selectedFakeItems)
             : base(pageValidationGuid)
         {
             SelectedUser = selectedUser;
             SelectedItems = selectedItems;
+            SelectedFakeItems = selectedFakeItems;
         }
     }
 }

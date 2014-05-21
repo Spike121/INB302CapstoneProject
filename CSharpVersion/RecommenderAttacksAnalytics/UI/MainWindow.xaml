@@ -1,7 +1,7 @@
-﻿<Window x:Class="RecommenderAttacksAnalytics.MainWindow"
+﻿<Window x:Class="RecommenderAttacksAnalytics.UI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" MinHeight="440" Height="525" MinWidth="715" Width="850" SizeToContent="Manual">
+        Title="MainWindow" MinHeight="440" Height="525" MinWidth="715" Width="850" SizeToContent="Manual" >
     
     <Grid>
         

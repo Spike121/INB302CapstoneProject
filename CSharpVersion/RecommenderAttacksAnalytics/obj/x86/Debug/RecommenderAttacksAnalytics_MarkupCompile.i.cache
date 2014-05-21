@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\Phil\Desktop\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\App.xaml
-8380419546
+101232493407
 
-45-1367031743
+52-981452
 14-684888390
-UI\DataSourceUploadContainerUC.xaml;UI\MainWindow.xaml;UI\ReadFromDatabaseUc.xaml;UI\ReadTextFileUC.xaml;UI\ResultsUC.xaml;UI\SelectItemsUC.xaml;UI\SelectUsersUC.xaml;UI\TestUC.xaml;
+UI\DataSourceUploadContainerUC.xaml;UI\FakeProfilesGeneratorUC.xaml;UI\MainWindow.xaml;UI\ReadFromDatabaseUc.xaml;UI\ReadTextFileUC.xaml;UI\ResultsUC.xaml;UI\ResultTemplateUC.xaml;UI\SelectItemsUC.xaml;UI\SelectUsersUC.xaml;UI\TestUC.xaml;
 
 False
 

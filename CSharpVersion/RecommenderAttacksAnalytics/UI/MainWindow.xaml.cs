@@ -1,22 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using RecommenderAttacksAnalytics.UI;
 using RecommenderAttacksAnalytics.EventArguments;
 using RecommenderAttacksAnalytics.UI.PageChangeParameters;
 using RecommenderAttacksAnalytics.Utility;
 
-namespace RecommenderAttacksAnalytics
+namespace RecommenderAttacksAnalytics.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -27,6 +16,8 @@ namespace RecommenderAttacksAnalytics
         private const AppPage FIRST_PAGE = AppPage.LOAD_DATA_PAGE;
         private const AppPage LAST_PAGE = AppPage.RESULTS_PAGE;
 
+
+        // TODO: Combine these 3 parameters into one an put it in AbstractAppPageUc
         private AbstractAppPageUC m_currentAppPage;
         private AppPage m_currentPageAsEnum = AppPage.NONE;
         protected int m_pageIndex;

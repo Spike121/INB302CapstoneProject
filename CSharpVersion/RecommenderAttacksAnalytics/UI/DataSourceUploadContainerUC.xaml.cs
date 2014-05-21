@@ -1,32 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace RecommenderAttacksAnalytics.UI
 {
     /// <summary>
     /// Interaction logic for DataSourceUploadContainerUC.xaml
     /// </summary>
-    public partial class DataSourceUploadContainerUC : AbstractAppPageUC
+    public partial class DataSourceUploadContainerUC
     {
-        private ReadTextFileUC m_textFileUploadUc = new ReadTextFileUC();
-        private ReadFromDatabaseUc m_databaseUploadUc = new ReadFromDatabaseUc();
-
-        public bool IsDataValid
-        {
-            get { return (bool)GetValue(IsDataValidProperty); }
-            set { SetValue(IsDataValidProperty, value); }
-        }
+        private readonly ReadTextFileUC m_textFileUploadUc = new ReadTextFileUC();
+        private readonly ReadFromDatabaseUc m_databaseUploadUc = new ReadFromDatabaseUc();
 
         public AbstractDataUploadUC SelectedDataSourceUploadUc
         {
@@ -34,8 +16,14 @@ namespace RecommenderAttacksAnalytics.UI
             set { SetValue(SelectedDataSourceUploadUcProperty, value); }
         }
 
-        public static readonly DependencyProperty IsDataValidProperty =
-            DependencyProperty.Register("IsDataValid", typeof(bool), typeof(DataSourceUploadContainerUC), new UIPropertyMetadata(false));
+        public bool AreFakeProfilesFromSameSource
+        {
+            get { return (bool)GetValue(AreFakeProfilesFromSameSourceProperty); }
+            set { SetValue(AreFakeProfilesFromSameSourceProperty, value); }
+        }
+
+        public static readonly DependencyProperty AreFakeProfilesFromSameSourceProperty =
+            DependencyProperty.Register("AreFakeProfilesFromSameSource", typeof(bool), typeof(DataSourceUploadContainerUC), new UIPropertyMetadata(false));
 
         public static readonly DependencyProperty SelectedDataSourceUploadUcProperty =
             DependencyProperty.Register("SelectedDataSourceUploadUc", typeof(AbstractDataUploadUC), typeof(DataSourceUploadContainerUC));
@@ -62,22 +50,7 @@ namespace RecommenderAttacksAnalytics.UI
 
         private void loadUc(AbstractDataUploadUC uc)
         { 
-            if(SelectedDataSourceUploadUc != null)
-            {
-                SelectedDataSourceUploadUc.DataValidityStateChangeEvent -= OnDataValidityChange;
-            }
-
             SelectedDataSourceUploadUc = uc;
-            SelectedDataSourceUploadUc.DataValidityStateChangeEvent +=new AbstractDataUploadUC.DataValidityStateChangeHandler(OnDataValidityChange);
-        }
-
-        private void OnDataValidityChange(bool isValid)
-        {
-            if (IsDataValid != isValid)
-            {
-                registerPageContentChange();
-                IsDataValid = isValid;
-            }
         }
 
         private void saveToDbButton_Click(object sender, RoutedEventArgs e)

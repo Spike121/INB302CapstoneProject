@@ -16,19 +16,33 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         private Dictionary<long, Dictionary<Item, int>> m_itemRatingsForUserCache = new Dictionary<long, Dictionary<Item, int>>();
         private Dictionary<long, Dictionary<User, int>> m_userRatingsForItemCache = new Dictionary<long, Dictionary<User, int>>();
 
+        private RatingsLookupTable m_fakeProfilesTable;
+
+        public RatingsLookupTable FakeProfilesTable
+        {
+            get{ return m_fakeProfilesTable; }
+        }
+
         private static RatingsLookupTable m_instance;
         public static RatingsLookupTable Instance
         {
-            get 
+            get
             {
-                if(m_instance == null)
-                    m_instance = new RatingsLookupTable();
-                
+                 if(m_instance == null)
+                 {
+                     m_instance = new RatingsLookupTable
+                     {
+                         m_fakeProfilesTable = new RatingsLookupTable()
+                     };
+                 }
+
                 return m_instance;
             }
         }
 
-        private RatingsLookupTable(){}
+        private RatingsLookupTable()
+        {   
+        }
 
         /// <summary>
         /// Adds an entry to the table based on a TableEntry instance
@@ -73,6 +87,17 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
             m_ratingsLookup.Add(new UserItemPair(user, item), rating);
         }
 
+        public void addFakeProfileEntry(TableEntry entry)
+        {
+            if (!hasEntry(new User(entry.UserId), new Item(entry.ItemId)))
+                m_fakeProfilesTable.addEntry(entry);
+        }
+
+        public void addFakeProfileEntry(long userId, long itemId, int rating)
+        {
+            m_fakeProfilesTable.addEntry(userId,itemId,rating);
+        }
+
         /// <summary>
         /// Clears all the users, items and ratings from the table
         /// </summary>
@@ -83,6 +108,7 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
             m_ratingsLookup = new Dictionary<UserItemPair, int>();
             m_itemRatingsForUserCache = new Dictionary<long, Dictionary<Item, int>>();
             m_userRatingsForItemCache = new Dictionary<long, Dictionary<User, int>>();
+            m_fakeProfilesTable = new RatingsLookupTable();
         }
 
         /// <summary>
@@ -105,6 +131,11 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         public bool hasEntry(User user, Item item)
         {
             return m_ratingsLookup.ContainsKey(createUserItemPair(user, item));
+        }
+
+        public bool hasEntry(UserItemPair pair)
+        {
+            return m_ratingsLookup.ContainsKey(pair);
         }
 
         public bool hasUser(long userId)

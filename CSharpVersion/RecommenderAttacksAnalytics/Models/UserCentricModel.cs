@@ -74,7 +74,7 @@ namespace RecommenderAttacksAnalytics.Models
             
             pearsonCoefficients = pearsonCoefficients.OrderByDescending(x => x.Value).Take(NEIGHBORBOOD_K_SIZE).ToDictionary(x => x.Key, x => x.Value);
             var targetUserAverageRating = SelectedUser.getRatingAverageForUser();
-            var predictions = new Dictionary<Item, double>();
+            
 
             foreach (var item in SelectedItems)
             {
@@ -92,7 +92,7 @@ namespace RecommenderAttacksAnalytics.Models
                         top += pearsonCoefficient * (item.getRatingFromUser(user) - user.getRatingAverageForUser());
                 }
                 var prediction = pearsonResults.IsAbsolutePearsonCoefficientSumZero ? targetUserAverageRating : targetUserAverageRating + (top / pearsonAbsSum);
-                predictions.Add(item, prediction);
+                m_predictions.Add(item, prediction);
             }
         }
     }

@@ -13,49 +13,102 @@
             <Setter Property="Padding" Value="8,2,8,2" />
         </Style>
         <converters:BoolToInverseConverter x:Key="BoolToInverseConverter" />
+        <converters:BooleanAndToBoolConverter x:Key="BooleanAndToBoolConverter" />
+        <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+        <converters:BooleanOrToBoolConverter x:Key="BooleanOrToBoolConverter"/>
+        <converters:EqualsToBoolConverter x:Key="NotEqualsToBoolConverter" IsInverted="True"/>
+        <converters:EqualsToBoolConverter x:Key="EqualsToBoolConverter" />
     </src:AbstractDataUploadUC.Resources>
-    
+
     <Grid Name="mainGrid">
         <DockPanel >
-        <Grid  DockPanel.Dock="Right">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"  />
-                <RowDefinition Height="Auto"  />
-                <RowDefinition Height="Auto"  />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto"  />
+            <Grid  DockPanel.Dock="Right">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"  />
+                    <RowDefinition Height="Auto"  />
+                    <RowDefinition Height="Auto"  />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*"  />
                 </Grid.RowDefinitions>
-        
-                <!--Row 0-->
-                <TextBlock Text="Choose a text file containing the rating data" />
-            
+
+
                 <!--Row 1-->
-                <Grid Grid.Row="1"   Margin="0,5,0,5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="50" />
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <TextBox Grid.Column="0" x:Name="m_fileNameTextBox" Text="{Binding Path=FilePath, Mode=TwoWay}" FlowDirection="RightToLeft" IsReadOnly="True" />
-                    <Button Grid.Column="1" x:Name="m_openFileSelectDialogBtn" Content="Select"  Margin="5,0,0,0" Click="openFileSelectDialogBtn_Click" 
-                            IsEnabled="{Binding Path=IsProcessing, Converter={StaticResource ResourceKey=BoolToInverseConverter}}" />
-                    <Button Grid.Column="3" x:Name="m_startLoadFromFileBtn" Content="Ok"  Padding="15,0,15,0" Click="startLoadFromFileBtn_Click" 
-                            IsEnabled="{Binding Path=IsProcessing, Converter={StaticResource ResourceKey=BoolToInverseConverter}}"/>
-                    
-                </Grid>
+                <GroupBox Header="Select files" Margin="0,5,0,0">
+                    <Grid Grid.Row="1" Margin="0,5,0,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition Width="75" />
+
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <!--Row 0-->
+                        <TextBlock Grid.Row="0" Text="Choose a text file containing the rating data" />
+
+                        <!--Row 1 -->
+                        <TextBox Grid.Row="1" Grid.Column="0" x:Name="m_fileNameTextBox"
+                             Text="{Binding Path=FilePath, Mode=TwoWay}" FlowDirection="RightToLeft" IsReadOnly="True" />
+                        <Button Grid.Row="1" Grid.Column="2" x:Name="m_openFileSelectDialogBtn" Content="Select"
+                                Click="openFileSelectDialogBtn_Click">
+                            <Button.IsEnabled>
+                                <MultiBinding Converter="{StaticResource BooleanOrToBoolConverter}">
+                                    <Binding Path="IsProcessing" Converter="{StaticResource BoolToInverseConverter}"/>
+                                    <Binding ElementName="m_fileNameTextBox" Path="Text"  Converter="{StaticResource NotEqualsToBoolConverter}" ConverterParameter=""/>
+                                </MultiBinding>
+                            </Button.IsEnabled>
+                        </Button>
+                        <!--<Button Grid.Column="3" x:Name="m_startLoadFromFileBtn" Content="Ok"  Padding="15,0,15,0" Click="startLoadFromFileBtn_Click" 
+                            IsEnabled="{Binding Path=IsProcessing, Converter={StaticResource ResourceKey=BoolToInverseConverter}}"/>-->
+
+                        <!--Row 2-->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Choose a text file containing the fake profiles"
+                               Margin="0,5,0,0" />
+
+                        <!--Row 3 (fake profiles upload)-->
+                        <TextBox Grid.Row="3" Grid.Column="0" x:Name="m_fakeProfilesTextBox"
+                             Text="{Binding Path=FakeProfilesFilePath, Mode=TwoWay}"
+                             FlowDirection="RightToLeft"
+                             IsReadOnly="True">
+                            <TextBox.IsEnabled>
+                                <MultiBinding Converter="{StaticResource BooleanAndToBoolConverter}">
+                                    <Binding Path="AreFakeProfilesFromSameSource"
+                                         RelativeSource="{RelativeSource  AncestorType={x:Type src:DataSourceUploadContainerUC}}" />
+                                    <Binding Path="IsProcessing" Converter="{StaticResource BoolToInverseConverter}" />
+                                </MultiBinding>
+                            </TextBox.IsEnabled>
+                        </TextBox>
+                        <Button Grid.Row="3" Grid.Column="2" x:Name="m_openFakeProfileFileDialogBtn" Content="Select"
+                            Click="openFakeProfileFileSelectDialogBtn_Click">
+                            <Button.IsEnabled>
+                                <MultiBinding Converter="{StaticResource BooleanAndToBoolConverter}">
+                                    <Binding Path="AreFakeProfilesFromSameSource" RelativeSource="{RelativeSource  AncestorType={x:Type src:DataSourceUploadContainerUC}}" />
+                                    <Binding Path="IsProcessing" Converter="{StaticResource BoolToInverseConverter}" />
+                                    <!--<Binding ElementName="m_fakeProfilesTextBox" Path="Text"  Converter="{StaticResource NotEqualsToBoolConverter}" ConverterParameter=""/>-->
+                                </MultiBinding>
+                            </Button.IsEnabled>
+                        </Button>
+                    </Grid>
+                </GroupBox>
 
                 <!--Row 2-->
-                <ProgressBar Grid.Row="2" x:Name="m_completionProgressBar" Height="20" Value="0" />
-            
+                <Button Grid.Row="2" HorizontalAlignment="Right" Content="Ok" Padding="20,2,20,2"  Margin="0,5,0,10" Click="startLoadFromFileBtn_Click"
+                    IsEnabled="{Binding Path=IsProcessing, Converter={StaticResource BoolToInverseConverter}}"/>
+
                 <!--Row 3-->
-                <ScrollViewer Grid.Row="3" x:Name="m_outputTextBoxScroller" Margin="0,5,0,0" 
-                              HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                <ProgressBar Grid.Row="3" x:Name="m_completionProgressBar" Height="20" Value="0" />
+
+                <!--Row 4-->
+                <ScrollViewer Grid.Row="4" x:Name="m_outputTextBoxScroller" Margin="0,5,0,0" 
+                            HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                     <TextBox x:Name="m_outputTextBox"  Background="WhiteSmoke" IsReadOnly="True" />
                 </ScrollViewer>
-
-  
             </Grid>
         </DockPanel>
     </Grid>

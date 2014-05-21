@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="RecommenderAttacksAnalytics.UI.ResultTemplateUC"
+             xmlns:src="clr-namespace:RecommenderAttacksAnalytics.UI"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignWidth="400"
+             FontFamily="Montserrat"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <UserControl.Resources>
+        <Style x:Key="SquareBackgroundBorder" TargetType="{x:Type Border}">
+            <Setter Property="MinHeight" Value="55px"/>
+            <Setter Property="MinWidth" Value="55px"/>
+            <Setter Property="Padding" Value="5,5,5,5"/>
+            <Setter Property="Background" Value="#676767"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Border Padding="5" BorderThickness="0,0,0,2" BorderBrush="DarkGray" Background="#FFF8F8F8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+            
+                <!--Column 0-->
+                <StackPanel Grid.Column="0">
+                    <TextBlock HorizontalAlignment="Center" Text="Item #" FontSize="14" Opacity="0.6"/>
+                    <Border Style="{StaticResource SquareBackgroundBorder}" >
+                        <TextBlock Text="{Binding Path=EntityId}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="26" />
+                    </Border>
+                </StackPanel>
+                
+                <!--Column 2-->
+                <StackPanel Grid.Column="2">
+                    <TextBlock HorizontalAlignment="Center" Text="Original prediction"  FontSize="12" Opacity="0.6" TextWrapping="WrapWithOverflow" />
+                    <Border Style="{StaticResource SquareBackgroundBorder}" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding Path=OriginalPrediction}"  HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="26" Foreground="White" />
+                    </Border>
+
+                </StackPanel>
+
+                <!--Column 2-->
+                <StackPanel Grid.Column="3" Margin="6,0,0,0">
+                    <TextBlock HorizontalAlignment="Center" Text="Final prediction"  FontSize="12" Opacity="0.6" TextWrapping="WrapWithOverflow" />
+                    <Border Style="{StaticResource SquareBackgroundBorder}" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding Path=FinalPrediction}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="26" />
+                    </Border>
+
+                </StackPanel>
+
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

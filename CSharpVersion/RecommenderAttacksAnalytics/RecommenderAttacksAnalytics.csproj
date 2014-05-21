@@ -56,6 +56,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WpfAnimatedGif">
+      <HintPath>..\packages\WpfAnimatedGif.1.4.4\lib\net\WpfAnimatedGif.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -63,13 +66,19 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\ArgToFormattedStringConverter.cs" />
+    <Compile Include="Converters\BooleanAndToBoolConverter.cs" />
+    <Compile Include="Converters\BooleanOrToBoolConverter.cs" />
     <Compile Include="Converters\BoolToInverseConverter.cs" />
+    <Compile Include="Converters\BoolToValueConverter.cs" />
+    <Compile Include="Converters\EnumToBoolConverter.cs" />
+    <Compile Include="Converters\EqualsToBoolConverter.cs" />
     <Compile Include="Converters\IsNullToBoolConverter.cs" />
     <Compile Include="Converters\SelectedItemsCountToBoolConverter.cs" />
     <Compile Include="Database\NHibernateUtil.cs" />
     <Compile Include="Entities\Common\AbstractItem.cs" />
     <Compile Include="Entities\Common\AbstractPersistenceEntity.cs" />
     <Compile Include="Entities\Common\AbstractUser.cs" />
+    <Compile Include="Entities\Common\AbstractRating.cs" />
     <Compile Include="Entities\Common\IPersistenceEntity.cs" />
     <Compile Include="Entities\Database\DBItem.cs" />
     <Compile Include="Entities\Database\DBUser.cs" />
@@ -82,10 +91,15 @@
     <Compile Include="Entities\LocalPersistence\RatingsLookupTable.cs" />
     <Compile Include="Entities\LocalPersistence\UserItemPair.cs" />
     <Compile Include="EventArguments\PageChangeEventArgs.cs" />
+    <Compile Include="Input\DatabaseReader.cs" />
     <Compile Include="UI\AbstractAppPageUC.cs" />
     <Compile Include="UI\AbstractDataUploadUC.cs" />
+    <Compile Include="UI\Containers\PredictionResultContainer.cs" />
     <Compile Include="UI\DataSourceUploadContainerUC.xaml.cs">
       <DependentUpon>DataSourceUploadContainerUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\FakeProfilesGeneratorUC.xaml.cs">
+      <DependentUpon>FakeProfilesGeneratorUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\PageChangeParameters\BasePageChangeParameters.cs" />
     <Compile Include="UI\PageChangeParameters\FromSelectItemsPageChangeParameters.cs" />
@@ -96,6 +110,9 @@
     </Compile>
     <Compile Include="UI\ResultsUC.xaml.cs">
       <DependentUpon>ResultsUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ResultTemplateUC.xaml.cs">
+      <DependentUpon>ResultTemplateUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\SelectItemsUC.xaml.cs">
       <DependentUpon>SelectItemsUC.xaml</DependentUpon>
@@ -115,6 +132,10 @@
     </Compile>
     <Compile Include="Utililty\Logger.cs" />
     <Page Include="UI\DataSourceUploadContainerUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\FakeProfilesGeneratorUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -140,6 +161,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\ResultsUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\ResultTemplateUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -186,16 +211,17 @@
     <Folder Include="Output\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Database\Mappings\DBUser.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Database\Mappings\DBItem.hbm.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Database\Mappings\DBUserItemRating.hbm.xml" />
+    <EmbeddedResource Include="Database\Mappings\DBUserItemRating.hbm.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Database\hibernate.cfg.xml" />
+    <Resource Include="Resources\Images\ajax-loader.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Fonts\Montserrat-Regular.ttf" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
