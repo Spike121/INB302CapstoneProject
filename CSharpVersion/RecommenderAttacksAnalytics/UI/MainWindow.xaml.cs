@@ -12,7 +12,7 @@ namespace RecommenderAttacksAnalytics.UI
     /// </summary>
     public partial class MainWindow : Window
     {
-        public enum AppPage { LOAD_DATA_PAGE, SELECT_USERS_PAGE, SELECT_ITEMS_PAGE, RESULTS_PAGE,TEST, NONE };
+        public enum AppPage { LOAD_DATA_PAGE, SELECT_USERS_PAGE, SELECT_ITEMS_PAGE, RESULTS_PAGE, GENERATE_PROMOTE_ITEMS_PAGE,TEST, NONE };
         private const AppPage FIRST_PAGE = AppPage.LOAD_DATA_PAGE;
         private const AppPage LAST_PAGE = AppPage.RESULTS_PAGE;
 
@@ -66,6 +66,17 @@ namespace RecommenderAttacksAnalytics.UI
             }
         }
 
+        private GeneratePromoteItemsUC m_promoteItemsGeneratePage;
+        private GeneratePromoteItemsUC PromoteItemsGeneratePage
+        {
+            get
+            {
+                if (m_promoteItemsGeneratePage == null)
+                    m_promoteItemsGeneratePage = new GeneratePromoteItemsUC();
+                return m_promoteItemsGeneratePage;
+            }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -107,6 +118,8 @@ namespace RecommenderAttacksAnalytics.UI
                     case AppPage.RESULTS_PAGE: page = ResultsPage;
                         break;
                     case AppPage.TEST: page = new TestUC();
+                        break;
+                    case AppPage.GENERATE_PROMOTE_ITEMS_PAGE: page = PromoteItemsGeneratePage;
                         break;
                     
                     default: throw new MissingMethodException("Missing definition in function getAppPageFromEnum");
