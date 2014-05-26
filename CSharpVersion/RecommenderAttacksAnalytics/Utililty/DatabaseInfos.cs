@@ -81,5 +81,10 @@ namespace RecommenderAttacksAnalytics.Utililty
             var xmlRoot = parseToXml();
             xmlRoot.Save(filePath);
         }
+
+        public string getConnectionString()
+        {
+            return String.Format("Server={0};Port={1};Database={2};Uid={3};Pwd={4}", HostName , Port, Schema, Username, Password);
+        }
     }
 }

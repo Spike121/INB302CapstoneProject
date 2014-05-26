@@ -36,8 +36,8 @@ namespace RecommenderAttacksAnalytics.UI
 
             if (RatingsLookupTable.Instance.hasUser(userId)) 
             {
-                currentModel = new UserCentricModel(userId, RatingsLookupTable.Instance.getItems());
-                currentModel.computePredictions();
+                //currentModel = new UserCentricModel(userId, RatingsLookupTable.Instance.getItems());
+                //currentModel.computePredictions();
             }
             
 

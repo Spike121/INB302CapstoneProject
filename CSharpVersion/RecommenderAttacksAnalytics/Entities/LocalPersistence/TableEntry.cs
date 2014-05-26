@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using RecommenderAttacksAnalytics.Entities.Database;
 
 namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
 {
@@ -29,9 +30,20 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
            
         }
 
+        public TableEntry(DBUserItemRating userItemRating)
+            :this(userItemRating.userId, userItemRating.itemId, (int)userItemRating.rating)
+        {
+            //TODO: Fix the int cast
+        }
+
         public override string ToString()
         {
             return String.Format("user {0}, rating item {1} with value {2}", m_userId, m_itemId, m_rating);
+        }
+
+        public UserItemPair getUserItemPair()
+        {
+            return new UserItemPair(new User(UserId), new Item(ItemId));
         }
     }
 }

@@ -7,13 +7,13 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
 {
     public class UserItemPair
     {
-        private User m_user;
-        private Item m_item;
+        public User User { get; private set; }
+        public Item Item  { get; private set; }
 
         public UserItemPair(User user, Item item)
         {
-            this.m_item = item;
-            this.m_user = user;
+            this.Item = item;
+            this.User = user;
         }
 
         public override bool Equals(object obj)
@@ -23,12 +23,12 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
 
             var userItemPair = obj as UserItemPair;
 
-            return userItemPair.m_item.Equals(this.m_item) && userItemPair.m_user.Equals(this.m_user);
+            return userItemPair.Item.Equals(this.Item) && userItemPair.User.Equals(this.User);
         }
 
         public override int GetHashCode()
         {
-            return m_item.GetHashCode() + m_user.GetHashCode();
+            return Item.GetHashCode() + User.GetHashCode();
         }
     }
 }

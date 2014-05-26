@@ -85,7 +85,7 @@ namespace RecommenderAttacksAnalytics.UI
             }
 
             m_currentAppPage = pageToLoad;
-            m_currentAppPage.PageChange += new RoutedEventHandler(OnCurrentUcChangePageEvent);
+            m_currentAppPage.PageChange += OnCurrentUcChangePageEvent;
 
             leftPanelContent.Content = m_currentAppPage;
             m_currentAppPage.activate(parameters);

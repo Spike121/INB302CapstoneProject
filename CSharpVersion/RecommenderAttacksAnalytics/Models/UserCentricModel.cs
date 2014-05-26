@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using RecommenderAttacksAnalytics.Entities.Common;
@@ -23,10 +24,22 @@ namespace RecommenderAttacksAnalytics.Models
             set { m_selectedEntity = value; }
         }
 
-        public UserCentricModel(long userId, IEnumerable<Item> selectedItems)
+        public IEnumerable<User> Neighborhood
         {
-            SelectedUser = RatingsLookupTable.Instance.getUser(userId);
+            get { return m_neighborhood.Cast<User>(); }
+            set { m_neighborhood = value; }
+        }
+
+        public UserCentricModel(User user, IEnumerable<User> neighborhood, IEnumerable<Item> selectedItems)
+        {
+            SelectedUser = user;
             SelectedItems = selectedItems;
+            Neighborhood = neighborhood;
+        }
+
+        public UserCentricModel(User user, IEnumerable<User> neighborhood, IEnumerable<User> fakeUsersNeighborhood, IEnumerable<Item> selectedItems, IEnumerable<Item> promotedItems)
+            : this(user, neighborhood.Concat(fakeUsersNeighborhood), selectedItems.Concat(promotedItems) )
+        {
         }
 
         protected override PearsonComputationResults getPearsonCoefficients()
@@ -34,7 +47,7 @@ namespace RecommenderAttacksAnalytics.Models
             var pearsonCoefficients = new Dictionary<IPersistenceEntity, double>();
             double absPearsonCoeffSum = 0.0f;
 
-            foreach(var neighbor in RatingsLookupTable.Instance.getUsers() )
+            foreach(var neighbor in Neighborhood )
             {
                 if (!neighbor.Equals(SelectedUser))
                 {

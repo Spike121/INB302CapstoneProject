@@ -84,6 +84,7 @@
     <Compile Include="Entities\Database\DBUser.cs" />
     <Compile Include="Entities\Database\DBUserItemRating.cs" />
     <Compile Include="Entities\Database\IDatabasePersistenceEntity.cs" />
+    <Compile Include="Entities\LocalPersistence\FakeProfilesRatingsLookupTable.cs" />
     <Compile Include="Entities\LocalPersistence\ILocalPersistenceEntity.cs" />
     <Compile Include="Entities\LocalPersistence\Item.cs" />
     <Compile Include="Entities\LocalPersistence\TableEntry.cs" />
@@ -91,7 +92,8 @@
     <Compile Include="Entities\LocalPersistence\RatingsLookupTable.cs" />
     <Compile Include="Entities\LocalPersistence\UserItemPair.cs" />
     <Compile Include="EventArguments\PageChangeEventArgs.cs" />
-    <Compile Include="Input\DatabaseReader.cs" />
+    <Compile Include="InputOutput\AbstractDataIO.cs" />
+    <Compile Include="InputOutput\DatabaseDataIO.cs" />
     <Compile Include="UI\AbstractAppPageUC.cs" />
     <Compile Include="UI\AbstractDataUploadUC.cs" />
     <Compile Include="UI\Containers\PredictionResultContainer.cs" />
@@ -147,7 +149,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Input\TextFileReader.cs" />
+    <Compile Include="InputOutput\TextFileDataIO.cs" />
     <Compile Include="UI\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

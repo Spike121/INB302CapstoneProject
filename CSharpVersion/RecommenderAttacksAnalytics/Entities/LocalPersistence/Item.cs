@@ -17,6 +17,10 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
             this.m_itemId = itemId;
         }
 
+        public bool IsPromoted { get; private set; }    
+
+
+
         public void addRater(User user)
         {
             if (!m_raters.Contains(user))

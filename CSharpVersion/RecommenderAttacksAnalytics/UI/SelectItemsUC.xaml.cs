@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using RecommenderAttacksAnalytics.Entities.LocalPersistence;
 using System.Collections.ObjectModel;
 using RecommenderAttacksAnalytics.UI.PageChangeParameters;
@@ -17,16 +18,23 @@ namespace RecommenderAttacksAnalytics.UI
             set { SetValue(ItemsProperty, value); }
         }
 
-
-
-        public ObservableCollection<Item> FakeItems
+        public ObservableCollection<Item> PromotedItems
         {
-            get { return (ObservableCollection<Item>)GetValue(FakeItemsProperty); }
-            set { SetValue(FakeItemsProperty, value); }
+            get { return (ObservableCollection<Item>)GetValue(PromotedItemsProperty); }
+            set { SetValue(PromotedItemsProperty, value); }
         }
 
-        public static readonly DependencyProperty FakeItemsProperty =
-            DependencyProperty.Register("FakeItems", typeof(ObservableCollection<Item>), typeof(SelectItemsUC), new UIPropertyMetadata(new ObservableCollection<Item>()));
+        public CompositeCollection CombinedItems
+        {
+            get { return (CompositeCollection)GetValue(CombinedItemsProperty); }
+            set { SetValue(CombinedItemsProperty, value); }
+        }
+
+        public static readonly DependencyProperty CombinedItemsProperty =
+            DependencyProperty.Register("CombinedItems", typeof(CompositeCollection), typeof(SelectItemsUC));
+
+        public static readonly DependencyProperty PromotedItemsProperty =
+            DependencyProperty.Register("PromotedItems", typeof(ObservableCollection<Item>), typeof(SelectItemsUC), new UIPropertyMetadata(new ObservableCollection<Item>()));
 
         public static readonly DependencyProperty ItemsProperty =
             DependencyProperty.Register("Items", typeof(ObservableCollection<Item>), typeof(SelectItemsUC), new UIPropertyMetadata(new ObservableCollection<Item>()));
@@ -52,14 +60,21 @@ namespace RecommenderAttacksAnalytics.UI
             }
 
             Items = new ObservableCollection<Item>(RatingsLookupTable.Instance.getItems());
-            FakeItems = new ObservableCollection<Item>(RatingsLookupTable.Instance.FakeProfilesTable.getItems());
+            var fakeProfileRatedItems = new ObservableCollection<Item>(RatingsLookupTable.Instance.FakeProfilesTable.getItems());
+
+            CombinedItems = new CompositeCollection
+            {
+                new CollectionContainer {Collection = Items},
+                new CollectionContainer {Collection = PromotedItems} 
+            };
         }
 
         protected override void nextPageBtn_Click(object sender, RoutedEventArgs e)
         {
-            var selectedItems = m_itemsSelector.SelectedItems.Cast<Item>();
-            //var selectedFakeItems = m_itemsSelector.SelectedItems.Cast<Item>();
-            goToNextPage(new FromSelectItemsPageChangeParameters(m_pageValidationGuid, m_selectedUser, selectedItems, FakeItems));
+            var selectedRegularItems = m_itemsSelector.SelectedItems.Cast<Item>().Where(x => !x.IsPromoted);
+            var selectedPromotedItems = m_itemsSelector.SelectedItems.Cast<Item>().Where(x => x.IsPromoted);
+
+            goToNextPage(new FromSelectItemsPageChangeParameters(m_pageValidationGuid, m_selectedUser, selectedRegularItems, selectedPromotedItems));
         }
     }
 }

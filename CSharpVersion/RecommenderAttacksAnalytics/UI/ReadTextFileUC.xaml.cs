@@ -3,7 +3,8 @@ using System.Windows;
 using System.Windows.Data;
 using Microsoft.Win32;
 using RecommenderAttacksAnalytics.Converters;
-using RecommenderAttacksAnalytics.Input;
+using RecommenderAttacksAnalytics.Entities.LocalPersistence;
+using RecommenderAttacksAnalytics.InputOutput;
 
 
 namespace RecommenderAttacksAnalytics.UI
@@ -14,11 +15,8 @@ namespace RecommenderAttacksAnalytics.UI
     public partial class ReadTextFileUC : AbstractDataUploadUC
     {
 
-        private readonly TextFileReader m_textFileReader = new TextFileReader(false);
-        private readonly TextFileReader m_fakeProfilesTextFileReader = new TextFileReader(true);
-        
-        public TextFileReader TextFileReader { get { return m_textFileReader; }}
-        public TextFileReader FakeProfilesTextFileReader { get { return m_fakeProfilesTextFileReader; }}
+        public TextFileDataIO TextFileReader { get { return m_normalDataIoModule as TextFileDataIO; }}
+        public TextFileDataIO FakeProfilesTextFileReader { get { return m_fakeProfilesDataIoModule as TextFileDataIO; }}
 
         private readonly OpenFileDialog m_fileDialog = new OpenFileDialog();
 
@@ -41,38 +39,16 @@ namespace RecommenderAttacksAnalytics.UI
             DependencyProperty.Register("FilePath", typeof(string), typeof(ReadTextFileUC));
 
         public ReadTextFileUC()
+            : base(new TextFileDataIO(false),new TextFileDataIO(true)) 
         {
             InitializeComponent();
             initializeBindings();
 
-            m_textFileReader.ReaderStateChangeEvent += OnReaderStateChange;
-            m_textFileReader.ReportProgressEvent += onReaderReportProgress;
+            TextFileReader.ReaderStateChangeEvent += OnReaderStateChange;
+            TextFileReader.ReportProgressEvent += onReaderReportProgress;
 
-            m_fakeProfilesTextFileReader.ReaderStateChangeEvent += OnReaderStateChange;
-            m_fakeProfilesTextFileReader.ReportProgressEvent += onReaderReportProgress;
-            
-
-            var isProcessingMultiBinding = new MultiBinding()
-            {
-                Converter = new BooleanOrToBoolConverter(),
-                Bindings =
-                {
-                    new Binding {Source = TextFileReader, Path = new PropertyPath(TextFileReader.IsReaderProcessingProperty.Name)},
-                    new Binding {Source = FakeProfilesTextFileReader, Path = new PropertyPath(TextFileReader.IsReaderProcessingProperty.Name)}
-                }
-            };
-
-            var isDataValidMutliBinding = new MultiBinding()
-            {
-                Converter = new BooleanAndToBoolConverter()
-            };
-
-            isDataValidMutliBinding.Bindings.Add(new Binding {Source = TextFileReader, Path = new PropertyPath(TextFileReader.IsReaderDataValidProperty.Name)});
-            if(HasFakeProfiles)
-                isDataValidMutliBinding.Bindings.Add(new Binding { Source = FakeProfilesTextFileReader, Path = new PropertyPath(TextFileReader.IsReaderDataValidProperty.Name) });
-
-            SetBinding(IsProcessingProperty, isProcessingMultiBinding);
-            SetBinding(IsDataValidProperty, isDataValidMutliBinding);
+            FakeProfilesTextFileReader.ReaderStateChangeEvent += OnReaderStateChange;
+            FakeProfilesTextFileReader.ReportProgressEvent += onReaderReportProgress;
 
             m_fileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             m_fileDialog.DefaultExt = ".txt";
@@ -82,6 +58,45 @@ namespace RecommenderAttacksAnalytics.UI
 
             FilePath = Properties.Settings.Default.lastUsedTextFilePath;
             FakeProfilesFilePath = Properties.Settings.Default.lastUsedFakeProfilesTextFilePath;
+        }
+
+        //protected override void initializeIsProcessingBindings()
+        //{
+        //    var isProcessingMultiBinding = new MultiBinding()
+        //    {
+        //        Converter = new BooleanOrToBoolConverter(),
+        //        Bindings =
+        //        {
+        //            new Binding {Source = TextFileReader, Path = new PropertyPath(TextFileDataIO.IsProcessingProperty.Name)},
+        //            new Binding {Source = FakeProfilesTextFileReader, Path = new PropertyPath(TextFileDataIO.IsProcessingProperty.Name)}
+        //        }
+        //    };
+
+        //    SetBinding(IsProcessingProperty, isProcessingMultiBinding);
+        //}
+
+        protected override void initializeIsDataValidBindings()
+        {
+            var doBothReadersHaveValidInputInput = new MultiBinding()
+            {
+                Converter = new BooleanAndToBoolConverter(),
+                Bindings = { new Binding { Source = TextFileReader, Path = new PropertyPath(AbstractDataIO.IsDataValidProperty.Name) } }
+            };
+
+            if (HasFakeProfiles)
+                doBothReadersHaveValidInputInput.Bindings.Add(new Binding { Source = FakeProfilesTextFileReader, Path = new PropertyPath(AbstractDataIO.IsDataValidProperty.Name) });
+
+
+            //var isDataValidMutliBinding = new MultiBinding()
+            //{
+            //    Converter = new BooleanOrToBoolConverter(),
+            //    Bindings =
+            //    {   doBothReadersHaveValidInputInput,
+            //        new Binding {  Source = RatingsLookupTable.Instance, Path = new PropertyPath(RatingsLookupTable.HasDataProperty.Name)},
+            //    }
+            //};
+
+            SetBinding(IsDataValidProperty, doBothReadersHaveValidInputInput);
         }
 
         private void openFileSelectDialogBtn_Click(object sender, RoutedEventArgs e)
@@ -100,14 +115,14 @@ namespace RecommenderAttacksAnalytics.UI
 
         private void startLoadFromFileBtn_Click(object sender, RoutedEventArgs e)
         {
-            //IsDataValid = false;
+            RatingsLookupTable.Instance.clearAllData();
 
-            if (m_textFileReader.readFromFile(FilePath))
+            if (TextFileReader.readFromFile(FilePath))
             {
                 Properties.Settings.Default.lastUsedTextFilePath = FilePath;
             }
 
-            if (HasFakeProfiles && m_fakeProfilesTextFileReader.readFromFile(FakeProfilesFilePath))
+            if (HasFakeProfiles && FakeProfilesTextFileReader.readFromFile(FakeProfilesFilePath))
             {
                 Properties.Settings.Default.lastUsedFakeProfilesTextFilePath = FakeProfilesFilePath;
             }
@@ -115,14 +130,14 @@ namespace RecommenderAttacksAnalytics.UI
             Properties.Settings.Default.Save();
         }
 
-        private void OnReaderStateChange(TextFileReader.TextFileReaderState state)
+        private void OnReaderStateChange(TextFileDataIO.TextFileReaderState state)
         {
             outputToTextbox(state.Message);
         }
 
         private void onReaderReportProgress(int percentage)
         {
-            m_completionProgressBar.Value = (m_textFileReader.getCompletionPercentage() + m_fakeProfilesTextFileReader.getCompletionPercentage() )/2;
+            m_completionProgressBar.Value = (m_normalDataIoModule.getCompletionPercentage() + m_fakeProfilesDataIoModule.getCompletionPercentage() )/2;
             //m_completionProgressBar.Value = percentage;
         }
 
