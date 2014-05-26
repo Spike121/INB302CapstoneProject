@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using RecommenderAttacksAnalytics.InputOutput;
+using RecommenderAttacksAnalytics.UI.PageChangeParameters;
 
 namespace RecommenderAttacksAnalytics.UI
 {
@@ -67,6 +68,13 @@ namespace RecommenderAttacksAnalytics.UI
         private void databaseOptionRadioButton_Click(object sender, RoutedEventArgs e)
         {
             loadDatabaseUploadUc();
+        }
+
+        protected override void nextPageBtn_Click(object sender, RoutedEventArgs e) {
+            if(!AreFakeProfilesFromSameSource) 
+                changePageTo(MainWindow.AppPage.GENERATE_PROMOTE_ITEMS_PAGE, new BasePageChangeParameters(m_pageValidationGuid));
+            else 
+                base.nextPageBtn_Click(sender, e);
         }
     }
 }

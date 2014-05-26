@@ -76,8 +76,8 @@
                         Click="saveToDbButton_Click"/>
 
             <Button Grid.Column="2" x:Name="nextPageBtn" Content="Next"  
-                        HorizontalAlignment="Right" Padding="8,2,8,2" Margin="0,5,0,0"
-                        Click="nextPageBtn_Click">
+                        HorizontalAlignment="Right" Padding="8,2,8,2" Margin="0"
+                        Click="nextPageBtn_Click" Height="22" VerticalAlignment="Bottom">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource BooleanAndToBoolConverter}" >
                         <Binding Path="SelectedDataSourceUploadUc.IsDataValid" />
