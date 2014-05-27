@@ -109,10 +109,12 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
 
         }
 
-        public void addFakeProfileEntry(TableEntry entry)
+        public UserItemPair addFakeProfileEntry(TableEntry entry)
         {
             if (!hasEntry(entry))
-                m_fakeProfilesTable.addEntry(entry);
+                return m_fakeProfilesTable.addEntry(entry);
+
+            return null;
         }
 
         /// <summary>
@@ -170,6 +172,7 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         {
             return m_itemSet.ContainsKey(itemId);
         }
+
 
         /// <summary>
         /// Returns the rating of an item by a particular user

@@ -100,8 +100,8 @@
     <Compile Include="UI\DataSourceUploadContainerUC.xaml.cs">
       <DependentUpon>DataSourceUploadContainerUC.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\GeneratePromoteItemsUC.xaml.cs">
-      <DependentUpon>GeneratePromoteItemsUC.xaml</DependentUpon>
+    <Compile Include="UI\GeneratePromotedItemsUC.xaml.cs">
+      <DependentUpon>GeneratePromotedItemsUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\PageChangeParameters\BasePageChangeParameters.cs" />
     <Compile Include="UI\PageChangeParameters\FromSelectItemsPageChangeParameters.cs" />
@@ -125,7 +125,7 @@
     <Compile Include="UI\TestUC.xaml.cs">
       <DependentUpon>TestUC.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utililty\GenerateFakeProfiles.cs" />
+    <Compile Include="Utililty\FakeProfilesGenerator.cs" />
     <Compile Include="Utililty\DatabaseInfos.cs" />
     <Compile Include="Utililty\Util.cs" />
     <Compile Include="Models\AbstractModel.cs" />
@@ -138,7 +138,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\GeneratePromoteItemsUC.xaml">
+    <Page Include="UI\GeneratePromotedItemsUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

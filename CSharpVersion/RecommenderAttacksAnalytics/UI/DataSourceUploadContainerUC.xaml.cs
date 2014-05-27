@@ -71,10 +71,11 @@ namespace RecommenderAttacksAnalytics.UI
         }
 
         protected override void nextPageBtn_Click(object sender, RoutedEventArgs e) {
-            if(!AreFakeProfilesFromSameSource) 
-                changePageTo(MainWindow.AppPage.GENERATE_PROMOTE_ITEMS_PAGE, new BasePageChangeParameters(m_pageValidationGuid));
-            else 
+            
+            if(AreFakeProfilesFromSameSource) 
                 base.nextPageBtn_Click(sender, e);
+            else
+                changePageTo(MainWindow.AppPage.GENERATE_PROMOTED_ITEMS_PAGE, new BasePageChangeParameters(m_pageValidationGuid));
         }
     }
 }
