@@ -28,6 +28,7 @@ namespace RecommenderAttacksAnalytics.UI {
         private void GenerateButton_Click(object sender, RoutedEventArgs e) {
             //Call the method
             //Add ItemList (List<AbstractItem>)
+            //This needs to be a list of items that a user selects from the page which Phil is doing I believe? 
             GenerateFakeProfiles.GenFakeProfiles(Convert.ToInt32(numFakeProfiles), Convert.ToInt32(numRandomItemsToPromote));
         }
     }
