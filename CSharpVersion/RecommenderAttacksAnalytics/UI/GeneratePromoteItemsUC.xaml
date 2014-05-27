@@ -12,6 +12,7 @@
         <TextBox x:Name="numRandomItemsToPromote" HorizontalAlignment="Left" Height="23" Margin="208,62,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="30"/>
         <Label Content="Number of other items to promote:" HorizontalAlignment="Left" Margin="5,59,0,0" VerticalAlignment="Top"/>
         <Button x:Name="GenerateButton" Content="Generate" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="208,270,0,0" Click="GenerateButton_Click"/>
+        <Label Content="Items to promote:" HorizontalAlignment="Left" Margin="5,90,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </src:AbstractAppPageUC>
