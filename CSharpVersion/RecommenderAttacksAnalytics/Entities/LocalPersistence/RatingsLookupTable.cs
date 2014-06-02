@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 
 namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
 {
-    public class RatingsLookupTable
+    public class RatingsLookupTable : DependencyObject
     {
 
         private  Dictionary<long, Item> m_itemSet = new Dictionary<long, Item>();
@@ -16,23 +17,35 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         private Dictionary<long, Dictionary<Item, int>> m_itemRatingsForUserCache = new Dictionary<long, Dictionary<Item, int>>();
         private Dictionary<long, Dictionary<User, int>> m_userRatingsForItemCache = new Dictionary<long, Dictionary<User, int>>();
 
-        private RatingsLookupTable m_fakeProfilesTable;
+        private FakeProfilesRatingsLookupTable m_fakeProfilesTable;
 
-        public RatingsLookupTable FakeProfilesTable
+        public FakeProfilesRatingsLookupTable FakeProfilesTable
         {
             get{ return m_fakeProfilesTable; }
         }
+
+        public bool HasData
+        {
+            get { return (bool)GetValue(HasDataProperty); }
+            set { SetValue(HasDataProperty, value); }
+        }
+
+        public bool IsTableForFakeProfiles { get; private set; }
+
+        public static readonly DependencyProperty HasDataProperty =
+            DependencyProperty.Register("HasData", typeof(bool), typeof(RatingsLookupTable), new UIPropertyMetadata(false));
 
         private static RatingsLookupTable m_instance;
         public static RatingsLookupTable Instance
         {
             get
             {
+                
                  if(m_instance == null)
                  {
-                     m_instance = new RatingsLookupTable
+                     m_instance = new RatingsLookupTable()
                      {
-                         m_fakeProfilesTable = new RatingsLookupTable()
+                         m_fakeProfilesTable = new FakeProfilesRatingsLookupTable()
                      };
                  }
 
@@ -40,17 +53,18 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
             }
         }
 
-        private RatingsLookupTable()
-        {   
+        protected RatingsLookupTable()
+        {
+            //IsTableForFakeProfiles = isTableForFakeProfiles;
         }
 
         /// <summary>
         /// Adds an entry to the table based on a TableEntry instance
         /// </summary>
         /// <param name="entry">The TableEntry instance containign the lements to add</param>
-        public void addEntry(TableEntry entry)
+        public UserItemPair addEntry(TableEntry entry)
         {
-            addEntry(entry.UserId, entry.ItemId, entry.Rating);
+            return addEntry(entry.UserId, entry.ItemId, entry.Rating);
         }
 
         /// <summary>
@@ -59,11 +73,11 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         /// <param name="userId"></param>
         /// <param name="itemId"></param>
         /// <param name="rating"></param>
-        public void addEntry(long userId, long itemId, int rating)
+        public virtual UserItemPair addEntry(long userId, long itemId, int rating)
         {
             User user;
             Item item;
-
+            
             if (!m_userSet.ContainsKey(userId))
             {
                 user = new User(userId);
@@ -84,18 +98,23 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
             item.addRater(user);
             user.addRatedItem(item);
 
-            m_ratingsLookup.Add(new UserItemPair(user, item), rating);
+            var key = new UserItemPair(user, item);
+            m_ratingsLookup.Add(key, rating);
+
+            //if (HasData)
+            //{
+            //}
+
+            return key;
+
         }
 
-        public void addFakeProfileEntry(TableEntry entry)
+        public UserItemPair addFakeProfileEntry(TableEntry entry)
         {
-            if (!hasEntry(new User(entry.UserId), new Item(entry.ItemId)))
-                m_fakeProfilesTable.addEntry(entry);
-        }
+            if (!hasEntry(entry))
+                return m_fakeProfilesTable.addEntry(entry);
 
-        public void addFakeProfileEntry(long userId, long itemId, int rating)
-        {
-            m_fakeProfilesTable.addEntry(userId,itemId,rating);
+            return null;
         }
 
         /// <summary>
@@ -108,7 +127,8 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
             m_ratingsLookup = new Dictionary<UserItemPair, int>();
             m_itemRatingsForUserCache = new Dictionary<long, Dictionary<Item, int>>();
             m_userRatingsForItemCache = new Dictionary<long, Dictionary<User, int>>();
-            m_fakeProfilesTable = new RatingsLookupTable();
+            m_fakeProfilesTable = new FakeProfilesRatingsLookupTable();
+            HasData = false;
         }
 
         /// <summary>
@@ -130,12 +150,17 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         /// <returns></returns>
         public bool hasEntry(User user, Item item)
         {
-            return m_ratingsLookup.ContainsKey(createUserItemPair(user, item));
+            return hasEntry(createUserItemPair(user, item));
         }
 
         public bool hasEntry(UserItemPair pair)
         {
             return m_ratingsLookup.ContainsKey(pair);
+        }
+
+        public bool hasEntry(TableEntry entry)
+        {
+            return m_ratingsLookup.ContainsKey(entry.getUserItemPair());
         }
 
         public bool hasUser(long userId)
@@ -147,6 +172,7 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         {
             return m_itemSet.ContainsKey(itemId);
         }
+
 
         /// <summary>
         /// Returns the rating of an item by a particular user

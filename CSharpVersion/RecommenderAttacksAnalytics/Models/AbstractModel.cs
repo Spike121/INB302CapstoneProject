@@ -12,6 +12,7 @@ namespace RecommenderAttacksAnalytics.Models
         protected const int NEIGHBORBOOD_K_SIZE = 20;
         protected AbstractPersistenceEntity m_selectedEntity;
         protected IEnumerable<AbstractPersistenceEntity> m_selectedCounterpartEntities;
+        protected IEnumerable<AbstractPersistenceEntity> m_neighborhood;     
         protected Dictionary<AbstractPersistenceEntity, double> m_predictions = new Dictionary<AbstractPersistenceEntity, double>();
         public Dictionary<AbstractPersistenceEntity, double> Predictions
         {

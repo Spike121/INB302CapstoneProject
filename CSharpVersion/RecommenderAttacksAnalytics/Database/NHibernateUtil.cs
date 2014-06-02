@@ -7,39 +7,53 @@ using NHibernate;
 using NHibernate.Cfg;
 using RecommenderAttacksAnalytics.Entities.Common;
 using RecommenderAttacksAnalytics.Entities.Database;
+using RecommenderAttacksAnalytics.Utililty;
 
 namespace RecommenderAttacksAnalytics.Database
 {
     public class NHibernateUtil
     {
-        private static Configuration Config = new NHibernate.Cfg.Configuration();
+        private static readonly Configuration Config = new Configuration();
         private static bool ConnectionSetup = false;
-        public static void NHibernateConnect(string hostname, string username, string password, int port, string schema) {
-            Config.Properties.Add(NHibernate.Cfg.Environment.ConnectionProvider,typeof(NHibernate.Connection.DriverConnectionProvider).AssemblyQualifiedName);
-            Config.Properties.Add(NHibernate.Cfg.Environment.Dialect,typeof(NHibernate.Dialect.MySQLDialect).AssemblyQualifiedName);
-            Config.Properties.Add(NHibernate.Cfg.Environment.ConnectionDriver,typeof(NHibernate.Driver.MySqlDataDriver).AssemblyQualifiedName);
-            string connection = "Server="+hostname+";Port="+port+";Database="+schema+";Uid="+username+";Pwd="+password;
-            Config.Properties.Add(NHibernate.Cfg.Environment.ConnectionString, connection);
+        private static DatabaseInfos m_databaseInfos;
+
+        public static void NHibernateConnect(DatabaseInfos databaseInfos)
+        {
+            m_databaseInfos = databaseInfos;
+            Config.Properties.Add(NHibernate.Cfg.Environment.ConnectionProvider, typeof(NHibernate.Connection.DriverConnectionProvider).AssemblyQualifiedName);
+            Config.Properties.Add(NHibernate.Cfg.Environment.Dialect, typeof(NHibernate.Dialect.MySQLDialect).AssemblyQualifiedName);
+            Config.Properties.Add(NHibernate.Cfg.Environment.ConnectionDriver, typeof(NHibernate.Driver.MySqlDataDriver).AssemblyQualifiedName);
+            Config.Properties.Add(NHibernate.Cfg.Environment.ConnectionString, m_databaseInfos.getConnectionString());
+            
             Config.AddAssembly("RecommenderAttacksAnalytics");
             ConnectionSetup = true;
         }
 
+        public static void SaveTextfileToDatabase() {
+
+        }
+
         public static IList<DBUserItemRating> FetchRatingsList()
         {
-
             // ensure NHibernateConnect has been run
             if(ConnectionSetup) {
 
-                ISessionFactory sessionFactory = Config.BuildSessionFactory();
-                ISession session = sessionFactory.OpenSession();
-                ITransaction tx = session.BeginTransaction();
-            
-                IList<DBUserItemRating> ratingList = session.CreateSQLQuery("SELECT * FROM ratings").AddEntity(typeof(DBUserItemRating)).List<DBUserItemRating>();
-
+                var sessionFactory = Config.BuildSessionFactory();
+                var session = sessionFactory.OpenSession();
+                var tx = session.BeginTransaction();
+                
+                var query = String.Format("SELECT * FROM {0}", "ratings");   
+                var ratingList = session.CreateSQLQuery(query).AddEntity(typeof(DBUserItemRating)).List<DBUserItemRating>();
+               
                 return ratingList;
-            } else {
-                throw new Exception("Connection has not been set.");
             }
+
+            throw new Exception("Connection has not been set.");
+        }
+
+        public static void Disconnect()
+        {
+
         }
     }
 }

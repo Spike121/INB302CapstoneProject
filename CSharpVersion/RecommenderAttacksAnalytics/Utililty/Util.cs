@@ -42,6 +42,15 @@ namespace RecommenderAttacksAnalytics.Utility
             return str;
         }
 
+        public static int getRandomIntegerInRange(int lowerBound, int upperBound)
+        {
+            if(upperBound < lowerBound)
+                throw new Exception("Upper bong value cannot be smaller than lower bound value");
 
+            if(lowerBound < 0 || upperBound < 0)
+                throw new Exception("Lower bound and upper bound values must be positive");
+
+            return new Random().Next(upperBound - lowerBound) + lowerBound;
+        }
     }
 }

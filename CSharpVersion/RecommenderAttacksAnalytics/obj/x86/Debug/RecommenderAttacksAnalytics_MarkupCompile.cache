@@ -10,11 +10,11 @@ none
 false
 DEBUG;TRACE
 C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\App.xaml
-10-1126880023
+102068152433
 
-55-978102116
+58-1222322002
 15-580965065
-UI\DataSourceUploadContainerUC.xaml;UI\GeneratePromoteItemsUC.xaml;UI\MainWindow.xaml;UI\ReadFromDatabaseUc.xaml;UI\ReadTextFileUC.xaml;UI\ResultsUC.xaml;UI\ResultTemplateUC.xaml;UI\SelectItemsUC.xaml;UI\SelectUsersUC.xaml;UI\TestUC.xaml;
+UI\DataSourceUploadContainerUC.xaml;UI\GeneratePromotedItemsUC.xaml;UI\MainWindow.xaml;UI\ReadFromDatabaseUc.xaml;UI\ReadTextFileUC.xaml;UI\ResultsUC.xaml;UI\ResultTemplateUC.xaml;UI\SelectItemsUC.xaml;UI\SelectUsersUC.xaml;UI\TestUC.xaml;
 
-True
+False
 

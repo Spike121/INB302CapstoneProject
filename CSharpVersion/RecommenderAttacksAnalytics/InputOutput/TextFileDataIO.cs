@@ -1,14 +1,13 @@
 ﻿using System;
+using System.ComponentModel;
 using System.IO;
-using NHibernate.Linq.Functions;
+using System.Windows;
 using RecommenderAttacksAnalytics.Entities.LocalPersistence;
 using RecommenderAttacksAnalytics.Utility;
-using System.ComponentModel;
-using System.Windows;
 
-namespace RecommenderAttacksAnalytics.Input
+namespace RecommenderAttacksAnalytics.InputOutput
 {
-    public class TextFileReader : DependencyObject
+    public class TextFileDataIO : AbstractDataIO
     {
         private const int NUM_LINE_ARGS = 4;
 
@@ -18,55 +17,27 @@ namespace RecommenderAttacksAnalytics.Input
         public event LogStateHandler ReaderStateChangeEvent;
         public event ReportProgressHandler ReportProgressEvent;
         
-        private readonly bool m_isReaderForFakeProfiles;
-        private long m_entriesProcessed = 0;
-        private BackgroundWorker m_fileReaderWorker;
-        private long m_numberOfUserItemPairs;
         private TextFileReaderState m_readerState = new TextFileReaderState();
-
-        public bool IsReaderProcessing
-        {
-            get { return (bool)GetValue(IsReaderProcessingProperty); }
-            set { SetValue(IsReaderProcessingProperty, value); }
-        }
-
-        public bool IsReaderDataValid
-        {
-            get { return (bool)GetValue(IsReaderDataValidProperty); }
-            set { SetValue(IsReaderDataValidProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsReaderDataValidProperty =
-            DependencyProperty.Register("IsReaderDataValid", typeof(bool), typeof(TextFileReader), new UIPropertyMetadata(false));
-
-        public static readonly DependencyProperty IsReaderProcessingProperty =
-            DependencyProperty.Register("IsReaderProcessing", typeof(bool), typeof(TextFileReader), new UIPropertyMetadata(false));
-
 
         private void ChangeState(TextFileReaderState.ReaderState state, string message)
         {
             m_readerState = new TextFileReaderState(state, message);
-            IsReaderProcessing = m_readerState.IsProcessing;
-            IsReaderDataValid = m_readerState.HasValidData;
+            IsProcessing = m_readerState.IsProcessing;
+            IsDataValid = m_readerState.HasValidData;
 
             if (ReaderStateChangeEvent != null)
                 ReaderStateChangeEvent(m_readerState);
         }
 
-        public TextFileReader(bool isReaderForFakeProfiles)
+        public TextFileDataIO(bool isForFakeProfiles)
         {
-            m_isReaderForFakeProfiles = isReaderForFakeProfiles;
-        }
-
-        public int getCompletionPercentage()
-        {
-            return m_numberOfUserItemPairs == 0 ? 100 : (int) ((float)m_entriesProcessed / m_numberOfUserItemPairs * 100);
+            m_isForFakeProfiles = isForFakeProfiles;
         }
 
         public bool readFromFile(string filePath)
         {
-            RatingsLookupTable.Instance.clearAllData();
-            IsReaderDataValid = false;
+            
+            IsDataValid = false;
 
             StreamReader sr;
             string msg;
@@ -100,12 +71,8 @@ namespace RecommenderAttacksAnalytics.Input
             ChangeState(TextFileReaderState.ReaderState.PROCESSING, "File opened");
             ChangeState(TextFileReaderState.ReaderState.PROCESSING, "Reading file...");
 
-            m_fileReaderWorker = new BackgroundWorker();
-            m_fileReaderWorker.DoWork += fileReaderWorker_DoWork;
-            m_fileReaderWorker.WorkerReportsProgress = true;
-            m_fileReaderWorker.ProgressChanged += fileReaderWorker_ProgressChanged;
-            m_fileReaderWorker.RunWorkerCompleted += fileReaderWorker_RunWorkerCompleted;
-            m_fileReaderWorker.RunWorkerAsync(sr);
+            setUpBackgroundWorker();
+            m_inputOutputWorker.RunWorkerAsync(sr);
            
             return true;
         }
@@ -122,12 +89,12 @@ namespace RecommenderAttacksAnalytics.Input
             return count;
         }
 
-        private void fileReaderWorker_DoWork(object sender, DoWorkEventArgs args)
+        protected override void InputOutputWorkerDoWork(object sender, DoWorkEventArgs args)
         {
             var sr = args.Argument as StreamReader;
             string currentLine;
             m_entriesProcessed = 0;
-            long catchUpValue = m_numberOfUserItemPairs / 1000;
+            long catchUpValue = m_numberOfUserItemPairs / 100;
 
             while (sr != null && (currentLine = sr.ReadLine()) != null)
             {
@@ -140,10 +107,11 @@ namespace RecommenderAttacksAnalytics.Input
 
                 if (isLineValid(lineArgs))
                 {
+                    //Dispatcher.Invoke(new Action(() => currentEntry = addEntryToTable(lineArgs)));
                     currentEntry = addEntryToTable(lineArgs);          
                 }
 
-                m_fileReaderWorker.ReportProgress(completionPercentage, currentEntry);
+                m_inputOutputWorker.ReportProgress(completionPercentage, currentEntry);
 
                 if (catchUpValue == 0 || m_entriesProcessed == 1 || (m_entriesProcessed % catchUpValue) == 0 || completionPercentage == 100)
                 {
@@ -152,24 +120,12 @@ namespace RecommenderAttacksAnalytics.Input
             }
         }
 
-        private TableEntry addEntryToTable(string[] args)
-        {
-            var entry = new TableEntry(args);
-            
-            if(m_isReaderForFakeProfiles)
-                RatingsLookupTable.Instance.addFakeProfileEntry(entry);
-            else
-                RatingsLookupTable.Instance.addEntry(entry);
-             
-            return entry;
-        }
-
-        private void fileReaderWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs args)
+        protected override void InputOutputWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs args)
         {
             ChangeState(TextFileReaderState.ReaderState.DONE_AND_VALID, "Done !" + Environment.NewLine);
         }
 
-        private void fileReaderWorker_ProgressChanged(object sender, ProgressChangedEventArgs args)
+        protected override void InputOutputWorkerProgressChanged(object sender, ProgressChangedEventArgs args)
         {
             if (ReportProgressEvent != null)
                 ReportProgressEvent(args.ProgressPercentage);
@@ -177,7 +133,19 @@ namespace RecommenderAttacksAnalytics.Input
             var newEntry = args.UserState as TableEntry;
 
             //if (newEntry != null)
-                //Logger.log(String.Format("New entry added: {0}", newEntry.ToString()));
+            //Logger.log(String.Format("New entry added: {0}", newEntry.ToString()));
+        }
+
+        private TableEntry addEntryToTable(string[] args)
+        {
+            var entry = new TableEntry(args);
+            
+            if(m_isForFakeProfiles)
+                RatingsLookupTable.Instance.addFakeProfileEntry(entry);
+            else
+                RatingsLookupTable.Instance.addEntry(entry);
+             
+            return entry;
         }
 
         private bool isLineValid(string[] args)
@@ -185,9 +153,10 @@ namespace RecommenderAttacksAnalytics.Input
             if (args.Length != NUM_LINE_ARGS || args[0].Equals("&"))
                 return false;
 
-            bool isValid = true;
+            var isValid = true;
 
-            for (int i = 0; i < NUM_LINE_ARGS; i++ )
+            // TODO: Switch to regex
+            for (var i = 0; i < NUM_LINE_ARGS; i++ )
             {
                 long n;
                 isValid &= Int64.TryParse(args[i], out n);
@@ -218,7 +187,6 @@ namespace RecommenderAttacksAnalytics.Input
             public TextFileReaderState()
             {
                 m_state = ReaderState.STOPPED;
-
             }
 
             public TextFileReaderState(ReaderState state, string message)

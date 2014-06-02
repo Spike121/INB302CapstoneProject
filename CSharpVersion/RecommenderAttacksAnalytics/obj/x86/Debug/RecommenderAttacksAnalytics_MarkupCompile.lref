@@ -1,6 +1,7 @@
 ﻿
 
 FC:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\UI\DataSourceUploadContainerUC.xaml;;
+FC:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\UI\GeneratePromotedItemsUC.xaml;;
 FC:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\UI\ReadFromDatabaseUc.xaml;;
 FC:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\UI\ReadTextFileUC.xaml;;
 FC:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\UI\ResultsUC.xaml;;
@@ -8,5 +9,4 @@ FC:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\Recommender
 FC:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\UI\SelectItemsUC.xaml;;
 FC:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\UI\SelectUsersUC.xaml;;
 FC:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\UI\TestUC.xaml;;
-FC:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\UI\GeneratePromoteItemsUC.xaml;;
 

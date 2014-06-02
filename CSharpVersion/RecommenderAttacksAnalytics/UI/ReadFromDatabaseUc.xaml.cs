@@ -11,8 +11,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using RecommenderAttacksAnalytics.Converters;
+using RecommenderAttacksAnalytics.Entities.LocalPersistence;
+using RecommenderAttacksAnalytics.InputOutput;
 using RecommenderAttacksAnalytics.Utililty;
-using RecommenderAttacksAnalytics.Input;
 using Microsoft.Win32;
 
 namespace RecommenderAttacksAnalytics.UI
@@ -23,19 +25,41 @@ namespace RecommenderAttacksAnalytics.UI
     public partial class ReadFromDatabaseUc : AbstractDataUploadUC
     {
         private DatabaseInfos m_databaseInfos = new DatabaseInfos();
+
         public DatabaseInfos DatabaseInfos 
         {
             get { return m_databaseInfos;  } 
         }
 
+        public DatabaseDataIO DatabaseReader { get { return m_normalDataIoModule as DatabaseDataIO; }}
+        public DatabaseDataIO FakeProfilesDatabaseReader { get { return m_fakeProfilesDataIoModule as DatabaseDataIO; }}
+
         public ReadFromDatabaseUc()
+            : base(new DatabaseDataIO(), new DatabaseDataIO())
         {
             InitializeComponent();
+            initializeBindings();
+        }
+
+
+        protected override void initializeIsDataValidBindings()
+        {
+            //var isDataValidMutliBinding = new MultiBinding()
+            //{
+            //    Converter = new BooleanOrToBoolConverter(),
+            //    Bindings = {
+            //        new Binding {  Source = RatingsLookupTable.Instance, Path = new PropertyPath(RatingsLookupTable.HasDataProperty.Name)},
+            //        new Binding {  Source = , Path = new PropertyPath(RatingsLookupTable.HasDataProperty.Name)}
+            //    }
+            //};
+
+            //SetBinding(IsDataValidProperty, isDataValidMutliBinding);
         }
 
         private void m_fetchDataBtn_Click(object sender, RoutedEventArgs e)
         {
-            DatabaseReader.FetchEntities(hostname.Text, username.Text, password.Password, Convert.ToInt32(port.Text), schema.Text);
+            RatingsLookupTable.Instance.clearAllData();
+            DatabaseReader.FetchEntities(m_databaseInfos);
         }
 
         private void m_saveAsFileBtn_Click(object sender, RoutedEventArgs e)

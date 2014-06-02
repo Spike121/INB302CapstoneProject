@@ -104,5 +104,5 @@ C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderA
 C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.g.resources
 C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.Properties.Resources.resources
 C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\RecommenderAttacksAnalytics.csproj.GenerateResource.Cache
-C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\UI\GeneratePromoteItemsUC.baml
-C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\UI\GeneratePromoteItemsUC.g.cs
+C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\UI\GeneratePromotedItemsUC.g.cs
+C:\Users\Spike\Documents\GitHub\INB302CapstoneProject\CSharpVersion\RecommenderAttacksAnalytics\obj\x86\Debug\UI\GeneratePromotedItemsUC.baml

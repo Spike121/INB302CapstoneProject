@@ -7,12 +7,13 @@ namespace RecommenderAttacksAnalytics.Entities.Common
 {
     public abstract class AbstractPersistenceEntity : IPersistenceEntity
     {
+       
         public  abstract  long getId();
-
+        
         public override bool Equals(object obj)
         {
-            //if (!(obj is AbstractPersistenceEntity))
-               // return false;
+            if (!(obj is AbstractPersistenceEntity))
+                return false;
 
             return getId() == (obj as AbstractPersistenceEntity).getId();
         }

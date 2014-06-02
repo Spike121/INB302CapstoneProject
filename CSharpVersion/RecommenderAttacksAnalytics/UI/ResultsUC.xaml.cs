@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using RecommenderAttacksAnalytics.Entities.Common;
+using RecommenderAttacksAnalytics.Entities.LocalPersistence;
 using RecommenderAttacksAnalytics.Models;
 using RecommenderAttacksAnalytics.UI.Containers;
 using RecommenderAttacksAnalytics.UI.PageChangeParameters;
@@ -15,7 +16,9 @@ namespace RecommenderAttacksAnalytics.UI
     {
 
         private AbstractModel m_model;
+        private AbstractModel m_promotedItemsModel;
         private readonly BackgroundWorker m_modelComputationsWorker = new BackgroundWorker();
+        private readonly BackgroundWorker m_promotedItemsModelComputationsWorker = new BackgroundWorker();
 
         public bool IsWorkerRunning
         {
@@ -40,12 +43,17 @@ namespace RecommenderAttacksAnalytics.UI
         {
             IsWorkerRunning = false;
             InitializeComponent();
+                       
+            setUpWorker(m_modelComputationsWorker);
+            setUpWorker(m_promotedItemsModelComputationsWorker);
+        }
 
-            m_modelComputationsWorker.DoWork += (modelComputationsWorker_DoWork);
-            m_modelComputationsWorker.ProgressChanged += modelComputationsWorker_ProgressChanged;
-            m_modelComputationsWorker.RunWorkerCompleted += modelComputationsWorker_RunWorkerCompleted;
-            m_modelComputationsWorker.WorkerReportsProgress = true;
-            
+        private void setUpWorker(BackgroundWorker worker)
+        {
+            worker.DoWork += modelComputationsWorker_DoWork;
+            worker.ProgressChanged += modelComputationsWorker_ProgressChanged;
+            worker.RunWorkerCompleted += modelComputationsWorker_RunWorkerCompleted;
+            worker.WorkerReportsProgress = true;
         }
 
         private void modelComputationsWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -75,8 +83,13 @@ namespace RecommenderAttacksAnalytics.UI
             if (p is FromSelectItemsPageChangeParameters)
             {
                 var parameters = p as FromSelectItemsPageChangeParameters;
-                m_model = new UserCentricModel(parameters.SelectedUser.getId(), parameters.SelectedItems);
                 
+                var selectedRegularItems = parameters.SelectedItems;
+                var selectedPromotedItems = parameters.SelectedPromotedItems;
+
+                m_model = new UserCentricModel(parameters.SelectedUser, RatingsLookupTable.Instance.getUsers(), selectedRegularItems);
+                m_promotedItemsModel = new UserCentricModel(parameters.SelectedUser, RatingsLookupTable.Instance.getUsers(), RatingsLookupTable.Instance.FakeProfilesTable.getUsers(), selectedRegularItems, selectedPromotedItems);
+
                 if (parameters.getPreviousPageValidationGuid() != PageValidationGuid)
                 {
                     PageValidationGuid = parameters.getPreviousPageValidationGuid();
