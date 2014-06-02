@@ -29,9 +29,12 @@ namespace RecommenderAttacksAnalytics.Database
             ConnectionSetup = true;
         }
 
+<<<<<<< HEAD
         public static void SaveTextfileToDatabase() {
 
         }
+=======
+>>>>>>> 4e15afde64938dcbfdfb1b853566dc3e24ca721e
 
         public static IList<DBUserItemRating> FetchRatingsList()
         {

@@ -57,7 +57,11 @@ namespace RecommenderAttacksAnalytics.UI
 
         private void saveToDbButton_Click(object sender, RoutedEventArgs e)
         {
+<<<<<<< HEAD
             Output.SaveToDB.SaveToDatabase();
+=======
+            
+>>>>>>> 4e15afde64938dcbfdfb1b853566dc3e24ca721e
         }
 
         private void textFileOptionRadioButton_Click(object sender, RoutedEventArgs e)
