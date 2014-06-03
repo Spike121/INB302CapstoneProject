@@ -12,7 +12,6 @@ namespace RecommenderAttacksAnalytics.Utililty {
     
     public class FakeProfilesGenerator {
         
-        private  List<Item> itemsToPromote;
         private const int MAX_RATING = 5;
         private const int MIN_RATING = 1;
 
