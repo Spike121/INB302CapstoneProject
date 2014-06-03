@@ -45,7 +45,7 @@ namespace RecommenderAttacksAnalytics.UI
             InitializeComponent();
                        
             setUpWorker(m_modelComputationsWorker);
-            setUpWorker(m_promotedItemsModelComputationsWorker);
+            //setUpWorker(m_promotedItemsModelComputationsWorker);
         }
 
         private void setUpWorker(BackgroundWorker worker)
@@ -76,10 +76,10 @@ namespace RecommenderAttacksAnalytics.UI
             m_model.computePredictions();
         }
 
-        public override void activate(IPageChangeParameters p)
+        public override void activate(BasePageChangeParameters p)
         {
             IsWorkerRunning = false;
-
+            
             if (p is FromSelectItemsPageChangeParameters)
             {
                 var parameters = p as FromSelectItemsPageChangeParameters;
@@ -94,6 +94,7 @@ namespace RecommenderAttacksAnalytics.UI
                 {
                     PageValidationGuid = parameters.getPreviousPageValidationGuid();
                     IsWorkerRunning = true;
+                    
                     m_modelComputationsWorker.RunWorkerAsync();
                 }
             }

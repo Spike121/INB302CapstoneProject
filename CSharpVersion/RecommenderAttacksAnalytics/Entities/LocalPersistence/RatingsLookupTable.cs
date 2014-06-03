@@ -62,7 +62,7 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         /// Adds an entry to the table based on a TableEntry instance
         /// </summary>
         /// <param name="entry">The TableEntry instance containign the lements to add</param>
-        public UserItemPair addEntry(TableEntry entry)
+        public virtual UserItemPair addEntry(TableEntry entry)
         {
             return addEntry(entry.UserId, entry.ItemId, entry.Rating);
         }
@@ -73,7 +73,7 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         /// <param name="userId"></param>
         /// <param name="itemId"></param>
         /// <param name="rating"></param>
-        public virtual UserItemPair addEntry(long userId, long itemId, int rating)
+        public UserItemPair addEntry(long userId, long itemId, int rating)
         {
             User user;
             Item item;

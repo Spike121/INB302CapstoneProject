@@ -14,10 +14,10 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
 
         public Item(long itemId)
         {
-            this.m_itemId = itemId;
+            m_itemId = itemId;
         }
 
-        public bool IsPromoted { get; private set; }    
+        public bool IsPromoted { get; set; }    
 
 
 

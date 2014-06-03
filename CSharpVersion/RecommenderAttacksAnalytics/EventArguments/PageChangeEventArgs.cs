@@ -18,9 +18,9 @@ namespace RecommenderAttacksAnalytics.EventArguments
 
         public MainWindow.AppPage SourcePage { get; set; }
         public MainWindow.AppPage DestinationPage { get; set; }
-        public IPageChangeParameters Parameters { get; set; }
+        public BasePageChangeParameters Parameters { get; set; }
 
-        protected PageChangeEventArgs(MainWindow.AppPage sourcePage, IPageChangeParameters parameters) 
+        protected PageChangeEventArgs(MainWindow.AppPage sourcePage, BasePageChangeParameters parameters) 
         {
             SourcePage = sourcePage;
             Parameters = parameters;
@@ -29,7 +29,7 @@ namespace RecommenderAttacksAnalytics.EventArguments
 
         public PageChangeEventArgs(MainWindow.AppPage sourcePage,
                                     MainWindow.AppPage destPage,
-                                    IPageChangeParameters parameters)
+                                    BasePageChangeParameters parameters)
             : this(sourcePage, parameters)
         {
             DestinationPage = destPage;
@@ -47,7 +47,7 @@ namespace RecommenderAttacksAnalytics.EventArguments
     public class NextPageChangeEventArgs : PageChangeEventArgs     
     {   
         
-        public NextPageChangeEventArgs( MainWindow.AppPage sourcePage, IPageChangeParameters parameters)
+        public NextPageChangeEventArgs( MainWindow.AppPage sourcePage, BasePageChangeParameters parameters)
             : base(sourcePage, parameters)
         {
             m_changeType = PageChangeType.NEXT_PAGE;
@@ -62,7 +62,7 @@ namespace RecommenderAttacksAnalytics.EventArguments
 
     public class PreviousPageChangeEventArgs : PageChangeEventArgs
     {
-        public PreviousPageChangeEventArgs(MainWindow.AppPage sourcePage, IPageChangeParameters parameters)
+        public PreviousPageChangeEventArgs(MainWindow.AppPage sourcePage, BasePageChangeParameters parameters)
             : base(sourcePage, parameters)
         {
             m_changeType = PageChangeType.PREVIOUS_PAGE;

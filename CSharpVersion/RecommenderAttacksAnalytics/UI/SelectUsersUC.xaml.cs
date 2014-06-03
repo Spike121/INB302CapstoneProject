@@ -1,19 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using RecommenderAttacksAnalytics.Entities.LocalPersistence;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using RecommenderAttacksAnalytics.UI.PageChangeParameters;
 
 namespace RecommenderAttacksAnalytics.UI
@@ -54,9 +43,9 @@ namespace RecommenderAttacksAnalytics.UI
             InitializeComponent();
         }
 
-        public override void  activate(IPageChangeParameters parameters)
+        public override void activate(BasePageChangeParameters parameters)
         {
-            if (parameters.getPreviousPageValidationGuid() != this.PageValidationGuid)
+            if(isCurrentPageValidationDifferenFromPreviousPage(parameters))
             {
                 Users = new ObservableCollection<User>(RatingsLookupTable.Instance.getUsers().OrderBy(x => x.getId()));
                 this.PageValidationGuid = parameters.getPreviousPageValidationGuid();

@@ -88,7 +88,7 @@ namespace RecommenderAttacksAnalytics.UI
             return (int)pageAsEnum;
         }
 
-        private void loadUc(AbstractAppPageUC pageToLoad, IPageChangeParameters parameters)
+        private void loadUc(AbstractAppPageUC pageToLoad, BasePageChangeParameters parameters)
         {
             if (m_currentAppPage != null)
             {

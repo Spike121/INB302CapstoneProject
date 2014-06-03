@@ -51,22 +51,27 @@ namespace RecommenderAttacksAnalytics.UI
             InitializeComponent();
         }
 
-        public override void  activate(IPageChangeParameters p)
+        public override void activate(BasePageChangeParameters p)
         {
-            if (p is FromSelectUsersPageChangeParameters)
+            if (isCurrentPageValidationDifferenFromPreviousPage(p))
             {
-                var parameters = p as FromSelectUsersPageChangeParameters;
-                m_selectedUser = parameters.SelectedUser;
+                if (p is FromSelectUsersPageChangeParameters)
+                {
+                    var parameters = p as FromSelectUsersPageChangeParameters;
+                    m_selectedUser = parameters.SelectedUser;
+                }
+
+                PromotedItems = new ObservableCollection<Item>(RatingsLookupTable.Instance.FakeProfilesTable.getPromotedItems());
+                Items = new ObservableCollection<Item>(RatingsLookupTable.Instance.getItems().Where(x => !PromotedItems.Contains(x)));
+                
+
+                CombinedItems = new CompositeCollection
+                {
+                    new CollectionContainer {Collection = PromotedItems},
+                    new CollectionContainer {Collection = Items}
+                };
+
             }
-
-            Items = new ObservableCollection<Item>(RatingsLookupTable.Instance.getItems());
-            var fakeProfileRatedItems = new ObservableCollection<Item>(RatingsLookupTable.Instance.FakeProfilesTable.getItems());
-
-            CombinedItems = new CompositeCollection
-            {
-                new CollectionContainer {Collection = Items},
-                new CollectionContainer {Collection = PromotedItems} 
-            };
         }
 
         protected override void nextPageBtn_Click(object sender, RoutedEventArgs e)

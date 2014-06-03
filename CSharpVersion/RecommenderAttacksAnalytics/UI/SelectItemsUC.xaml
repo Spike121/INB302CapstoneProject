@@ -36,12 +36,6 @@
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-            <!--<ListBox.ItemsSource>
-                <CompositeCollection >
-                    <CollectionContainer Collection="{Binding Path=Items}" />
-                    <CollectionContainer Collection="{Binding Path=PromotedItems}" />
-                </CompositeCollection>
-            </ListBox.ItemsSource>-->
         </ListBox>
 
         <!--Page change buttons-->

@@ -30,7 +30,12 @@ namespace RecommenderAttacksAnalytics.UI
         }
 
         // TODO: Put this method and others as abstract when the XAML viewer is not needed anymore
-        public virtual void activate(IPageChangeParameters parameters) { }
+        public virtual void activate(BasePageChangeParameters parameters) { }
+
+        protected bool isCurrentPageValidationDifferenFromPreviousPage(BasePageChangeParameters p)
+        {
+            return p.getPreviousPageValidationGuid() != PageValidationGuid;
+        }
 
         protected void registerPageContentChange()
         {
@@ -48,7 +53,7 @@ namespace RecommenderAttacksAnalytics.UI
             doPageChange(new PageChangeEventArgs(m_currentPage, toPage, m_pageValidationGuid));                
         }
 
-        protected void changePageTo(MainWindow.AppPage toPage, IPageChangeParameters parameters)
+        protected void changePageTo(MainWindow.AppPage toPage, BasePageChangeParameters parameters)
         {
             doPageChange(new PageChangeEventArgs(m_currentPage, toPage,parameters));
         }
@@ -58,7 +63,7 @@ namespace RecommenderAttacksAnalytics.UI
             doPageChange(new NextPageChangeEventArgs(m_currentPage, m_pageValidationGuid));
         }
 
-        protected void goToNextPage(IPageChangeParameters parameters)
+        protected void goToNextPage(BasePageChangeParameters parameters)
         {
             doPageChange(new NextPageChangeEventArgs(m_currentPage, parameters));
         }
@@ -68,7 +73,7 @@ namespace RecommenderAttacksAnalytics.UI
             doPageChange(new PreviousPageChangeEventArgs(m_currentPage, m_pageValidationGuid));
         }
 
-        protected void goToPreviousPage(IPageChangeParameters parameters)
+        protected void goToPreviousPage(BasePageChangeParameters parameters)
         {
             doPageChange(new PreviousPageChangeEventArgs(m_currentPage, parameters));
         }

@@ -21,6 +21,10 @@ namespace RecommenderAttacksAnalytics.Utililty {
             if(promotedItems.Count == 0)
                 return;
 
+            foreach (var promotedItem in promotedItems)
+                RatingsLookupTable.Instance.FakeProfilesTable.addPromotedItem(promotedItem);   
+            
+
             var allItems = RatingsLookupTable.Instance.getItems();
             var unPromotedItemsSubset = allItems.Where(x => !promotedItems.Contains(x)).ToList();
 
@@ -31,6 +35,7 @@ namespace RecommenderAttacksAnalytics.Utililty {
                 UserItemPair userItemPair = null;
                 foreach (var promotedItem in promotedItems)
                     userItemPair = RatingsLookupTable.Instance.addFakeProfileEntry(new TableEntry(randomUserID, promotedItem.getId(), MAX_RATING));
+                
 
                 if (userItemPair == null) 
                     continue;
@@ -51,7 +56,7 @@ namespace RecommenderAttacksAnalytics.Utililty {
             var random = new Random();
             long randomUserID = random.Next(0, int.MaxValue);
 
-            while (RatingsLookupTable.Instance.hasUser(randomUserID))
+            while (RatingsLookupTable.Instance.FakeProfilesTable.hasUser(randomUserID))
                 randomUserID = random.Next(0, int.MaxValue);
 
             return randomUserID;
