@@ -20,6 +20,8 @@ namespace RecommenderAttacksAnalytics.Utililty {
             if(promotedItems.Count == 0)
                 return;
 
+            RatingsLookupTable.Instance.FakeProfilesTable.clearAllData();
+
             foreach (var promotedItem in promotedItems)
                 RatingsLookupTable.Instance.FakeProfilesTable.addPromotedItem(promotedItem);   
             
@@ -63,7 +65,7 @@ namespace RecommenderAttacksAnalytics.Utililty {
 
         private List<TableEntry> getTargetedRatingFillingsForUser(User fakeProfileUser, List<Item> unPromotedItems )
         {
-            return new List<TableEntry>();
+            throw new NotImplementedException();
         }
 
         private List<TableEntry> getRandomRatingFillingsForUser(User fakeProfileUser, List<Item> unPromotedItems)

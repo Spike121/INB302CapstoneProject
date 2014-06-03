@@ -97,6 +97,7 @@
     <Compile Include="Output\SaveToDB.cs" />
     <Compile Include="UI\AbstractAppPageUC.cs" />
     <Compile Include="UI\AbstractDataUploadUC.cs" />
+    <Compile Include="UI\AsyncWrappers\RatingsPredictionModelAsyncWrapper.cs" />
     <Compile Include="UI\Containers\PredictionResultContainer.cs" />
     <Compile Include="UI\DataSourceUploadContainerUC.xaml.cs">
       <DependentUpon>DataSourceUploadContainerUC.xaml</DependentUpon>
@@ -128,6 +129,7 @@
     </Compile>
     <Compile Include="Utililty\FakeProfilesGenerator.cs" />
     <Compile Include="Utililty\DatabaseInfos.cs" />
+    <Compile Include="Utililty\NeighborSimilarityComputationImplementer.cs" />
     <Compile Include="Utililty\Util.cs" />
     <Compile Include="Models\AbstractModel.cs" />
     <Compile Include="Models\UserCentricModel.cs" />

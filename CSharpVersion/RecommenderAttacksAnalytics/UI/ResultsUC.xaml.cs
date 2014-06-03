@@ -1,11 +1,18 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 using System.Windows;
+using System.Windows.Data;
+using RecommenderAttacksAnalytics.Converters;
 using RecommenderAttacksAnalytics.Entities.Common;
 using RecommenderAttacksAnalytics.Entities.LocalPersistence;
 using RecommenderAttacksAnalytics.Models;
+using RecommenderAttacksAnalytics.UI.AsyncWrappers;
 using RecommenderAttacksAnalytics.UI.Containers;
 using RecommenderAttacksAnalytics.UI.PageChangeParameters;
+using RecommenderAttacksAnalytics.Utility;
 
 namespace RecommenderAttacksAnalytics.UI
 {
@@ -15,21 +22,28 @@ namespace RecommenderAttacksAnalytics.UI
     public partial class ResultsUC : AbstractAppPageUC
     {
 
-        private AbstractModel m_model;
-        private AbstractModel m_promotedItemsModel;
-        private readonly BackgroundWorker m_modelComputationsWorker = new BackgroundWorker();
-        private readonly BackgroundWorker m_promotedItemsModelComputationsWorker = new BackgroundWorker();
+        private readonly RatingsPredictionModelAsyncWrapper m_regularPredictionsAsyncWrapper = new RatingsPredictionModelAsyncWrapper("regular");
+        private readonly RatingsPredictionModelAsyncWrapper m_postAttackPredictionsAsyncWrapper = new RatingsPredictionModelAsyncWrapper("attack");
 
-        public bool IsWorkerRunning
+        public bool IsProcessing
         {
-            get { return (bool)GetValue(IsWorkerRunningProperty); }
-            private set { SetValue(IsWorkerRunningProperty, value); }
+            get { return (bool)GetValue(IsProcessingProperty); }
+            set { SetValue(IsProcessingProperty, value); }
         }
 
-        public static readonly DependencyProperty IsWorkerRunningProperty =
-            DependencyProperty.Register("IsWorkerRunning", typeof(bool), typeof(ResultsUC), new UIPropertyMetadata(false));
+        public static readonly DependencyProperty IsProcessingProperty =
+            DependencyProperty.Register("IsProcessing", typeof(bool), typeof(ResultsUC), new PropertyMetadata(OnIsProcessingValueChange));
 
-        
+        private static void OnIsProcessingValueChange(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is ResultsUC)
+            {
+                var r = d as ResultsUC;
+                if ((bool)e.OldValue && !(bool)e.NewValue)
+                    r.collectResultsFromWorkers();
+            }
+        }
+
         public ObservableCollection<PredictionResultContainer> PredictionsResults   {
             get { return (ObservableCollection<PredictionResultContainer>)GetValue(PredictionsResultsProperty); }
             set { SetValue(PredictionsResultsProperty, value); }
@@ -41,62 +55,63 @@ namespace RecommenderAttacksAnalytics.UI
         public ResultsUC()
             :base(MainWindow.AppPage.RESULTS_PAGE)
         {
-            IsWorkerRunning = false;
             InitializeComponent();
-                       
-            setUpWorker(m_modelComputationsWorker);
-            //setUpWorker(m_promotedItemsModelComputationsWorker);
-        }
-
-        private void setUpWorker(BackgroundWorker worker)
-        {
-            worker.DoWork += modelComputationsWorker_DoWork;
-            worker.ProgressChanged += modelComputationsWorker_ProgressChanged;
-            worker.RunWorkerCompleted += modelComputationsWorker_RunWorkerCompleted;
-            worker.WorkerReportsProgress = true;
-        }
-
-        private void modelComputationsWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            IsWorkerRunning = false;
-            PredictionsResults.Clear();
-            foreach (var prediction in m_model.Predictions)
+            var isProcessingBinding = new MultiBinding()
             {
-                PredictionsResults.Add(new PredictionResultContainer(prediction.Key, prediction.Value));
-            }
+                Converter = new BooleanOrToBoolConverter(), 
+                Bindings =
+                {
+                    new Binding{ Source = m_regularPredictionsAsyncWrapper, Path = new PropertyPath(RatingsPredictionModelAsyncWrapper.IsRunningProperty.Name)},
+                    new Binding{ Source = m_postAttackPredictionsAsyncWrapper, Path = new PropertyPath(RatingsPredictionModelAsyncWrapper.IsRunningProperty.Name)}
+                }
+            };
+
+            SetBinding(IsProcessingProperty, isProcessingBinding);
         }
 
-        private void modelComputationsWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void collectResultsFromWorkers()
         {
 
-        }
+            Logger.log("Collecting...");
+            PredictionsResults.Clear();
 
-        private void modelComputationsWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            m_model.computePredictions();
+            var beforeAttackPredictionsMap = m_regularPredictionsAsyncWrapper.Model.Predictions;
+            var afterAttackPredictionsMap = m_postAttackPredictionsAsyncWrapper.Model.Predictions;
+
+            foreach (var itemPredictionPair in beforeAttackPredictionsMap)
+            {
+                var item = itemPredictionPair.Key as Item;
+                var originalPrediction = itemPredictionPair.Value;
+                var finalPrediction = afterAttackPredictionsMap.ContainsKey(item)   ? afterAttackPredictionsMap[item]
+                                                                                    : 0.0f ;
+                PredictionsResults.Add(new PredictionResultContainer(item, originalPrediction, finalPrediction, item.IsPromoted));
+            } 
         }
 
         public override void activate(BasePageChangeParameters p)
         {
-            IsWorkerRunning = false;
-            
             if (p is FromSelectItemsPageChangeParameters)
             {
                 var parameters = p as FromSelectItemsPageChangeParameters;
                 
                 var selectedRegularItems = parameters.SelectedItems;
                 var selectedPromotedItems = parameters.SelectedPromotedItems;
+                var allSelectedItems = selectedRegularItems.Concat(selectedPromotedItems).ToList();
 
-                m_model = new UserCentricModel(parameters.SelectedUser, RatingsLookupTable.Instance.getUsers(), selectedRegularItems);
-                m_promotedItemsModel = new UserCentricModel(parameters.SelectedUser, RatingsLookupTable.Instance.getUsers(), RatingsLookupTable.Instance.FakeProfilesTable.getUsers(), selectedRegularItems, selectedPromotedItems);
-
-                if (parameters.getPreviousPageValidationGuid() != PageValidationGuid)
-                {
+                var regularPredictionsModel = new UserCentricModel(parameters.SelectedUser, RatingsLookupTable.Instance.getUsers(), allSelectedItems); 
+                var postAttackPredictionsModel = new UserCentricModel(  parameters.SelectedUser, 
+                                                                        RatingsLookupTable.Instance.getUsers(), 
+                                                                        RatingsLookupTable.Instance.FakeProfilesTable.getUsers(),
+                                                                        allSelectedItems); 
+                
+                //if (parameters.getPreviousPageValidationGuid() != PageValidationGuid)
+                //{
                     PageValidationGuid = parameters.getPreviousPageValidationGuid();
-                    IsWorkerRunning = true;
-                    
-                    m_modelComputationsWorker.RunWorkerAsync();
-                }
+
+                    m_regularPredictionsAsyncWrapper.getPredictionsAsync(regularPredictionsModel);
+                    Thread.Sleep(1);
+                    m_postAttackPredictionsAsyncWrapper.getPredictionsAsync(postAttackPredictionsModel);
+                //}
             }
         }
     }

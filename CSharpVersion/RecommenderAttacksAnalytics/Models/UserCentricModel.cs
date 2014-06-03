@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using RecommenderAttacksAnalytics.Entities.Common;
 using RecommenderAttacksAnalytics.Entities.LocalPersistence;
+using RecommenderAttacksAnalytics.Utililty;
 using RecommenderAttacksAnalytics.Utility;
 using System.Collections.Specialized;
 
@@ -37,15 +39,14 @@ namespace RecommenderAttacksAnalytics.Models
             Neighborhood = neighborhood;
         }
 
-        public UserCentricModel(User user, IEnumerable<User> neighborhood, IEnumerable<User> fakeUsersNeighborhood, IEnumerable<Item> selectedItems, IEnumerable<Item> promotedItems)
-            : this(user, neighborhood.Concat(fakeUsersNeighborhood), selectedItems.Concat(promotedItems) )
+        public UserCentricModel(User user, IEnumerable<User> neighborhood, IEnumerable<User> fakeUsersNeighborhood, IEnumerable<Item> selectedItems)
+            : this(user, neighborhood.Concat(fakeUsersNeighborhood).ToList(), selectedItems.ToList() )
         {
         }
 
-        protected override PearsonComputationResults getPearsonCoefficients()
+        protected override Dictionary<IPersistenceEntity, double> getPearsonCoefficients()
         {
             var pearsonCoefficients = new Dictionary<IPersistenceEntity, double>();
-            double absPearsonCoeffSum = 0.0f;
 
             foreach(var neighbor in Neighborhood )
             {
@@ -53,60 +54,60 @@ namespace RecommenderAttacksAnalytics.Models
                 {
                     var value = computeSimilarityToNeighbor(SelectedUser, neighbor);
                     pearsonCoefficients.Add(neighbor, value);
-                    absPearsonCoeffSum += Math.Abs(value);
                 }
             }
 
-            return new PearsonComputationResults(pearsonCoefficients, absPearsonCoeffSum);
+            return pearsonCoefficients;
         }
 
         protected override double computeSimilarityToNeighbor(IPersistenceEntity selectedEntity, IPersistenceEntity neighborEntity)
         {
-                
             var user = selectedEntity as User;
             var neighbor = neighborEntity as User;
-            
-            var commonItemsWithRatingsForUser = user.findItemsInCommonWithNeighbor(neighbor);
-            var commonItemsWithRatingsForNeighbor = neighbor.findItemsInCommonWithNeighbor(user);
 
-            var userAverage = Util.getRatingAverageFromRatingsCollection(commonItemsWithRatingsForUser.Values.ToList());
-            var neighborAverage = Util.getRatingAverageFromRatingsCollection(commonItemsWithRatingsForNeighbor.Values.ToList());
+            var computationImplementer = new NeighborSimilarityComputationImplementer(user, neighbor);
 
-            var top = user.diffFromAverage(userAverage) * neighbor.diffFromAverage(neighborAverage);
-            var bottomLeft = Math.Sqrt(user.diffFromAverageSquared(userAverage));
-            var bottomRight = Math.Sqrt(neighbor.diffFromAverageSquared(neighborAverage));
-           
-            var result = top / (bottomLeft * bottomRight);
-            return result;
+            return computationImplementer.computeSimilarity();
         }
 
         public override void computePredictions()
         {
-            var pearsonResults = getPearsonCoefficients();
-            var pearsonCoefficients = pearsonResults.PearsonCoefficients.ToDictionary(x =>  x.Key as User, x => x.Value );
+            m_predictions.Clear();
+            var pearsonCoefficients = getPearsonCoefficients();
             
+            // TODO: Try with a threshold instead of a neighborhood size
             pearsonCoefficients = pearsonCoefficients.OrderByDescending(x => x.Value).Take(NEIGHBORBOOD_K_SIZE).ToDictionary(x => x.Key, x => x.Value);
+            
             var targetUserAverageRating = SelectedUser.getRatingAverageForUser();
             
-
+            // Predict rating for every item
             foreach (var item in SelectedItems)
             {
-                double top = 0.0;
-                double pearsonAbsSum = 0.0f;
+                var top = 0.0d;
+                var pearsonAbsSum = 0.0d;
 
-                foreach (var v in pearsonCoefficients)
+                foreach (var userCoeffPair in pearsonCoefficients)
                 {
+                    var neighbor = userCoeffPair.Key as User;
+                    var pearsonCoefficient = userCoeffPair.Value;
 
-                    var user = v.Key;
-                    var pearsonCoefficient = v.Value;
-                    pearsonAbsSum += Math.Abs(pearsonCoefficient);
-
-                    if(item.hasRatingFromUser(user))
-                        top += pearsonCoefficient * (item.getRatingFromUser(user) - user.getRatingAverageForUser());
+                    if (item.hasRatingFromUser(neighbor) )
+                    {
+                        pearsonAbsSum += Math.Abs(pearsonCoefficient);
+                        top += pearsonCoefficient * (item.getRatingFromUser(neighbor) - neighbor.getRatingAverageForUser());
+                    }
                 }
-                var prediction = pearsonResults.IsAbsolutePearsonCoefficientSumZero ? targetUserAverageRating : targetUserAverageRating + (top / pearsonAbsSum);
-                m_predictions.Add(item, prediction);
+
+                var prediction = pearsonAbsSum < Double.Epsilon ? targetUserAverageRating
+                                                                : targetUserAverageRating + (top / pearsonAbsSum);
+                if (!m_predictions.ContainsKey(item))
+                    m_predictions.Add(item, prediction);
             }
+
+            Logger.log("Done with computations.");
         }
+
+
+   
     }
 }

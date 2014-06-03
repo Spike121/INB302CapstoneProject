@@ -4,6 +4,7 @@ using System.Windows.Input;
 using RecommenderAttacksAnalytics.EventArguments;
 using RecommenderAttacksAnalytics.UI.PageChangeParameters;
 using RecommenderAttacksAnalytics.Utility;
+using Remotion.Linq.Collections;
 
 namespace RecommenderAttacksAnalytics.UI
 {
@@ -16,6 +17,14 @@ namespace RecommenderAttacksAnalytics.UI
         private const AppPage FIRST_PAGE = AppPage.LOAD_DATA_PAGE;
         private const AppPage LAST_PAGE = AppPage.RESULTS_PAGE;
 
+        public ObservableCollection<PageSelectionButtonData> MyProperty
+        {
+            get { return (ObservableCollection<PageSelectionButtonData>)GetValue(MyPropertyProperty); }
+            set { SetValue(MyPropertyProperty, value); }
+        }
+
+        public static readonly DependencyProperty MyPropertyProperty =
+            DependencyProperty.Register("MyProperty", typeof(ObservableCollection<PageSelectionButtonData>), typeof(MainWindow), new UIPropertyMetadata(new ObservableCollection<PageSelectionButtonData>()));
 
         // TODO: Combine these 3 parameters into one an put it in AbstractAppPageUc
         private AbstractAppPageUC m_currentAppPage;
@@ -218,6 +227,18 @@ namespace RecommenderAttacksAnalytics.UI
         private void m_selectUsersBtn_MouseDown(object sender, MouseButtonEventArgs e)
         {
             goDirectlyToPage(AppPage.SELECT_USERS_PAGE);
+        }
+
+        public class PageSelectionButtonData
+        {
+            public string Title { get; private set; }
+            public AppPage AppPageEnum { get; private set; }
+
+            public PageSelectionButtonData(string title, AppPage page)
+            {
+                Title = title;
+                AppPageEnum = page;
+            }
         }
     }
 }

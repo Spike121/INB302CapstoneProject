@@ -29,24 +29,34 @@
                 <!--Top-->
                 <StackPanel Grid.Row="0" Width="150" >
                     <StackPanel.Resources>
-                        <Style TargetType="{x:Type Border}">
+                        <Style x:Key="baseSelectedPageBtnStyle" TargetType="{x:Type Border}" >
                             <Setter Property="BorderThickness" Value="1,1,0,1" />
                             <Setter Property="Background" Value="WhiteSmoke" />
                             <Setter Property="Height" Value="50" />
                             <Setter Property="Cursor" Value="Hand" />
                             <Setter Property="BorderBrush" Value="LightGray" />
                         </Style>
+
+                        <Style x:Name="unselectedPageStyle" BasedOn="{StaticResource baseSelectedPageBtnStyle}" TargetType="{x:Type Border}"/>
+                        <Style x:Key="highlightSelectedPageBtnStyle" BasedOn="{StaticResource baseSelectedPageBtnStyle}" TargetType="{x:Type Border}"/>
+                        <ControlTemplate x:Key="pageSelectionBtnTemplate">
+                            <Border MouseDown="getDataBtn_MouseDown">
+                                <TextBlock Text="1- Get data"  VerticalAlignment="Center" TextAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
                     </StackPanel.Resources>
                     <Border x:Name="getDataBtn" MouseDown="getDataBtn_MouseDown">
-                        <TextBlock Text="1- Get data"  VerticalAlignment="Center" TextAlignment="Center" />
+                        <TextBlock Text="1- Get data"  VerticalAlignment="Center" TextAlignment="Left" Margin="30,0,0,0" />
                     </Border>
                     <Border x:Name="m_selectUsersBtn" MouseDown="m_selectUsersBtn_MouseDown">
-                        <TextBlock Text="2- Select users"  VerticalAlignment="Center" TextAlignment="Center" />
+                        <TextBlock Text="2- Select users"  VerticalAlignment="Center" TextAlignment="Left" Margin="30,0,0,0" />
                     </Border>
                     <Border x:Name="m_selectItemsBtn">
-                        <TextBlock Text="3- Select items"  VerticalAlignment="Center" TextAlignment="Center" />
+                        <TextBlock Text="3- Select items"  VerticalAlignment="Center" TextAlignment="Left" Margin="30,0,0,0" />
                     </Border>
-                    <TextBlock />
+                    <Border x:Name="m_resultsBtn">
+                        <TextBlock Text="4- Results"  VerticalAlignment="Center" TextAlignment="Left" Margin="30,0,0,0" />
+                    </Border>
                     <TextBlock />
                 </StackPanel>
                 

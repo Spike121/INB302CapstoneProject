@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,14 +13,7 @@ namespace RecommenderAttacksAnalytics.Utility
     {
         
 
-        public static double getRatingAverageFromRatingsCollection(List<int> ratings)
-        {
-            double avg = 0.0f;
-            foreach (var rating in ratings)
-                avg += rating;
-
-            return (ratings.Count == 0) ? 0.0f : avg / ratings.Count;
-        }
+  
 
         private static byte[] getBytes(string str)
         { 
@@ -52,5 +46,35 @@ namespace RecommenderAttacksAnalytics.Utility
 
             return new Random().Next(upperBound - lowerBound) + lowerBound;
         }
+
+        //public static List<int> getNRandomIntegersInRange(int lowerBound, int upperBound, int count)
+        //{
+        //    var randomIntegers = new List<int>(count);
+
+           
+        //}
+
+        public static bool getRandomBoolean()
+        {
+            return new Random().Next(0,2) > 0;
+        }
+
+        //private static List<int> recursiveGetNNumbersInRange(int lower, int upper, List<int> values, int count)
+        //{
+
+        //    if (upper < lower)
+        //        return values;
+
+            
+        //    var val = getRandomIntegerInRange(lower, upper);
+        //    values.Add(val);
+
+        //    var rand = new Random();
+            
+
+        //    recursiveGetNNumbersInRange(lower, upper, values, count);
+        //}
+
+
     }
 }

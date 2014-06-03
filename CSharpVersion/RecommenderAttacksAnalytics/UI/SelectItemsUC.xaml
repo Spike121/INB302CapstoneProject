@@ -7,7 +7,7 @@
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                          xmlns:localPersistence="clr-namespace:RecommenderAttacksAnalytics.Entities.LocalPersistence"
                          mc:Ignorable="d" 
-                         d:DesignHeight="300" d:DesignWidth="300"
+                         d:DesignHeight="300" d:DesignWidth="435"
                        DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <src:AbstractAppPageUC.Resources>
         <Style TargetType="{x:Type Button}">
@@ -19,24 +19,68 @@
     </src:AbstractAppPageUC.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-        <Label Content="{Binding ElementName=m_itemsSelector, Path=SelectedItems.Count, 
-               Converter={StaticResource ResourceKey=ArgToFormatedStringConverter}, ConverterParameter='{}{0} items selected'}"
-               Margin="10,0,0,0"/>
-        <ListBox  Grid.Column="0" Grid.Row="1" x:Name="m_itemsSelector" SelectionMode="Multiple" Margin="10,0,10,10" ItemsSource="{Binding Path=CombinedItems}">
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type localPersistence:Item}">
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox IsChecked="{Binding Path=IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}" />
-                        <TextBlock Text="{Binding}" Margin="5,0,0,0"  Foreground="{Binding Path=IsPromoted, Converter={StaticResource BoolToForegroundConverter}}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        
+        <Grid Grid.Row="0" Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Padding="0" VerticalAlignment="Bottom" Content="Select the items whose rating will be predicted" FontSize="14" />
+            <Label Grid.Row="0" Grid.Column="2" 
+                   Opacity="0.5"
+                   Padding="0"
+                   VerticalAlignment="Bottom"
+                   Content="{Binding ElementName=m_itemsSelector, Path=SelectedItems.Count, 
+                   Converter={StaticResource ResourceKey=ArgToFormatedStringConverter}, ConverterParameter='{}{0} selected'}"/>
+            
+            <!--<TreeView x:Name="m_itemsTreeView" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" >
+                <TreeViewItem Header="Promoted items" ItemsSource="{Binding Path=PromotedItems}" IsExpanded="True" >
+                    <TreeViewItem.ItemTemplate >
+                        <DataTemplate DataType="{x:Type localPersistence:Item}">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding Is}"/>
+                                <CheckBox IsChecked="{Binding Path=IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeViewItem}}}" />
+                                <TextBlock  Text="{Binding}" Margin="5,0,0,0"
+                                            Foreground="{Binding Path=IsPromoted, Converter={StaticResource BoolToForegroundConverter}}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </TreeViewItem.ItemTemplate>
+                </TreeViewItem>
+                <TreeViewItem Header="Regular items" ItemsSource="{Binding Path=Items}" IsExpanded="True">
+                    <TreeViewItem.ItemTemplate >
+                        <DataTemplate DataType="{x:Type localPersistence:Item}">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding Path=IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TreeViewItem}}}" />
+                                <TextBlock  Text="{Binding}" Margin="5,0,0,0"
+                                            Foreground="{Binding Path=IsPromoted, Converter={StaticResource BoolToForegroundConverter}}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </TreeViewItem.ItemTemplate>
+                </TreeViewItem>
+            </TreeView>-->
+            
+            <ListBox Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" x:Name="m_itemsSelector" SelectionMode="Multiple" 
+                     ItemsSource="{Binding Path=CombinedItems}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type localPersistence:Item}">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox
+                                IsChecked="{Binding Path=IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}" />
+                            <TextBlock Text="{Binding}" Margin="5,0,0,0"
+                                       Foreground="{Binding Path=IsPromoted, Converter={StaticResource BoolToForegroundConverter}}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
 
         <!--Page change buttons-->
         <Grid Grid.Row="2" Grid.ColumnSpan="3">

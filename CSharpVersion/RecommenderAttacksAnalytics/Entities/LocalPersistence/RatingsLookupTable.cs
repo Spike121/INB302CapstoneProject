@@ -35,6 +35,8 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         public static readonly DependencyProperty HasDataProperty =
             DependencyProperty.Register("HasData", typeof(bool), typeof(RatingsLookupTable), new UIPropertyMetadata(false));
 
+        static readonly object _locker = new object();
+
         private static RatingsLookupTable m_instance;
         public static RatingsLookupTable Instance
         {
@@ -193,25 +195,33 @@ namespace RecommenderAttacksAnalytics.Entities.LocalPersistence
         public Dictionary<Item, int> getAllItemRatingsForUser(User user)
         {
             Dictionary<Item, int> itemRatings;
-            if(m_itemRatingsForUserCache.ContainsKey(user.getId()))
-            {
-                itemRatings = m_itemRatingsForUserCache[user.getId()];
-            }
-            else
-            {
-                itemRatings = new Dictionary<Item, int>();
 
-                foreach(var itemRatingPair in m_itemSet)
+            lock (_locker)
+            {
+                if (m_itemRatingsForUserCache == null)
+                    m_itemRatingsForUserCache = new Dictionary<long, Dictionary<Item, int>>();
+
+                if(m_itemRatingsForUserCache.ContainsKey(user.getId()))
                 {
-                    var item = itemRatingPair.Value;
-                    var itemUserPair = createUserItemPair(user, item);
-
-                    if(m_ratingsLookup.ContainsKey(itemUserPair))
-                        itemRatings.Add(item, m_ratingsLookup[itemUserPair]);
+                    itemRatings = m_itemRatingsForUserCache[user.getId()];
                 }
+                else
+                {
+                    itemRatings = new Dictionary<Item, int>();
 
-                m_itemRatingsForUserCache.Add(user.getId(), itemRatings);
+                    foreach(var itemRatingPair in m_itemSet)
+                    {
+                        var item = itemRatingPair.Value;
+                        var itemUserPair = createUserItemPair(user, item);
+
+                        if(m_ratingsLookup.ContainsKey(itemUserPair))
+                            itemRatings.Add(item, m_ratingsLookup[itemUserPair]);
+                    }
+
+                    m_itemRatingsForUserCache.Add(user.getId(), itemRatings);
+                }
             }
+            
 
             return itemRatings;
         }

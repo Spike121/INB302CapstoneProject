@@ -61,9 +61,11 @@ namespace RecommenderAttacksAnalytics.UI
                     m_selectedUser = parameters.SelectedUser;
                 }
 
-                PromotedItems = new ObservableCollection<Item>(RatingsLookupTable.Instance.FakeProfilesTable.getPromotedItems());
-                Items = new ObservableCollection<Item>(RatingsLookupTable.Instance.getItems().Where(x => !PromotedItems.Contains(x)));
-                
+                var unsortedPromotedItems = RatingsLookupTable.Instance.FakeProfilesTable.getPromotedItems();
+                var unsortedItems = RatingsLookupTable.Instance.getItems().Where(x => !unsortedPromotedItems.Contains(x));
+
+                PromotedItems = new ObservableCollection<Item>(unsortedPromotedItems.OrderBy(x => x.getId()));
+                Items = new ObservableCollection<Item>(unsortedItems.OrderBy(x => x.getId()));
 
                 CombinedItems = new CompositeCollection
                 {

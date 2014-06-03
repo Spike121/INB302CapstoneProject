@@ -69,19 +69,45 @@ namespace RecommenderAttacksAnalytics.UI
                 var parameters = p as BasePageChangeParameters;
                 if (parameters.getPreviousPageValidationGuid() != PageValidationGuid)
                 {
-                    //AllItems.Clear();
-                    //foreach (var item in RatingsLookupTable.Instance.getItems())
-                        //AllItems.Add(item);
-                    AllItems = new List<Item>(RatingsLookupTable.Instance.getItems());
+                    AllItems = new List<Item>(RatingsLookupTable.Instance.getItems().OrderBy(x => x.getId()));
                 }
             }
         }
 
-        private void m_generateBtn_Click(object sender, RoutedEventArgs e)
+        private void generateBtn_Click(object sender, RoutedEventArgs e)
         {
             var promotedItems = m_itemSelectionListBox.SelectedItems.Cast<Item>().ToList();
             m_fakeProfilesGenerator.generateFakeProfiles(GeneratedFakeProfilesCount, promotedItems, FillingMethod == FillingMethodEnum.RANDOM);
             changePageTo(MainWindow.AppPage.SELECT_USERS_PAGE);
+        }
+
+        private void selectRandomItemsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var nbOfItemsToSelect = Int32.Parse(m_selectRandomItemsTextBox.Text);
+                int minNumberOfItems = 0;
+                int maxNumberOfItems = AllItems.Count;
+
+                if (nbOfItemsToSelect > maxNumberOfItems)
+                    nbOfItemsToSelect = maxNumberOfItems;
+
+                if (nbOfItemsToSelect < 0)
+                    nbOfItemsToSelect = minNumberOfItems;
+
+                m_selectRandomItemsTextBox.Text = nbOfItemsToSelect.ToString();
+                m_itemSelectionListBox.SelectedItems.Clear();
+
+            }
+            catch (FormatException)
+            {
+            }
+            catch (OverflowException)
+            {
+
+            }
+            
+
         }
     }
 }

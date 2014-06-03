@@ -6,13 +6,13 @@
                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
                         xmlns:converters="clr-namespace:RecommenderAttacksAnalytics.Converters"
                         xmlns:localPersistence="clr-namespace:RecommenderAttacksAnalytics.Entities.LocalPersistence"
-
                         mc:Ignorable="d" 
                         d:DesignHeight="374" d:DesignWidth="590"
-                       DataContext="{Binding RelativeSource={RelativeSource Self}}">
+                       DataContext="{Binding RelativeSource={RelativeSource Self}}" >
     <src:AbstractAppPageUC.Resources>
         <converters:EnumToBoolConverter x:Key="EnumToBoolConverter"  />
         <converters:ArgToFormattedStringConverter x:Key="ItemCountToStringConverter" />
+      
     </src:AbstractAppPageUC.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
@@ -34,32 +34,45 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Text="Select items to promote" />
-                <ListBox x:Name="m_itemSelectionListBox" Grid.Row="1" ItemsSource="{Binding Path=AllItems}" SelectionMode="Multiple"  
-                         IsSynchronizedWithCurrentItem="True">
+                <Grid Grid.Row="0" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock  Text="Select items to promote" FontSize="14" />
+                    <TextBlock  Grid.Column="2" 
+                                Opacity="0.5" 
+                                Text="{Binding ElementName=m_itemSelectionListBox, Path=SelectedItems.Count, Converter={StaticResource ItemCountToStringConverter}, ConverterParameter='{}{0} selected'}" 
+                                HorizontalAlignment="Center" />
+                </Grid>
+                <ListBox x:Name="m_itemSelectionListBox" Grid.Row="1" ItemsSource="{Binding Path=AllItems}" SelectionMode="Multiple"  >
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type localPersistence:Item}"  >
                             <CheckBox IsChecked="{Binding Path=IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" Content="{Binding}" />
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                
-                <TextBlock Grid.Row="2"  Text="{Binding ElementName=m_itemSelectionListBox, Path=SelectedItems.Count}" HorizontalAlignment="Center" />
-                
-                <Grid Grid.Row="3" Margin="0,5,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition  />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>                    
-                    <TextBlock Grid.Column="0" Text="Select" VerticalAlignment="Center" />
-                    <TextBox  Grid.Column="1" x:Name="m_selectRandomItemsTextBox" Width="30"  Margin="5,0,5,0" />
-                    <TextBlock Grid.Column="2" Text="random items " VerticalAlignment="Center" />
-                    <Button  Grid.Column="4" x:Name="m_selectRandomItemsBtn" Content="Go" Padding="8,2,8,2" />
-                </Grid>
-                
+
+                <Border Grid.Row="2" Background="#04000000">
+                    <Grid  Margin="0,2,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Select" VerticalAlignment="Bottom" />
+                        <TextBox Grid.Column="1" x:Name="m_selectRandomItemsTextBox" Width="30"
+                                 Text="1" 
+                                 VerticalContentAlignment="Bottom" HorizontalContentAlignment="Center"
+                                 Padding="0"
+                                 VerticalAlignment="Bottom" Margin="5,0,5,0" />
+                        <TextBlock Grid.Column="2" Text="random items " VerticalAlignment="Bottom" />
+                        <Button Grid.Column="4" x:Name="m_selectRandomItemsBtn" Content="Go" Padding="8,2,8,2" Click="selectRandomItemsBtn_Click" />
+                    </Grid>
+                    </Border>                
             </Grid>
 
             <!--Right Side-->
@@ -120,11 +133,17 @@
                 </GroupBox>
                 
                 <!--Save to file-->
-                <GroupBox Grid.Row="1" Header="Save"  Margin="0,5,0,0" >
-                    
+                <GroupBox Grid.Row="1" Header="Saving"  Margin="0,5,0,0" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
                 </GroupBox>
                 </Grid>
         </Grid>
-        <Button x:Name="m_generateBtn" Grid.Row="1" Content="Generate" Padding="6,4,6,4" HorizontalAlignment="Right" Click="m_generateBtn_Click" />
+        <Button x:Name="m_generateBtn" Grid.Row="1" Content="Generate"  Padding="8,2,8,2" HorizontalAlignment="Right" Click="generateBtn_Click" />
     </Grid>
 </src:AbstractAppPageUC>
