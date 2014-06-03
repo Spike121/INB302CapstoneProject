@@ -94,6 +94,7 @@
     <Compile Include="EventArguments\PageChangeEventArgs.cs" />
     <Compile Include="InputOutput\AbstractDataIO.cs" />
     <Compile Include="InputOutput\DatabaseDataIO.cs" />
+    <Compile Include="Output\SaveToDB.cs" />
     <Compile Include="UI\AbstractAppPageUC.cs" />
     <Compile Include="UI\AbstractDataUploadUC.cs" />
     <Compile Include="UI\Containers\PredictionResultContainer.cs" />
@@ -210,9 +211,7 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Output\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Database\Mappings\DBUserItemRating.hbm.xml">
       <SubType>Designer</SubType>
