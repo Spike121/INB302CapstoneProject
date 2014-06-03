@@ -143,6 +143,7 @@
                     </Grid>
                 </GroupBox>
                 <CheckBox x:Name="saveFakeProfiles" Content="Save fake profiles to textfile" HorizontalAlignment="Left" Margin="10,27,0,0" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Click="saveFakeProfiles_Click"/>
+                <Label Content="(Saves to C:/Temp/FakeProfiles.txt)" Grid.Row="1" HorizontalAlignment="Left" Margin="5,38,0,0" VerticalAlignment="Top"/>
             </Grid>
         </Grid>
         <Button x:Name="m_generateBtn" Grid.Row="1" Content="Generate"  Padding="8,2,8,2" HorizontalAlignment="Right" Click="generateBtn_Click" />
