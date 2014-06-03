@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using RecommenderAttacksAnalytics.Entities.LocalPersistence;
 using RecommenderAttacksAnalytics.UI.PageChangeParameters;
 using RecommenderAttacksAnalytics.Utililty;
+using RecommenderAttacksAnalytics.Output;
 using Remotion.Linq.Collections;
 
 namespace RecommenderAttacksAnalytics.UI
@@ -78,6 +79,8 @@ namespace RecommenderAttacksAnalytics.UI
         {
             var promotedItems = m_itemSelectionListBox.SelectedItems.Cast<Item>().ToList();
             m_fakeProfilesGenerator.generateFakeProfiles(GeneratedFakeProfilesCount, promotedItems, FillingMethod == FillingMethodEnum.RANDOM);
+            if(saveFakeProfiles.IsChecked == true) 
+                Output.FakeProfilesToTextfile.CreateFakeProfilesTextfile();
             changePageTo(MainWindow.AppPage.SELECT_USERS_PAGE);
         }
 
@@ -108,6 +111,10 @@ namespace RecommenderAttacksAnalytics.UI
             }
             
 
+        }
+
+        private void saveFakeProfiles_Click(object sender, RoutedEventArgs e) {
+            saveFakeProfiles.IsChecked = true;
         }
     }
 }

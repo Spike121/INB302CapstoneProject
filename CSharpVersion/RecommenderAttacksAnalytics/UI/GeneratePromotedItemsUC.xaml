@@ -133,8 +133,8 @@
                 </GroupBox>
                 
                 <!--Save to file-->
-                <GroupBox Grid.Row="1" Header="Saving"  Margin="0,5,0,0" >
-                    <Grid>
+                <GroupBox Grid.Row="1" Header="Saving"  Margin="0,8,0,173" Height="62" >
+                    <Grid Margin="0,0,0,-1">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
@@ -142,7 +142,8 @@
                         </Grid.ColumnDefinitions>
                     </Grid>
                 </GroupBox>
-                </Grid>
+                <CheckBox x:Name="saveFakeProfiles" Content="Save fake profiles to textfile" HorizontalAlignment="Left" Margin="10,27,0,0" Grid.Row="1" Grid.Column="1" VerticalAlignment="Top" Click="saveFakeProfiles_Click"/>
+            </Grid>
         </Grid>
         <Button x:Name="m_generateBtn" Grid.Row="1" Content="Generate"  Padding="8,2,8,2" HorizontalAlignment="Right" Click="generateBtn_Click" />
     </Grid>
