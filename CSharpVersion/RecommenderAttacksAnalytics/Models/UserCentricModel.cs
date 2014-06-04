@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using RecommenderAttacksAnalytics.Entities.Common;
 using RecommenderAttacksAnalytics.Entities.LocalPersistence;
 using RecommenderAttacksAnalytics.Utililty;
 using RecommenderAttacksAnalytics.Utility;
-using System.Collections.Specialized;
 
 namespace RecommenderAttacksAnalytics.Models
 {

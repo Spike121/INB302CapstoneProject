@@ -109,7 +109,6 @@
 
                         <!--TODO-->
                         <!--1- Save to text file option -->
-
                         <!--2- Get N random items to promote -->
                         <!--3- Filter list based on item id ?-->
 
@@ -121,12 +120,12 @@
                         <!--Row 1-->
                         <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,5,0,0" Grid.ColumnSpan="2">
                             <TextBlock Text="Fake profiles ratings filling method" HorizontalAlignment="Left" />
-                            <!--<RadioButton x:Name="m_randomizedFillingBtn" Content="Fill with randomized ratings" 
+                            <RadioButton x:Name="m_randomizedFillingBtn" Content="Fill with randomized ratings" 
                                      IsChecked="{Binding Path=FillingMethod, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static src:GeneratePromotedItemsUC+FillingMethodEnum.RANDOM}}"
                                      ToolTip="The fake profiles' unpromoted ratings will be selected at random"  />
                         <RadioButton x:Name="m_targetedFillingBtn" Content="Fill with targeted ratings" 
                                      IsChecked="{Binding Path=FillingMethod, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static src:GeneratePromotedItemsUC+FillingMethodEnum.TARGETED}}"
-                                     ToolTip="The fake profiles' unpromoted ratings will be selected to match some of the current users' ratings, increasing the influence of the promoted item on the final rating" />-->
+                                     ToolTip="The fake profiles' unpromoted ratings will be selected to match some of the current users' ratings, increasing the influence of the promoted item on the final rating" />
                         </StackPanel>
 
                     </Grid>
@@ -135,11 +134,19 @@
                 <!--Save to file-->
                 <GroupBox Grid.Row="1" Header="Saving"  Margin="0,5,0,0" >
                     <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition />
-                            <ColumnDefinition />
+                            <ColumnDefinition  />
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Text="Save your generated fake profiles for subsequent use" Margin="0,10,0,5" />
+                        
+                        <TextBox Grid.Column="0" Grid.Row="1" />
+                        <Button Grid.Column="1" Grid.Row="1" Content="Save" Padding="8,2,8,2" />
                     </Grid>
                 </GroupBox>
                 </Grid>

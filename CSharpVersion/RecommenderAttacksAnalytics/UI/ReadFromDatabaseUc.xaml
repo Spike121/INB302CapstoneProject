@@ -85,6 +85,5 @@
                               HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
             <TextBox x:Name="m_outputTextBox"  Background="WhiteSmoke" IsReadOnly="True" />
         </ScrollViewer>
-        <TextBlock HorizontalAlignment="Left" Margin="33,0,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Note: Table should be called &quot;ratings&quot; with a list of UserID, ItemID, and Rating values." VerticalAlignment="Top" MaxWidth="300"/>
     </Grid>
 </src:AbstractDataUploadUC>

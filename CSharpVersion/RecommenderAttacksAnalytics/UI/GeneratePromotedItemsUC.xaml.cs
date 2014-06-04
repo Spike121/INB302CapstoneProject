@@ -86,7 +86,7 @@ namespace RecommenderAttacksAnalytics.UI
             try
             {
                 var nbOfItemsToSelect = Int32.Parse(m_selectRandomItemsTextBox.Text);
-                int minNumberOfItems = 0;
+                const int minNumberOfItems = 0;
                 int maxNumberOfItems = AllItems.Count;
 
                 if (nbOfItemsToSelect > maxNumberOfItems)
@@ -97,14 +97,23 @@ namespace RecommenderAttacksAnalytics.UI
 
                 m_selectRandomItemsTextBox.Text = nbOfItemsToSelect.ToString();
                 m_itemSelectionListBox.SelectedItems.Clear();
+                
+                while (m_itemSelectionListBox.SelectedItems.Count != nbOfItemsToSelect)
+                {
+                    var item = m_itemSelectionListBox.Items.GetItemAt(new Random().Next(minNumberOfItems, maxNumberOfItems));
+                    if (!m_itemSelectionListBox.SelectedItems.Contains(item))
+                        m_itemSelectionListBox.SelectedItems.Add(item);
+                }
+
 
             }
             catch (FormatException)
             {
+                // TODO: Proper exception handling
             }
             catch (OverflowException)
             {
-
+                // TODO: Proper exception handling 
             }
             
 
