@@ -1,0 +1,90 @@
+﻿<src:AbstractAppPageUC x:Class="RecommenderAttacksAnalytics.UI.DataSourceUploadContainerUC"
+                       xmlns:converters="clr-namespace:RecommenderAttacksAnalytics.Converters"
+                        xmlns:src="clr-namespace:RecommenderAttacksAnalytics.UI"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:system="clr-namespace:System;assembly=mscorlib"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+
+
+    <src:AbstractAppPageUC.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Padding" Value="8,2,8,2" />
+            <Setter Property="Margin" Value="0,5,0,0"/>
+        </Style>
+        <Style TargetType="{x:Type RadioButton}">
+            <Setter Property="Margin" Value="0,3,0,0"/>
+        </Style>
+        <Color x:Key="redColor">Red</Color>
+        <Color x:Key="greenColor">LimeGreen</Color>
+        <converters:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
+        <converters:BooleanAndToBoolConverter x:Key="BooleanAndToBoolConverter"/>
+        <converters:BoolToInverseConverter x:Key="BoolToInverseConverter"/>
+        <converters:BoolToValueConverter x:Key="BoolToYesNoConverter" TrueValue="Yes" FalseValue="No" ReturnType="{x:Type system:String}"/> 
+        <converters:BoolToValueConverter x:Key="BoolToRedOrGreenConverter" TrueValue="{StaticResource greenColor}" FalseValue="{StaticResource redColor}" ReturnType="{x:Type SolidColorBrush}" />
+    </src:AbstractAppPageUC.Resources>
+
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <!--Row 0-->
+        <GroupBox Header="Data source">
+            <StackPanel Margin="4">
+                
+                <TextBlock Text="Choose the input method"  />
+                <RadioButton x:Name="m_textFileOptionRadioButton" Content="Text file" GroupName="dataSourceSelectorGroup" Click="textFileOptionRadioButton_Click" />
+                <RadioButton x:Name="m_databaseOptionRadioButton" Content="Database" GroupName="dataSourceSelectorGroup" Click="databaseOptionRadioButton_Click" />
+                
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <CheckBox x:Name="m_areFakeProfilesFromSameSourceCheckbox" 
+                              IsChecked="{Binding Path=AreFakeProfilesFromSameSource, Mode=TwoWay}"
+                              VerticalAlignment="Center" Content="Take fake profiles data from same source"  />
+
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                    <Label  Content="Valid data: " Padding="0" VerticalAlignment="Center"/>
+                    <Label Content="{Binding Path=SelectedDataSourceUploadUc.IsDataValid, 
+                           Converter={StaticResource BoolToYesNoConverter}}" 
+                           Foreground="{Binding Path=SelectedDataSourceUploadUc.IsDataValid, Converter={StaticResource BoolToRedOrGreenConverter}}" 
+                           Margin="5,0,0,0"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+        
+        <!--Row 1-->
+        <ContentControl Grid.Row="1" Content="{Binding Path=SelectedDataSourceUploadUc}"  />
+
+        <!--Page change buttons-->
+        <Grid Grid.Row="3" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" x:Name="saveToDbButton" Content="Save to database" 
+                        HorizontalAlignment="Right" 
+                        Click="saveToDbButton_Click"/>
+
+            <Button Grid.Column="2" x:Name="nextPageBtn" Content="Next"  
+                        HorizontalAlignment="Right" Padding="8,2,8,2" Margin="0"
+                        Click="nextPageBtn_Click" Height="22" VerticalAlignment="Bottom">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource BooleanAndToBoolConverter}" >
+                        <Binding Path="SelectedDataSourceUploadUc.IsDataValid" />
+                        <Binding Path="SelectedDataSourceUploadUc.IsProcessing" Converter="{StaticResource BoolToInverseConverter}" />
+                    </MultiBinding>
+                </Button.IsEnabled>
+            </Button>
+        </Grid>
+    </Grid>
+</src:AbstractAppPageUC>

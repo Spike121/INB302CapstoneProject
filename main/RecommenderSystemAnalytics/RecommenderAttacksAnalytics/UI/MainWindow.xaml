@@ -1,0 +1,76 @@
+﻿<Window x:Class="RecommenderAttacksAnalytics.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" MinHeight="440" Height="525" MinWidth="715" Width="850" SizeToContent="Manual" >
+    
+    <Grid>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <!--Sidebar-->
+        <Border BorderThickness="0,0,2,0"
+                BorderBrush="LightGray"
+                Grid.Column="0" Grid.Row="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                
+                <!--Top-->
+                <StackPanel Grid.Row="0" Width="150" >
+                    <StackPanel.Resources>
+                        <Style x:Key="baseSelectedPageBtnStyle" TargetType="{x:Type Border}" >
+                            <Setter Property="BorderThickness" Value="1,1,0,1" />
+                            <Setter Property="Background" Value="WhiteSmoke" />
+                            <Setter Property="Height" Value="50" />
+                            <Setter Property="Cursor" Value="Hand" />
+                            <Setter Property="BorderBrush" Value="LightGray" />
+                        </Style>
+
+                        <Style x:Name="unselectedPageStyle" BasedOn="{StaticResource baseSelectedPageBtnStyle}" TargetType="{x:Type Border}"/>
+                        <Style x:Key="highlightSelectedPageBtnStyle" BasedOn="{StaticResource baseSelectedPageBtnStyle}" TargetType="{x:Type Border}"/>
+                        <ControlTemplate x:Key="pageSelectionBtnTemplate">
+                            <Border MouseDown="getDataBtn_MouseDown">
+                                <TextBlock Text="1- Get data"  VerticalAlignment="Center" TextAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </StackPanel.Resources>
+                    <Border x:Name="getDataBtn" MouseDown="getDataBtn_MouseDown">
+                        <TextBlock Text="1- Get data"  VerticalAlignment="Center" TextAlignment="Left" Margin="30,0,0,0" />
+                    </Border>
+                    <Border x:Name="m_selectUsersBtn" MouseDown="m_selectUsersBtn_MouseDown">
+                        <TextBlock Text="2- Select users"  VerticalAlignment="Center" TextAlignment="Left" Margin="30,0,0,0" />
+                    </Border>
+                    <Border x:Name="m_selectItemsBtn">
+                        <TextBlock Text="3- Select items"  VerticalAlignment="Center" TextAlignment="Left" Margin="30,0,0,0" />
+                    </Border>
+                    <Border x:Name="m_resultsBtn">
+                        <TextBlock Text="4- Results"  VerticalAlignment="Center" TextAlignment="Left" Margin="30,0,0,0" />
+                    </Border>
+                    <TextBlock />
+                </StackPanel>
+                
+                <!--Bottom-->
+                <Border Grid.Row="2" x:Name="testPageBtn" BorderThickness="1,1,0,1" BorderBrush="LightGray" Height="50" Cursor="Hand" Background="WhiteSmoke" MouseDown="testPageBtn_MouseDown">
+                    <TextBlock Text="Tests"  VerticalAlignment="Center" TextAlignment="Center" />
+                </Border>
+            </Grid>
+        </Border>
+        
+        <!--Left Pane-->
+        <Border Grid.Column="1" Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="LightGray">
+            <ContentControl  x:Name="leftPanelContent" Margin="5" />
+        </Border>
+    </Grid>
+    
+</Window>

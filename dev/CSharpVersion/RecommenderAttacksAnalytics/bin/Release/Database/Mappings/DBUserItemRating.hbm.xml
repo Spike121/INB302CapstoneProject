@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping 	xmlns="urn:nhibernate-mapping-2.2"
+					auto-import="true"
+					default-lazy="false"
+					assembly="RecommenderAttacksAnalytics"
+					namespace="RecommenderAttacksAnalytics.Entities.Database">
+
+  <class name="DBUserItemRating" table="ratings" lazy="true" >
+    <composite-id>
+      <key-property name="userId" column="userId" />
+      <key-property name="itemId" column="itemId" />
+    </composite-id>
+    <property name="rating">
+      <column name="rating" sql-type="int(11)" not-null="true" />
+    </property>
+  </class>
+</hibernate-mapping>

@@ -1,0 +1,124 @@
+﻿<ui:AbstractAppPageUC x:Class="RecommenderAttacksAnalytics.UI.ResultsUC"
+                      xmlns:src="clr-namespace:RecommenderAttacksAnalytics.UI"
+                      xmlns:results="clr-namespace:RecommenderAttacksAnalytics.UI"
+                      xmlns:gif="http://wpfanimatedgif.codeplex.com"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:ui="clr-namespace:RecommenderAttacksAnalytics.UI"
+                      xmlns:containers="clr-namespace:RecommenderAttacksAnalytics.UI.Containers"
+                      xmlns:converters="clr-namespace:RecommenderAttacksAnalytics.Converters"
+                      xmlns:system="clr-namespace:System;assembly=mscorlib"
+                      mc:Ignorable="d" 
+                      DataContext="{Binding RelativeSource={RelativeSource Self}}"
+                      d:DesignHeight="300" d:DesignWidth="543">
+    <ui:AbstractAppPageUC.Resources>
+        <converters:BoolToValueConverter x:Key="BoolToVisibilityCollapsedConverter" TrueValue="Visible" FalseValue="Collapsed" ReturnType="{x:Type Visibility}"/>
+        <converters:BoolToValueConverter x:Key="NotBoolToVisibilityCollapsedConverter" TrueValue="Collapsed" FalseValue="Visible" ReturnType="{x:Type Visibility}"/>
+        <converters:BoolToValueConverter x:Key="BoolToYesNoStringConverter" TrueValue="Y" FalseValue="N" ReturnType="{x:Type system:String}"/>
+        <Style x:Key="SquareBackgroundBorder" TargetType="{x:Type Border}">
+            <Setter Property="MinHeight" Value="55px"/>
+            <Setter Property="MinWidth" Value="55px"/>
+            <Setter Property="Padding" Value="5,5,5,5"/>
+            <Setter Property="Background" Value="#676767"/>
+        </Style>
+    </ui:AbstractAppPageUC.Resources>
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+                <ListBox ItemsSource="{Binding Path=PredictionsResults}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type containers:PredictionResultContainer}">
+                            <ContentControl x:Name="bbbb">
+
+                                <Border Padding="5" BorderThickness="0,0,0,2" BorderBrush="DarkGray" Background="#FFF8F8F8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!--Column 0-->
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock HorizontalAlignment="Center" Text="Item #" FontSize="14"
+                                                       Opacity="0.6" />
+                                            <Border Style="{StaticResource SquareBackgroundBorder}">
+                                                <TextBlock Text="{Binding Path=EntityId}" HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center" FontSize="26" Foreground="White" />
+                                            </Border>
+                                        </StackPanel>
+
+                                        <!--Column 1-->
+                                        <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                            <TextBlock HorizontalAlignment="Center" Text="Is promoted" FontSize="14"
+                                                       Opacity="0.6" />
+                                            <Border Style="{StaticResource SquareBackgroundBorder}">
+                                                <TextBlock
+                                                    Text="{Binding Path=IsPromoted, Converter={StaticResource BoolToYesNoStringConverter}}"
+                                                    HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="26"
+                                                    Foreground="White" />
+                                            </Border>
+                                        </StackPanel>
+
+                                        <!--Column 2-->
+                                        <StackPanel Grid.Column="3">
+                                            <TextBlock HorizontalAlignment="Center" Text="Original prediction"
+                                                       FontSize="12" Opacity="0.6" TextWrapping="WrapWithOverflow" />
+                                            <Border Style="{StaticResource SquareBackgroundBorder}"
+                                                    HorizontalAlignment="Center">
+                                                <TextBlock Text="{Binding Path=OriginalScore, StringFormat='0.##'}"
+                                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                           FontSize="26" Foreground="White" />
+                                            </Border>
+
+                                        </StackPanel>
+
+                                        <!--Column 3-->
+                                        <StackPanel Grid.Column="4" Margin="6,0,0,0">
+                                            <TextBlock HorizontalAlignment="Center" Text="Final prediction" FontSize="12"
+                                                       Opacity="0.6" TextWrapping="WrapWithOverflow" />
+                                            <Border Style="{StaticResource SquareBackgroundBorder}"
+                                                    HorizontalAlignment="Center">
+                                                <TextBlock Text="{Binding Path=FinalScore, StringFormat='0.##'}"
+                                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                           FontSize="26" Foreground="White" />
+                                            </Border>
+
+                                        </StackPanel>
+
+                                    </Grid>
+                                </Border>
+
+                                <!--<src:ResultTemplateUC DataContext="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                              OriginalPrediction="{Binding Path=OriginalScore}"
+                                              FinalPrediction="{Binding Path=FinalScore}"
+                                              EntityId="{Binding Path=EntityId}"/>-->
+                            </ContentControl>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            
+                <!--<Button HorizontalAlignment="Right" Content="Simulate attack" Grid.Row="1"
+                        x:Name="m_simulateAttackButton"
+                        Visibility="{Binding Path=IsProcessing, Converter={StaticResource NotBoolToVisibilityCollapsedConverter}}" Click="m_simulateAttackButton_Click" />-->
+            </Grid>
+        <StackPanel VerticalAlignment="Center" Visibility="{Binding Path=IsProcessing, Converter={StaticResource BoolToVisibilityCollapsedConverter}}">
+            <Image gif:ImageBehavior.AnimatedSource="../Resources/Images/ajax-loader.gif"
+                   gif:ImageBehavior.RepeatBehavior="Forever"
+                   Width="25"/>
+            <TextBlock Text="Loading results..." HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</ui:AbstractAppPageUC>
